@@ -36,6 +36,10 @@ The plugin also enforces structured decision-making at the point of code changes
 2. In Claude Code, go to **Customize > Add Plugin > Local** and select the downloaded zip
 3. Run `/setup` to configure your knowledge folder
 
+## Works Well With Obsidian
+
+The knowledge folder is plain markdown — it works great as an Obsidian vault. We recommend using [Obsidian Web Clipper](https://obsidian.md/clipper) to save articles and references directly into `intake/clippings/`, where ARIA's audit process can review and promote them.
+
 ## Philosophy
 
 ARIA takes the position that **the LLM captures, the human promotes.** AI is excellent at noticing and structuring knowledge during sessions. But deciding what's load-bearing vs. noise requires human judgment.

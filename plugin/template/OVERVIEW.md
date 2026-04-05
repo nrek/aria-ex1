@@ -169,4 +169,6 @@ Neither system is universally better. They solve different problems. The questio
 4. Run `/extract` when you finish a task or before switching context
 5. Run `/audit-knowledge` when prompted (or any time) to review and promote
 
+The knowledge folder is plain markdown — it works great as an [Obsidian](https://obsidian.md) vault. We recommend using [Obsidian Web Clipper](https://obsidian.md/clipper) to save articles and references directly into `intake/clippings/`, where ARIA's audit process can review and promote them.
+
 See [README.md](README.md) for the folder structure, conventions, and operational details. See [LOCAL.md](LOCAL.md) for format templates and detailed usage guidance.
