@@ -4,6 +4,25 @@ Project-specific conventions, format templates, and usage details that extend th
 
 **Last updated:** (update when you edit this file)
 
+## Extended Structure
+
+<!-- Document any subdirectories or conventions you add beyond the base structure.
+     Example: if you create guides/claude/ for Claude Code-specific docs, note it here
+     so future sessions know where to look. -->
+
+```
+knowledge/
+├── ...                              # (base structure — see README.md)
+├── guides/
+│   └── your-topic/                  # Group related guides into subdirectories
+├── intake/
+│   ├── clippings/                   # Web articles, threads, saved content
+│   ├── notes/                       # Quick notes and observations
+│   └── attachments/                 # Images, PDFs, supporting files
+└── references/
+    └── ...                          # Research papers, external docs
+```
+
 ## Format Templates
 
 ### Approaches (`approaches/`)

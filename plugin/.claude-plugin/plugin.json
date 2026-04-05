@@ -1,6 +1,6 @@
 {
   "name": "aria-knowledge",
-  "version": "2.3.1",
+  "version": "2.3.2",
   "description": "Knowledge repository management — audit memory/plans, scan configs for drift, extract session knowledge, manage backlogs, look up rules. Includes Rule 22 enforcement hooks and session start audit checks. IMPORTANT: All skills except /setup require ~/.claude/aria-knowledge.local.md to exist. If missing when any skill is invoked, stop and tell the user to run /setup.",
   "author": {
     "name": "Mike Prasad"
