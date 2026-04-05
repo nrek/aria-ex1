@@ -1,0 +1,78 @@
+# Knowledge Repository
+
+Universal knowledge, approaches, insights, and reference material shared across projects.
+
+See [OVERVIEW.md](OVERVIEW.md) for the project philosophy, design principles, and how the system works. See [LOCAL.md](LOCAL.md) for project-specific conventions, format templates, and detailed usage guide.
+
+## Structure
+
+```
+knowledge/
+├── README.md
+├── LOCAL.md                 # Project-specific guide (not managed by plugin)
+├── intake/                  # Unprocessed input — backlogs and staging
+│   ├── insights-backlog.md
+│   ├── decisions-backlog.md
+│   ├── extraction-backlog.md
+│   ├── notes/               # Your own notes and rough drafts
+│   ├── attachments/         # Files from elsewhere (screenshots, PDFs)
+│   └── clippings/           # Saved external content
+├── logs/                    # Operational logs — audit dates and results
+│   ├── knowledge-audit-log.md
+│   └── config-audit-log.md
+├── rules/                   # Living rules and principles
+│   ├── working-rules.md
+│   ├── change-decision-framework.md
+│   └── enforcement-mechanisms.md
+├── approaches/              # Validated methodologies and patterns
+├── decisions/               # Cross-project architectural decisions (ADR format)
+├── guides/                  # Operational knowledge — how things work in your environment
+├── references/              # External resources, evaluations, research
+└── archive/                 # Retired or superseded content
+```
+
+## Folder Taxonomy
+
+| Folder | Holds | Think of it as |
+|--------|-------|----------------|
+| `rules/` | Principles, constraints, policies | "We must / must not" |
+| `approaches/` | Validated methodologies, patterns | "How we do X (proven)" |
+| `decisions/` | ADRs, architectural choices | "We chose X because Y" |
+| `guides/` | Operational knowledge, how things work | "Here's how X works" |
+| `references/` | External research, evaluations, bookmarks | "What others say about X" |
+| `archive/` | Retired content with pointers | "What we used to do" |
+| `intake/` | Staging — backlogs, notes, clippings | "Not yet categorized" |
+| `logs/` | Audit timestamps and results | System metadata |
+
+## Categories
+
+### `intake/`
+Unprocessed input awaiting review. Backlogs accumulate during work sessions and get promoted (or cleared) during the knowledge audit. Nothing in `intake/` is canonical.
+
+### `logs/`
+Operational records tracking when audits ran and what they found. System metadata, not knowledge content.
+
+### `rules/`
+Living documents that govern how you work. Rules are added and retired based on real experience. Rule numbers are permanent IDs — retired rules keep their number and get marked `[RETIRED]`.
+
+### `approaches/`
+Validated methodologies and patterns confirmed through use. Include context about when they apply and when they don't.
+
+### `decisions/`
+Cross-project architectural decisions using ADR (Architecture Decision Record) format.
+
+### `guides/`
+Operational knowledge about how things work in your environment. Tool setup, architecture descriptions, team onboarding, infrastructure runbooks. Organize with subdirectories by topic (e.g., `claude/`, `infrastructure/`, `deployment/`).
+
+### `references/`
+External research, vendor evaluations, tool comparisons, and bookmarked resources.
+
+### `archive/`
+Retired content. When something is superseded, move it here with a pointer from the original location.
+
+## Conventions
+
+- **File naming:** kebab-case (`api-design-patterns.md`)
+- **Dates:** Include `**Last updated:** YYYY-MM-DD` near the top of each file
+- **Decision files:** Use numeric prefix (`001-`, `002-`)
+- **Don't delete — archive:** Move deprecated content to `archive/` with pointers
