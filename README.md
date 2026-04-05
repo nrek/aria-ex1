@@ -16,11 +16,36 @@ Knowledge moves through a pipeline: **Capture → Review → Promote**
 
 The plugin also enforces structured decision-making at the point of code changes (Rule 22), making the reasoning process visible and auditable.
 
-## What's Included
+## Features
 
-- **6 skills:** `/setup`, `/extract`, `/audit-knowledge`, `/audit-config`, `/backlog`, `/rules`
-- **Session hooks:** Start (audit cadence checks), Pre/Post edit (decision framework), Stop (knowledge capture)
-- **Knowledge templates:** Working rules, change decision framework, enforcement mechanisms, and folder structure for organizing rules, approaches, decisions, guides, and references
+- Configure knowledge folder location, structure, and audit cadences via `/setup`
+- Validate folder structure against template and create missing directories/files
+- Diff managed files against plugin version on setup, with keep/update/show-diff options
+- Detect and check for companion plugin dependencies (explanatory-output-style)
+- Scan conversations for uncaptured insights, decisions, feedback, project context, and references via `/extract`
+- Deduplicate extracted knowledge against existing backlog entries
+- Stage all captured knowledge in backlogs for human review — nothing is auto-promoted
+- Review backlogs and memory files for promotable knowledge via `/audit-knowledge`
+- Categorize findings as already-captured, implementation-specific, or worth-extracting
+- Detect emerging themes across backlog entries that individually don't justify a doc but together reveal a pattern
+- Scan CLAUDE.md files, configs, and docs for drift, broken references, and staleness via `/audit-config`
+- View and manage pending items across all three backlogs via `/backlog`
+- Quick lookup into working rules by number or keyword via `/rules`
+- Check audit cadences at session start and prompt when knowledge or config review is overdue
+- Enforce structured change decision framework (Rule 22) before every Edit/Write — requires visible impact assessment, alternatives analysis, and scope definition
+- Classify changes as HIGH or LOW impact with format-specific reasoning requirements
+- Flag changes that fail validation or exceed declared scope, with proposed next steps
+- Verify scope after every Edit/Write — checks for extra changes, unnecessary rewrites, and secondary impact on parents/siblings/dependents
+- Prompt for knowledge capture before session ends
+- Ship 24 living working rules governing coding, architecture, and development decisions
+- Ship a 7-step change decision framework with real examples and hook configuration
+- Ship enforcement mechanisms documentation covering soft (prompt-driven) through hard (system-level) enforcement layers
+- Provide cross-references between related rule files
+- Create and maintain 11-directory taxonomy for organizing knowledge by type (rules, approaches, decisions, guides, references, archive, intake with notes/attachments/clippings, logs)
+- Ship user-owned templates for project-specific conventions and directory stubs
+- Maintain audit logs tracking when reviews ran and what they found
+- Store configuration in `~/.claude/aria-knowledge.local.md` readable by hook scripts
+- Work with Obsidian as a vault, including Web Clipper integration for `intake/clippings/`
 
 ## Install
 
