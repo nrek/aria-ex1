@@ -24,9 +24,17 @@ The plugin also enforces structured decision-making at the point of code changes
 
 ## Install
 
+### CLI
+
 1. Copy the `plugin/` directory to your Claude Code plugins folder
-2. Run `/setup` in Claude Code to configure your knowledge folder
+2. Run `/setup` to configure your knowledge folder
 3. Start working — the plugin captures knowledge automatically
+
+### Desktop / IDE
+
+1. Download the latest zip from [Releases](https://github.com/mikeprasad/aria-knowledge/releases)
+2. In Claude Code, go to **Customize > Add Plugin > Local** and select the downloaded zip
+3. Run `/setup` to configure your knowledge folder
 
 ## Philosophy
 
