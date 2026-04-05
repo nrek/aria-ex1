@@ -37,3 +37,7 @@ See [plugin/template/OVERVIEW.md](plugin/template/OVERVIEW.md) for the full desi
 ## License
 
 [CC BY-NC-SA 4.0](LICENSE) — Free to use and modify. Must be attributed, non-commercial, and derivatives must share alike.
+
+## Support
+
+If ARIA is useful to you, consider buying me a coffee via PayPal (mikeprasad@gmail.com) or [Venmo](https://venmo.com/mikeprasad).
