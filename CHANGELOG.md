@@ -2,6 +2,12 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.3.1] - 2026-04-06
+
+### Added
+- Known Issues section in README documenting the Claude Code "hook error" UI bug (anthropics/claude-code#17088)
+- Note in OVERVIEW.md template hooks section about the same cosmetic display issue
+
 ## [2.3.0] - 2026-04-05
 
 ### Added

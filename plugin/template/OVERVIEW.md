@@ -78,6 +78,8 @@ The plugin includes hooks that fire automatically during sessions:
 
 The pre/post edit hooks implement a change decision framework that prevents common failure modes: rewriting code that should have been extended, touching files outside the decision scope, skipping alternatives analysis. The enforcement is prompt-based — it shapes reasoning at the moment of action rather than blocking execution.
 
+> **Note:** Claude Code displays a "hook error" label next to tool calls that trigger these hooks. This is a [known Claude Code UI bug](https://github.com/anthropics/claude-code/issues/17088) — the hooks exit successfully and work correctly. The label is cosmetic.
+
 ### Enforcement Philosophy
 
 The plugin uses a layered enforcement model, from softest to hardest:

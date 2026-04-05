@@ -71,6 +71,10 @@ ARIA takes the position that **the LLM captures, the human promotes.** AI is exc
 
 See [plugin/template/OVERVIEW.md](plugin/template/OVERVIEW.md) for the full design rationale.
 
+## Known Issues
+
+- **"hook error" label on Pre/PostToolUse hooks** — Claude Code displays "hook error" next to every tool call that triggers a hook, even when the hook exits successfully (exit code 0) with valid JSON output. This is a [known Claude Code UI bug](https://github.com/anthropics/claude-code/issues/17088) — the Rule 22 enforcement hooks are working correctly. The label is cosmetic and does not indicate a problem with ARIA.
+
 ## License
 
 [CC BY-NC-SA 4.0](LICENSE) — Free to use and modify. Must be attributed, non-commercial, and derivatives must share alike.
