@@ -105,7 +105,6 @@ knowledge_folder: [path from Step 2]
 audit_cadence_knowledge: [value from Step 6]
 audit_cadence_config: [value from Step 6]
 explanatory_plugin: [true/false from Step 5]
-setup_version: 2.0.0
 ---
 ```
 
