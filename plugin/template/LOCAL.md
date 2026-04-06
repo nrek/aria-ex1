@@ -28,9 +28,12 @@ knowledge/
 ### Approaches (`approaches/`)
 
 ```markdown
-# [Approach Name]
+---
+Last updated: YYYY-MM-DD
+tags: [tag1, tag2, tag3]
+---
 
-**Last updated:** YYYY-MM-DD
+# [Approach Name]
 
 ## When to Use
 [Conditions where this approach applies]
@@ -51,10 +54,13 @@ knowledge/
 ### Decisions (`decisions/`)
 
 ```markdown
-# [Number] — [Title]
+---
+Status: Accepted | Superseded | Deprecated
+Date: YYYY-MM-DD
+tags: [tag1, tag2]
+---
 
-**Status:** Accepted | Superseded | Deprecated
-**Date:** YYYY-MM-DD
+# [Number] — [Title]
 
 ## Context
 [What prompted this decision]
@@ -75,9 +81,12 @@ knowledge/
 ### Guides (`guides/`)
 
 ```markdown
-# [Guide Title]
+---
+Last updated: YYYY-MM-DD
+tags: [tag1, tag2]
+---
 
-**Last updated:** YYYY-MM-DD
+# [Guide Title]
 
 ## Overview
 [What this guide covers and who it's for]
@@ -119,6 +128,9 @@ Add your own "When to Read" mappings as your knowledge base grows:
 | Starting any session | `rules/working-rules.md` (or summary in your project's CLAUDE.md) |
 | Before a code change triggers the Rule 22 hook | `rules/change-decision-framework.md` |
 | Designing a new enforcement mechanism | `rules/enforcement-mechanisms.md` |
+| Working in a specific domain (API, CSS, Stripe, etc.) | Run `/context <topic>` to load relevant knowledge |
+| After promoting knowledge or adding new files | Run `/index` to rebuild the tag index |
+| Checking what knowledge exists for a topic | Run `/context <topic>` to see matches |
 | *(add your own rows as your knowledge base grows)* | |
 
 ## Adding New Knowledge
@@ -139,3 +151,26 @@ During the knowledge audit (`/audit-knowledge`), look for these clusters:
 - **Recurring feedback corrections** → may warrant a new rule
 
 Not every insight becomes a knowledge file — but patterns of insights do.
+
+## Tag Convention
+
+Every promoted knowledge file should include a `tags:` field in its YAML frontmatter:
+
+```yaml
+---
+Last updated: YYYY-MM-DD
+tags: [api, pagination, django]
+---
+```
+
+**Known tags** are maintained in `index.md` under `## Known Tags`. The initial set includes:
+
+| Group | Tags |
+|-------|------|
+| Tech domain | `api`, `css`, `database`, `deployment`, `django`, `react`, `nextjs`, `react-native`, `tailwind`, `testing`, `infrastructure` |
+| Cross-cutting | `architecture`, `performance`, `security`, `accessibility` |
+| Tool/service | `stripe`, `linear`, `supabase`, `figma`, `claude-code` |
+| Process | `process`, `decision-framework`, `enforcement` |
+| Project | `cs`, `ss`, `df`, `aria` |
+
+**Freeform tags** are valid — any tag works. Freeform tags that appear on 3+ files get suggested for promotion to the known set during `/index`. Similar tags (e.g., `api` vs `apis`) get flagged for normalization.

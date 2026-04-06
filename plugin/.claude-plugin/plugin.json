@@ -1,7 +1,7 @@
 {
   "name": "aria-knowledge",
-  "version": "2.3.2",
-  "description": "Knowledge repository management — audit memory/plans, scan configs for drift, extract session knowledge, manage backlogs, look up rules. Includes Rule 22 enforcement hooks and session start audit checks. IMPORTANT: All skills except /setup require ~/.claude/aria-knowledge.local.md to exist. If missing when any skill is invoked, stop and tell the user to run /setup.",
+  "version": "2.4.0",
+  "description": "Knowledge repository management — audit memory/plans, scan configs for drift, extract session knowledge, manage backlogs, look up rules, build tag indexes, and load knowledge by topic. Includes Rule 22 enforcement hooks (with abbreviated mode for planning paths) and session start audit checks. IMPORTANT: All skills except /setup require ~/.claude/aria-knowledge.local.md to exist. If missing when any skill is invoked, stop and tell the user to run /setup.",
   "author": {
     "name": "Mike Prasad"
   },
@@ -23,7 +23,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"CHANGE DECISION CHECK (Rule 22) — Output this REQUIRED format before proceeding: Assess impact: HIGH (behavior, architecture, key logic, many dependents) or LOW (content, simple functions, docs). --- HIGH IMPACT FORMAT: Line 1: High Impact — [what] ([why high]). Then one line each: Change — [what + context]. Intake — [information gathered]. Criteria — [objective basis]. Solutions — [all options ranked, best first]. Rank — [winner + why]. Validate — [does it hold up? contradictions?]. Execute — [precise scope]. FLAG if Validate or Execute fails and newline with Proposed: or Question: for next step. --- LOW IMPACT FORMAT: Line 1: Low Impact — [what] ([why low]). Then: Change — [what + intake + criteria in one line]. Solutions — [options ranked, best first]. Execute — [decision; scope check, secondary impact check, functional impact]. If Execute flags: add FLAG and newline with Proposed: or Question: for clarification needed. --- If you have not completed this assessment, STOP and do so before proceeding.\"}}'",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/pre-edit-check.sh",
             "timeout": 5
           }
         ]
@@ -35,7 +35,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"POST-EDIT SCOPE CHECK — Output this REQUIRED format after edit. Check: (1) Stay in scope? (2) Was anything extra touched? (3) Any unnecessary rewrites? (4) Do changes match decision? (5) Any secondary impact on parents/siblings/dependents? --- PASS: Scope PASS — [brief context why pass, including secondary status]. --- PASS WITH SECONDARY: Scope PASS CONDITIONAL — [what was done as planned]. Then newline: Secondary: [what needs attention]. Then newline: Proposed: [recommended action]. --- FAIL: Scope FAIL — [what failed, what was affected]. Then newline: Proposed: [concrete next step or fix].\"}}'",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/post-edit-check.sh",
             "timeout": 5
           }
         ]

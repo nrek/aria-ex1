@@ -20,11 +20,15 @@ if [ -f "$KT_CONFIG" ]; then
   KT_CADENCE_KNOWLEDGE=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^audit_cadence_knowledge:' | sed 's/^audit_cadence_knowledge: *//')
   KT_CADENCE_CONFIG=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^audit_cadence_config:' | sed 's/^audit_cadence_config: *//')
   KT_EXPLANATORY=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^explanatory_plugin:' | sed 's/^explanatory_plugin: *//')
+  KT_FREEFORM_THRESHOLD=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^freeform_promotion_threshold:' | sed 's/^freeform_promotion_threshold: *//')
+  KT_STALENESS_MONTHS=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^staleness_threshold_months:' | sed 's/^staleness_threshold_months: *//')
 
   # Defaults if not set
   KT_CADENCE_KNOWLEDGE=${KT_CADENCE_KNOWLEDGE:-3}
   KT_CADENCE_CONFIG=${KT_CADENCE_CONFIG:-14}
   KT_EXPLANATORY=${KT_EXPLANATORY:-false}
+  KT_FREEFORM_THRESHOLD=${KT_FREEFORM_THRESHOLD:-3}
+  KT_STALENESS_MONTHS=${KT_STALENESS_MONTHS:-6}
 
   # Validate knowledge_folder is non-empty
   if [ -z "$KT_KNOWLEDGE_FOLDER" ]; then
@@ -46,5 +50,11 @@ if [ -f "$KT_CONFIG" ]; then
   esac
   case "$KT_CADENCE_CONFIG" in
     ''|*[!0-9]*) KT_CADENCE_CONFIG=14 ;;
+  esac
+  case "$KT_FREEFORM_THRESHOLD" in
+    ''|*[!0-9]*) KT_FREEFORM_THRESHOLD=3 ;;
+  esac
+  case "$KT_STALENESS_MONTHS" in
+    ''|*[!0-9]*) KT_STALENESS_MONTHS=6 ;;
   esac
 fi

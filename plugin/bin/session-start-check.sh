@@ -86,6 +86,12 @@ else
   MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — Config audit log not found. Prompt user: No config audit has been run yet. Want me to check for drift? "
 fi
 
+# Knowledge surfacing — prompt Claude to suggest /context after user states task
+INDEX_FILE="$KT_KNOWLEDGE_FOLDER/index.md"
+if [ -f "$INDEX_FILE" ]; then
+  MESSAGES="${MESSAGES}KNOWLEDGE CONTEXT — After the user describes their task, check if the knowledge index exists at ${KT_KNOWLEDGE_FOLDER}/index.md. If it does, suggest a /context command with tags relevant to their stated task. Only suggest once per session. Do not block — just offer. Example: 'Before we start — you have knowledge docs that may be relevant. Want me to run /context api pagination?' "
+fi
+
 # Output only if there are messages
 if [ -n "$MESSAGES" ]; then
   MESSAGES_ESCAPED=$(kt_json_escape "$MESSAGES")

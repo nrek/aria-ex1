@@ -106,6 +106,27 @@ Check for:
 
 Note all findings for presentation in Step 6 under the new "Integrity Issues" section.
 
+## Step 5c: Cross-Reference Backlog Against Promoted Docs
+
+For each pending backlog entry (from Steps 2, 2b, 2c), check whether it overlaps with existing promoted knowledge files.
+
+**How to match:**
+1. If `{knowledge_folder}/index.md` exists, read it and use the tag index for matching. Extract keywords from the backlog entry and check if any match tags in the index.
+2. If no index exists, fall back to keyword matching: scan headings and first paragraphs of files in `approaches/`, `decisions/`, `guides/`, `references/` for overlapping terms.
+
+**Two types of overlap to detect:**
+
+**Topic overlap** — the backlog entry covers a topic that already has a promoted doc:
+- A backlog insight about pagination when `approaches/api-pagination.md` exists
+- Flag: "This insight may relate to existing doc `approaches/api-pagination.md` — update existing rather than create new?"
+
+**Potential invalidation** — the backlog entry describes a change that may affect existing promoted docs:
+- A clipping about a new Stripe API version when `references/stripe-webhook-patterns.md` exists
+- A decision that reverses or modifies an existing approach
+- Flag: "New entry about [topic] — existing `[file]` may need review or update."
+
+Note all cross-references for presentation in Step 6. These inform the user's promotion decisions — they're not blockers.
+
 ## Step 6: Present Findings
 
 Present a table with ALL files scanned and their category. Only show details for Category C items.
@@ -193,6 +214,28 @@ If clusters are detected, present each one with a **draft synthesis document**:
 The draft is a starting point for review, not final content. The user may edit, reject, or ask for revisions before promotion. If there isn't enough evidence for a concrete draft, say so and present the theme without one.
 ```
 
+### Stale Knowledge
+
+If `{knowledge_folder}/index.md` exists, read its `## Stale Files` section. If it has entries, present them as action items:
+
+```
+## Stale Knowledge
+- N files past review threshold:
+  - [file path] ([age] months, threshold: [threshold] months)
+
+For each: review and update Last updated date? Update content? Archive if no longer relevant?
+```
+
+If no index exists, skip this section with a note: "Run `/index` to enable staleness detection."
+
+### Cross-Reference Findings (from Step 5c)
+
+For each cross-reference found:
+- **Type:** topic overlap | potential invalidation
+- **Backlog entry:** which entry triggered the match
+- **Existing file:** which promoted doc it overlaps with
+- **Recommendation:** update existing, create new alongside, or review existing for staleness
+
 ## Step 7: Wait for User Review
 
 **STOP here.** Do NOT extract anything automatically.
@@ -224,6 +267,37 @@ Use relative paths. Each link should include a brief note explaining the relatio
 
 If there are no Category C items, pending insights, or pending decisions, say so clearly:
 > "Nothing new to extract. All knowledge-worthy items are already captured."
+
+## Step 7b: Rebuild Knowledge Index
+
+After all approved promotions and edits are complete, rebuild the knowledge index to capture the current state.
+
+Run the full `/index` logic:
+1. Scan all promoted folders for files and tags
+2. Normalize tags (present conflicts for approval)
+3. Suggest freeform-to-known tag promotions
+4. Flag untagged files and offer to add tags
+5. Update project-to-tag mappings
+6. Detect stale files
+7. Suggest cross-references between files with 2+ shared tags
+8. Write `{knowledge_folder}/index.md`
+
+**Batch the interactive prompts** — present all index health findings together rather than interrupting one at a time:
+
+```
+## Index Health
+- N similar tags found: [list normalizations]
+- N freeform tags eligible for promotion: [list]
+- N untagged files: [list]
+- N cross-reference suggestions: [list]
+- Project mappings: [changes or "unchanged"]
+
+[Approve normalizations? Promote tags? Tag files? Add cross-references?]
+```
+
+Apply approved changes, then write the final `index.md`.
+
+If this is the first audit (no index exists yet), note: "Building knowledge index for the first time."
 
 ## Step 8: Update the Audit Log (always, even if nothing extracted)
 

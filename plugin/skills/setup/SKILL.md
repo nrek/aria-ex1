@@ -95,6 +95,18 @@ Present current or default cadences:
 
 Record the values.
 
+### Advanced Options
+
+If the user asks about advanced options or re-runs setup with existing config, also offer:
+
+> "Advanced settings (defaults are fine for most users):
+> - **Freeform tag promotion threshold:** 3 (suggest promoting a freeform tag to known after it appears on this many files)
+> - **Staleness threshold:** 6 months (flag knowledge files not updated within this period)
+>
+> Want to change either? (Enter new values or press enter to keep defaults)"
+
+Record the values. If the user doesn't ask about advanced options during initial setup, use the defaults silently.
+
 ## Step 7: Write Config
 
 Write `~/.claude/aria-knowledge.local.md` with the collected settings:
@@ -105,6 +117,8 @@ knowledge_folder: [path from Step 2]
 audit_cadence_knowledge: [value from Step 6]
 audit_cadence_config: [value from Step 6]
 explanatory_plugin: [true/false from Step 5]
+freeform_promotion_threshold: [value from Step 6, default 3]
+staleness_threshold_months: [value from Step 6, default 6]
 ---
 ```
 
@@ -139,6 +153,8 @@ After writing the config file, read it back and verify that each value can be ex
    - `audit_cadence_knowledge` — confirm it's the integer from Step 6
    - `audit_cadence_config` — confirm it's the integer from Step 6
    - `explanatory_plugin` — confirm it's `true` or `false`
+   - `freeform_promotion_threshold` — confirm it's the integer from Step 6
+   - `staleness_threshold_months` — confirm it's the integer from Step 6
 
 **If any check fails:** rewrite the file with corrected formatting and verify again. Report which value failed and what was fixed.
 
