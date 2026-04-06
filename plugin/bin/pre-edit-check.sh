@@ -30,6 +30,20 @@ if [ "$KT_CONFIGURED" = "true" ] && [ -n "$KT_KNOWLEDGE_FOLDER" ]; then
   case "$FILE_PATH" in
     "$KT_KNOWLEDGE_FOLDER"/*) IS_PROTECTED=true ;;
   esac
+
+  # Check user-configured critical paths (comma-separated glob patterns)
+  if [ -n "$KT_CRITICAL_PATHS" ] && [ "$IS_PROTECTED" = "false" ]; then
+    OLD_IFS="$IFS"
+    IFS=','
+    for PATTERN in $KT_CRITICAL_PATHS; do
+      # Strip trailing /* or * to get directory prefix
+      PREFIX=$(echo "$PATTERN" | sed 's|/\*$||;s|\*$||')
+      case "$FILE_PATH" in
+        */$PREFIX/*) IS_PROTECTED=true; break ;;
+      esac
+    done
+    IFS="$OLD_IFS"
+  fi
 fi
 
 if [ "$IS_PLANNING" = "true" ] && [ "$IS_PROTECTED" = "false" ]; then

@@ -2,6 +2,10 @@
 
 A structured knowledge management plugin for Claude Code. Captures what you learn during AI-assisted development sessions, stages it for review, and promotes validated knowledge into durable, findable documents.
 
+**Knowledge Lifecycle** — auto capture, staging, review, promotion, staleness, archival. Pipeline from raw signal to validated knowledge.
+**Decision Discipline & Enforcement** — decision-making rules, change framework, pre/post hooks, impact classification, scope verification, planning path abbreviation. Hook-enforced active application.
+**Contextual Retrieval & Indexing** — tag index, /context with project expansion, /index with cross-reference suggestions, session-start surfacing, bidirectional linking. The right knowledge for each session at the right time.
+
 ## The Problem
 
 Every time an AI session ends, context disappears. Insights, decisions, and corrections vanish into compacted conversation history. ARIA gives that knowledge a durable home.
@@ -16,7 +20,7 @@ Knowledge moves through a pipeline: **Capture → Review → Promote**
 
 The plugin also enforces structured decision-making at the point of code changes (Rule 22), making the reasoning process visible and auditable.
 
-## Features
+## All Features
 
 - Configure knowledge folder location, structure, and audit cadences via `/setup`
 - Validate folder structure against template and create missing directories/files
@@ -46,6 +50,16 @@ The plugin also enforces structured decision-making at the point of code changes
 - Maintain audit logs tracking when reviews ran and what they found
 - Store configuration in `~/.claude/aria-knowledge.local.md` readable by hook scripts
 - Work with Obsidian as a vault, including Web Clipper integration for `intake/clippings/`
+- Save transcript snapshots before context compaction to prevent knowledge loss (PreCompact hook)
+- Prompt to review captured snapshots immediately after compaction (PostCompact hook)
+- Automatically surface relevant knowledge files when tasks are created (TaskCreated hook with tag index matching)
+- Quick-save URLs or text snippets to intake via `/clip` without leaving the session
+- View knowledge base health dashboard via `/stats` — file counts, backlog depth, audit status, tag stats, coverage gaps
+- Configure project-specific critical paths that always require full impact assessment
+- First-run welcome message introduces features progressively for new users
+- Periodic update check prompts to run `/setup` for plugin template updates (configurable cadence)
+- Gate all automatic features behind a single `auto_capture` toggle
+- Quick command reference via `/help` — lists all available skills with descriptions
 
 ## Install
 

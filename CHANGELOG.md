@@ -2,6 +2,29 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.5.0] - 2026-04-07
+
+### Added
+- PreCompact hook — saves transcript snapshot to `intake/pre-compact-captures/` before context compaction, preserving knowledge that would otherwise be lost to summarization
+- PostCompact hook — prompts user to review pre-compaction snapshots immediately after compaction
+- TaskCreated hook — auto-context retrieval that matches task keywords against the tag index and surfaces relevant knowledge files with 30-second cooldown for batch creation
+- `/clip` skill — quick-save URLs or text snippets to `intake/clippings/` without leaving the session
+- `/stats` skill — read-only knowledge base health dashboard (file counts, backlog depth, audit status, tag stats, coverage gaps)
+- `QUICKSTART.md` — concise "your first 3 sessions" guide for marketplace users
+- First-run welcome message — friendly introduction on first session instead of audit prompts
+- `auto_capture` config key (default: true) — gates all automatic features (pre-compact capture, post-compact prompt, task-created context retrieval)
+- `critical_paths` config key (default: empty) — comma-separated path patterns that always require HIGH impact Rule 22 assessment
+- `audit_cadence_update` config key (default: 30) — days between update check prompts, parsed from config file's own `/setup on` date
+- `intake/pre-compact-captures/` directory in template structure
+- `/help` skill — quick command reference table with descriptions for all available skills
+
+### Changed
+- `/setup` — new fields in cadence display (update check), advanced options (auto-capture, critical paths), config write, and verification
+- `/audit-knowledge` — new Step 2d scans pre-compact captures for extractable knowledge, new Step 6 section presents findings
+- `config.sh` — parses `audit_cadence_update`, `auto_capture`, and `critical_paths` with defaults and validation
+- `session-start-check.sh` — first-run detection (skips audit prompts on fresh install), update check cadence using config file date
+- `pre-edit-check.sh` — matches file paths against user-configured `critical_paths` patterns
+
 ## [2.4.0] - 2026-04-06
 
 ### Added

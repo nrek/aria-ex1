@@ -22,6 +22,9 @@ if [ -f "$KT_CONFIG" ]; then
   KT_EXPLANATORY=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^explanatory_plugin:' | sed 's/^explanatory_plugin: *//')
   KT_FREEFORM_THRESHOLD=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^freeform_promotion_threshold:' | sed 's/^freeform_promotion_threshold: *//')
   KT_STALENESS_MONTHS=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^staleness_threshold_months:' | sed 's/^staleness_threshold_months: *//')
+  KT_CADENCE_UPDATE=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^audit_cadence_update:' | sed 's/^audit_cadence_update: *//')
+  KT_AUTO_CAPTURE=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^auto_capture:' | sed 's/^auto_capture: *//')
+  KT_CRITICAL_PATHS=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^critical_paths:' | sed 's/^critical_paths: *//')
 
   # Defaults if not set
   KT_CADENCE_KNOWLEDGE=${KT_CADENCE_KNOWLEDGE:-3}
@@ -29,6 +32,8 @@ if [ -f "$KT_CONFIG" ]; then
   KT_EXPLANATORY=${KT_EXPLANATORY:-false}
   KT_FREEFORM_THRESHOLD=${KT_FREEFORM_THRESHOLD:-3}
   KT_STALENESS_MONTHS=${KT_STALENESS_MONTHS:-6}
+  KT_CADENCE_UPDATE=${KT_CADENCE_UPDATE:-30}
+  KT_AUTO_CAPTURE=${KT_AUTO_CAPTURE:-true}
 
   # Validate knowledge_folder is non-empty
   if [ -z "$KT_KNOWLEDGE_FOLDER" ]; then
@@ -56,5 +61,12 @@ if [ -f "$KT_CONFIG" ]; then
   esac
   case "$KT_STALENESS_MONTHS" in
     ''|*[!0-9]*) KT_STALENESS_MONTHS=6 ;;
+  esac
+  case "$KT_CADENCE_UPDATE" in
+    ''|*[!0-9]*) KT_CADENCE_UPDATE=30 ;;
+  esac
+  case "$KT_AUTO_CAPTURE" in
+    true|false) ;; # valid
+    *) KT_AUTO_CAPTURE=true ;;
   esac
 fi

@@ -35,7 +35,7 @@ If **(b) create new:**
 
 Read the expected structure from `${CLAUDE_PLUGIN_ROOT}/template/`.
 
-**Expected directories:** `intake/`, `intake/notes/`, `intake/attachments/`, `intake/clippings/`, `logs/`, `rules/`, `approaches/`, `decisions/`, `guides/`, `references/`, `archive/`
+**Expected directories:** `intake/`, `intake/notes/`, `intake/attachments/`, `intake/clippings/`, `intake/pre-compact-captures/`, `logs/`, `rules/`, `approaches/`, `decisions/`, `guides/`, `references/`, `archive/`
 
 **Expected files:** `README.md`, `OVERVIEW.md`, `LOCAL.md`, `intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `logs/knowledge-audit-log.md`, `logs/config-audit-log.md`, `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`
 
@@ -90,8 +90,9 @@ Present current or default cadences:
 > "Audit cadences control how often you're prompted to review knowledge:
 > - **Knowledge audit:** every 3 days (scans memory/plans for extractable knowledge)
 > - **Config audit:** every 14 days (checks configs and docs for drift)
+> - **Update check:** every 30 days (prompts to run /setup for plugin template updates)
 >
-> Want to change either cadence? (Enter new values or press enter to keep defaults)"
+> Want to change any cadence? (Enter new values or press enter to keep defaults)"
 
 Record the values.
 
@@ -102,8 +103,10 @@ If the user asks about advanced options or re-runs setup with existing config, a
 > "Advanced settings (defaults are fine for most users):
 > - **Freeform tag promotion threshold:** 3 (suggest promoting a freeform tag to known after it appears on this many files)
 > - **Staleness threshold:** 6 months (flag knowledge files not updated within this period)
+> - **Auto-capture on compaction:** true (save transcript snapshot before context compaction)
+> - **Critical paths:** (empty) comma-separated path patterns that always require HIGH impact assessment (e.g., auth/*,payments/*,migrations/*)
 >
-> Want to change either? (Enter new values or press enter to keep defaults)"
+> Want to change any? (Enter new values or press enter to keep defaults)"
 
 Record the values. If the user doesn't ask about advanced options during initial setup, use the defaults silently.
 
@@ -117,8 +120,11 @@ knowledge_folder: [path from Step 2]
 audit_cadence_knowledge: [value from Step 6]
 audit_cadence_config: [value from Step 6]
 explanatory_plugin: [true/false from Step 5]
+audit_cadence_update: [value from Step 6, default 30]
 freeform_promotion_threshold: [value from Step 6, default 3]
 staleness_threshold_months: [value from Step 6, default 6]
+auto_capture: [true/false from Step 6, default true]
+critical_paths: [comma-separated patterns from Step 6, default empty]
 ---
 ```
 
@@ -153,8 +159,11 @@ After writing the config file, read it back and verify that each value can be ex
    - `audit_cadence_knowledge` — confirm it's the integer from Step 6
    - `audit_cadence_config` — confirm it's the integer from Step 6
    - `explanatory_plugin` — confirm it's `true` or `false`
+   - `audit_cadence_update` — confirm it's the integer from Step 6
    - `freeform_promotion_threshold` — confirm it's the integer from Step 6
    - `staleness_threshold_months` — confirm it's the integer from Step 6
+   - `auto_capture` — confirm it's `true` or `false`
+   - `critical_paths` — confirm it's a comma-separated string of path patterns (or empty)
 
 **If any check fails:** rewrite the file with corrected formatting and verify again. Report which value failed and what was fixed.
 
@@ -163,12 +172,15 @@ After writing the config file, read it back and verify that each value can be ex
 ## Step 8: Confirm
 
 Output a summary:
+
 ```
 Setup complete!
 - Knowledge folder: [path]
 - Knowledge audit: every [N] days
 - Config audit: every [N] days
+- Update check: every [N] days
 - Insight capture: [enabled/disabled]
+- Auto-capture on compaction: [enabled/disabled]
 - Files added: [N]
 - Files updated: [N]
 - Files kept (user version): [N]

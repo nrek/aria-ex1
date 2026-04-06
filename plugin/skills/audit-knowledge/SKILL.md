@@ -51,6 +51,22 @@ If there are entries below the `---` separator, these are feedback, project cont
 
 For each entry, note it for presentation in Step 6. Feedback items are promoted to `~/.claude/projects/` memory as feedback memories. Project context items become project memories. Reference items become reference memories or go to `{knowledge_folder}/references/`. Rejected items get cleared from the backlog.
 
+## Step 2d: Review Pre-Compact Captures
+
+Scan `{knowledge_folder}/intake/pre-compact-captures/` for `.md` files. **If the directory doesn't exist or is empty**, skip silently to Step 3.
+
+For each transcript snapshot found:
+1. Note the filename (contains date and session ID, e.g., `2026-04-07_a1b2c3d4.md`)
+2. Scan the transcript for extractable content — look for the same categories as `/extract`: Insight blocks, architectural decisions, feedback corrections, project context, and reference pointers
+3. Note findings for presentation in Step 6 under a "Pre-Compact Captures" section
+
+These are raw transcripts, so be selective — most conversation content is operational, not knowledge. Focus on the same high-value signals `/extract` looks for.
+
+After the user reviews findings in Step 7:
+- **Approved items** → append to the appropriate backlog file (insights-backlog.md, decisions-backlog.md, or extraction-backlog.md), then delete the snapshot file
+- **Rejected items** → delete the snapshot file
+- **Skip** → leave the snapshot for the next audit
+
 ## Step 3: Scan Memory Files
 
 Read all `.md` files in `~/.claude/projects/` memory directories for the current project (excluding `MEMORY.md` itself).
@@ -157,6 +173,15 @@ For each decision entry:
 - **Date / Project(s) / Context:** from the entry header
 - **Decision:** what was decided and why
 - **Recommendation:** promote to ADR in `{knowledge_folder}/decisions/` (with suggested filename) or "clear" if already captured elsewhere
+
+### Pre-Compact Captures (from intake/pre-compact-captures/)
+
+For each snapshot with extractable content:
+- **Date / Session:** from the filename
+- **Findings:** extracted insights, decisions, feedback, or references
+- **Recommended action:** append to appropriate backlog and delete snapshot, or delete without extracting
+
+If no snapshots exist or none had extractable content: omit this section.
 
 ### Category C Items (if any)
 

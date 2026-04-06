@@ -46,6 +46,24 @@ CONFIG_LOG="$KT_KNOWLEDGE_FOLDER/logs/config-audit-log.md"
 
 MESSAGES=""
 
+# First-run detection — show welcome instead of audit prompts for new users
+IS_FIRST_RUN=false
+if [ -f "$KNOWLEDGE_LOG" ]; then
+  if grep -q '(no audits yet)' "$KNOWLEDGE_LOG"; then
+    IS_FIRST_RUN=true
+  fi
+else
+  IS_FIRST_RUN=true
+fi
+
+if [ "$IS_FIRST_RUN" = "true" ]; then
+  MESSAGES="WELCOME — aria-knowledge is set up and active. Here is what is running: (1) Knowledge capture — run /extract after completing tasks to save insights. (2) Decision discipline — Rule 22 checks appear before edits to ensure changes are intentional. (3) Audit prompts — you will be prompted to review captured knowledge periodically. Available commands: /context [topic] to load relevant knowledge, /rules to look up working rules, /backlog to see pending items, /stats for knowledge base health, /clip to save URLs or snippets. These features work automatically — just start working."
+  MESSAGES_ESCAPED=$(kt_json_escape "$MESSAGES")
+  echo '{"systemMessage":"'"$MESSAGES_ESCAPED"'"}'
+  echo "$(date +%Y-%m-%dT%H:%M:%S) session-start-check: first-run welcome" >> "$KT_KNOWLEDGE_FOLDER/logs/hook-debug.log" 2>/dev/null
+  exit 0
+fi
+
 # Check knowledge audit cadence
 if [ -f "$KNOWLEDGE_LOG" ]; then
   LAST_KA_DATE=$(grep '^\- \*\*Date:\*\*' "$KNOWLEDGE_LOG" | head -1 | sed 's/.*\*\*Date:\*\* //' | sed 's/ .*//')
@@ -84,6 +102,18 @@ if [ -f "$CONFIG_LOG" ]; then
   fi
 else
   MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — Config audit log not found. Prompt user: No config audit has been run yet. Want me to check for drift? "
+fi
+
+# Check update cadence — parse last /setup date from config file
+LAST_SETUP_DATE=$(grep '/setup on ' "$KT_CONFIG" | tail -1 | sed 's|.*/setup on ||' | grep -oE '[0-9]{4}-[0-9]{2}-[0-9]{2}')
+if [ -n "$LAST_SETUP_DATE" ]; then
+  LAST_SETUP_EPOCH=$(date_to_epoch "$LAST_SETUP_DATE")
+  if [ -n "$LAST_SETUP_EPOCH" ]; then
+    DAYS_SINCE_SETUP=$(( (TODAY_EPOCH - LAST_SETUP_EPOCH) / 86400 ))
+    if [ "$DAYS_SINCE_SETUP" -ge "$KT_CADENCE_UPDATE" ]; then
+      MESSAGES="${MESSAGES}UPDATE CHECK — It has been ${DAYS_SINCE_SETUP} days since the last /setup run (configured cadence: every ${KT_CADENCE_UPDATE} days). Prompt user: It has been ${DAYS_SINCE_SETUP} days since you last ran /setup. Run /setup to check for plugin template updates. "
+    fi
+  fi
 fi
 
 # Knowledge surfacing — prompt Claude to suggest /context after user states task
