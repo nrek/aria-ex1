@@ -3,7 +3,9 @@
 A structured knowledge management plugin for Claude Code. Captures what you learn during AI-assisted development sessions, stages it for review, and promotes validated knowledge into durable, findable documents.
 
 **Knowledge Lifecycle** — auto capture, staging, review, promotion, staleness, archival. Pipeline from raw signal to validated knowledge.
+
 **Decision Discipline & Enforcement** — decision-making rules, change framework, pre/post hooks, impact classification, scope verification, planning path abbreviation. Hook-enforced active application.
+
 **Contextual Retrieval & Indexing** — tag index, /context with project expansion, /index with cross-reference suggestions, session-start surfacing, bidirectional linking. The right knowledge for each session at the right time.
 
 ## The Problem
