@@ -26,16 +26,7 @@ if [ ! -d "$KT_KNOWLEDGE_FOLDER" ]; then
 fi
 
 # Build cleanup checklist
-CHECKLIST="SESSION CLEANUP (aria-knowledge) — Before ending, check:"
-
-if [ "$KT_EXPLANATORY" = "true" ]; then
-  CHECKLIST="$CHECKLIST (1) Were any Insight blocks output that were not appended to ${KT_KNOWLEDGE_FOLDER}/intake/insights-backlog.md? If yes, append them now using the format in that file."
-  CHECKLIST="$CHECKLIST (2) Were any cross-project architectural decisions made this session that were not logged to ${KT_KNOWLEDGE_FOLDER}/intake/decisions-backlog.md? If yes, flag to user: This looks like a cross-project decision — want me to log it?"
-  CHECKLIST="$CHECKLIST (3) Was meaningful work completed this session? If yes, prompt: Want me to run /extract before wrapping up?"
-else
-  CHECKLIST="$CHECKLIST (1) Were any cross-project architectural decisions made this session that were not logged to ${KT_KNOWLEDGE_FOLDER}/intake/decisions-backlog.md? If yes, flag to user: This looks like a cross-project decision — want me to log it?"
-  CHECKLIST="$CHECKLIST (2) Was meaningful work completed this session? If yes, prompt: Want me to run /extract before wrapping up?"
-fi
+CHECKLIST="SESSION CHECK: (1) Review and append any uncaptured Insight blocks to insights-backlog.md (2) Review and append any uncaptured cross-project decisions to decisions-backlog.md (3) Suggest /extract if meaningful work was completed this session."
 
 # Escape for JSON
 CHECKLIST_ESCAPED=$(kt_json_escape "$CHECKLIST")
