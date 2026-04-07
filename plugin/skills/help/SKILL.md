@@ -25,6 +25,7 @@ Print the command reference table. No config or file access needed.
 | /backlog [type] | View and manage pending intake items |
 | /stats | Knowledge base health dashboard — file counts, backlogs, audit status |
 | /clip [url or text] | Quick-save a URL or text snippet to intake for later review |
+| /intake [path or url] | Bulk import knowledge from files, directories, or URLs |
 | /help | This command reference |
 
 Run /setup to configure. See QUICKSTART.md for a walkthrough of your first 3 sessions.

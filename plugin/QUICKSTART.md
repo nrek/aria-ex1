@@ -49,6 +49,7 @@ With an index built, ARIA surfaces relevant knowledge automatically:
 | `/backlog` | View pending intake items |
 | `/stats` | Knowledge base health dashboard |
 | `/clip [url or text]` | Quick-save a URL or snippet to intake |
+| `/intake [path or url]` | Bulk import knowledge from files, directories, or URLs |
 
 ## Configuration
 

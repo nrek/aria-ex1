@@ -31,6 +31,7 @@ See [QUICKSTART.md](QUICKSTART.md) for a detailed walkthrough of your first 3 se
 | `/backlog [type]` | View pending intake items |
 | `/stats` | Knowledge base health dashboard |
 | `/clip [url/text]` | Quick-save a URL or snippet to intake |
+| `/intake [path/url]` | Bulk import knowledge from files, directories, or URLs |
 | `/help` | Command reference |
 
 ## How It Works

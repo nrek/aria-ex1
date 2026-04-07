@@ -56,6 +56,7 @@ The plugin also enforces structured decision-making at the point of code changes
 - Prompt to review captured snapshots immediately after compaction (PostCompact hook)
 - Automatically surface relevant knowledge files when tasks are created (TaskCreated hook with tag index matching)
 - Quick-save URLs or text snippets to intake via `/clip` without leaving the session
+- Bulk import knowledge from files, directories, or URLs via `/intake` with preview before staging
 - View knowledge base health dashboard via `/stats` — file counts, backlog depth, audit status, tag stats, coverage gaps
 - Configure project-specific critical paths that always require full impact assessment
 - First-run welcome message introduces features progressively for new users
