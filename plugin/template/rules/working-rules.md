@@ -121,6 +121,12 @@ Every change — code, architecture, configuration, documentation — follows th
 
 7. **Execute Precisely** — Only touch what the chosen solution requires, nothing more, and only within the determined scope.
 
+### 27. Verify current information before diagnosing external failures
+
+When a failure involves an external service, API, or dependency, verify that the identifiers, versions, and endpoints you're using are still current before investigating other causes. Stale information is a more common failure mode than system outages. Check the authoritative source first — API discovery endpoints, release notes, package registries, official docs.
+
+**Origin:** An API returned 404 for a model identifier that had been renamed. A single discovery-endpoint call would have resolved it immediately instead of extended debugging of a non-existent outage.
+
 -----
 
 ## Meta Rules

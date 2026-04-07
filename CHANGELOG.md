@@ -2,6 +2,28 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.6.0] - 2026-04-07
+
+### Added
+- `/ask` skill — research a question, check existing knowledge first, save answer directly to promoted files (skips backlogs)
+- `/intake` skill — bulk knowledge import from file paths, directories, glob patterns, or URLs with preview-before-staging and deduplication against existing knowledge
+- Entity detection in `/index` (Step 8b) — scans promoted files for recurring proper nouns (tools, services, APIs) appearing in 2+ files, generates `## Entities` section in `index.md`
+- Entity integrity checks in `/audit-knowledge` Step 5b — flags stale entity references and missing entities
+- "Update existing" option in `/audit-knowledge` Step 7 — merge backlog items into existing promoted docs instead of always creating new files
+- `digest-transcript.sh` — standalone script that extracts high-signal content from JSONL session transcripts (~1-2% of original token cost)
+- `README.md` inside `plugin/` — usage-focused docs available when plugin is installed from marketplace
+- `LICENSE` inside `plugin/` — CC BY-NC-SA 4.0 for marketplace requirement
+- Discovery metadata in `plugin.json` — homepage, repository, license, keywords for marketplace searchability
+
+### Changed
+- `/audit-knowledge` Step 2d now runs transcript digest before reading pre-compact snapshots (default), reducing ~50K+ token reads to ~2-3K; use `detailed` flag for full review
+- Session-start hook messages shortened ~50% across all 7 message types — collapsed redundant error branches into single flag-based pattern
+- Session-stop hook shortened from ~100 to ~35 tokens
+- Unregistered Stop hook from `plugin.json` — fired on every response (15-30 times per session), not just session end; `/extract` and PreCompact capture cover its checks. Script kept in `bin/` for optional re-enablement.
+
+### Fixed
+- Remove `category` field from `plugin.json` per validator warning (belongs in `marketplace.json`)
+
 ## [2.5.1] - 2026-04-07
 
 ### Fixed
