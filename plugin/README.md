@@ -30,6 +30,7 @@ See [QUICKSTART.md](QUICKSTART.md) for a detailed walkthrough of your first 3 se
 | `/rules [number]` | Look up a working rule |
 | `/backlog [type]` | View pending intake items |
 | `/stats` | Knowledge base health dashboard |
+| `/ask [question]` | Research a question, save answer as a knowledge doc |
 | `/clip [url/text]` | Quick-save a URL or snippet to intake |
 | `/intake [path/url]` | Bulk import knowledge from files, directories, or URLs |
 | `/help` | Command reference |

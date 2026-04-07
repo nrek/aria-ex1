@@ -214,6 +214,25 @@ For each approved cross-reference:
 
 If no suggestions, skip this step silently.
 
+## Step 8b: Entity Detection
+
+Scan all promoted files for recurring proper nouns — tool names, service names, API names, framework names, and other named entities that appear across multiple knowledge files.
+
+**How to detect entities:**
+1. Scan headings, bold text, and inline code spans in promoted files for proper nouns and technical names
+2. Filter to entities that appear in **2+ files** (single-file mentions aren't useful for cross-referencing)
+3. Exclude entities that are already covered by tags (e.g., if "Stripe" is both a tag and an entity, the tag index already covers it)
+4. Exclude common words that happen to be capitalized (sentence starters, section headings like "Overview", "Summary")
+
+**Build an entity map:**
+```
+Stripe → approaches/payment-flow.md, references/stripe-webhook-patterns.md, decisions/003-payment-provider.md
+Supabase → guides/infrastructure/supabase-setup.md, decisions/005-builder-architecture.md
+Django → approaches/api-pagination.md, guides/api-auth.md
+```
+
+This data is used when generating the `## Entities` section in Step 9. No user interaction here — just collection.
+
 ## Step 9: Rebuild and Write `index.md`
 
 Generate `{knowledge_folder}/index.md` with this structure:
@@ -260,6 +279,14 @@ Last updated: YYYY-MM-DD (N months ago) — threshold: M months
 - relative/path/to/file.md — File description (no tags in frontmatter)
 
 (Omit this section entirely if no untagged files remain after Step 5.)
+
+## Entities
+
+### [Entity Name]
+- relative/path/to/file1.md
+- relative/path/to/file2.md
+
+(Repeat for each entity appearing in 2+ files, sorted alphabetically. Omit this section entirely if no entities detected or all are already covered by tags.)
 ```
 
 **File paths** in the index are relative to the knowledge folder root (e.g., `approaches/api-pagination.md`, not the absolute path).
@@ -279,6 +306,7 @@ Normalizations: P applied
 Promotions: Q tags promoted to known
 Stale files: S (threshold: T months)
 Cross-references: R suggested, X added
+Entities: E detected (across 2+ files)
 Project mappings: updated/unchanged
 ```
 

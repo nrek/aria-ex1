@@ -24,6 +24,7 @@ Print the command reference table. No config or file access needed.
 | /rules [number] | Look up a working rule by number or keyword |
 | /backlog [type] | View and manage pending intake items |
 | /stats | Knowledge base health dashboard — file counts, backlogs, audit status |
+| /ask [question] | Research a question, check existing knowledge, save answer as a knowledge doc |
 | /clip [url or text] | Quick-save a URL or text snippet to intake for later review |
 | /intake [path or url] | Bulk import knowledge from files, directories, or URLs |
 | /help | This command reference |

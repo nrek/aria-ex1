@@ -123,6 +123,8 @@ Check for:
 - **Stale references** — file paths, rule numbers, tool names, or class names mentioned in knowledge files that no longer exist in the codebase or knowledge repo. Verify by checking the filesystem — don't rely on memory.
 - **Superseded content** — decisions in `decisions/` or the decisions backlog that modify or override an existing approach or rule, but the approach/rule hasn't been updated to reflect this
 - **Missing connections** — files that discuss the same concepts, patterns, or components but don't reference each other (e.g., an approach that implements a rule but doesn't cite it, or two decisions about the same system with no cross-link)
+- **Stale entity references** — if `index.md` has an `## Entities` section, check that listed files still exist and still mention the entity. Flag any entries pointing to archived, renamed, or deleted files.
+- **Missing entities** — scan promoted files for named tools, services, or frameworks that appear in 2+ files but are not listed in the entity index. These should be picked up by the next `/index` run, but flagging them during audit ensures awareness.
 
 **Scope:** Only check files in `{knowledge_folder}/rules/`, `{knowledge_folder}/approaches/`, `{knowledge_folder}/decisions/`, `{knowledge_folder}/guides/`, and `{knowledge_folder}/references/`. Do not lint backlogs, logs, or templates.
 
@@ -279,6 +281,7 @@ Present Category C items, pending insights, and pending decisions. Ask the user 
 - Approved decisions → create full ADR in `{knowledge_folder}/decisions/`, clear from backlog
 - Approved synthesis drafts → create the new file in the appropriate category, clear source entries from backlogs
 - Approved integrity fixes → apply the fix (edit existing file, add cross-reference, archive superseded content)
+- **Update existing** → for items with Step 5c cross-reference matches, merge the new content into the matched file instead of creating a new one. Read the existing file, identify where the new content fits (new section, addition to existing section, or replacement of outdated content), make the edit, update the `Last updated` date, and add/update tags if needed. Clear from backlog after updating.
 - Rejected items → clear from their respective backlogs
 
 ### Cross-References on Promotion

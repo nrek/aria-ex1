@@ -57,7 +57,7 @@ else
 fi
 
 if [ "$IS_FIRST_RUN" = "true" ]; then
-  MESSAGES="WELCOME — aria-knowledge is set up and active. Here is what is running: (1) Knowledge capture — run /extract after completing tasks to save insights. (2) Decision discipline — Rule 22 checks appear before edits to ensure changes are intentional. (3) Audit prompts — you will be prompted to review captured knowledge periodically. Available commands: /context [topic] to load relevant knowledge, /rules to look up working rules, /backlog to see pending items, /stats for knowledge base health, /clip to save URLs or snippets. These features work automatically — just start working."
+  MESSAGES="ARIA Knowledge Active: Auto insights collection, Rule 22 logic on edits, context surfacing, audit prompts, and precompact capture. Run /help for commands, see QUICKSTART.md for more."
   MESSAGES_ESCAPED=$(kt_json_escape "$MESSAGES")
   echo '{"systemMessage":"'"$MESSAGES_ESCAPED"'"}'
   echo "$(date +%Y-%m-%dT%H:%M:%S) session-start-check: first-run welcome" >> "$KT_KNOWLEDGE_FOLDER/logs/hook-debug.log" 2>/dev/null
@@ -65,6 +65,7 @@ if [ "$IS_FIRST_RUN" = "true" ]; then
 fi
 
 # Check knowledge audit cadence
+KA_DUE=false
 if [ -f "$KNOWLEDGE_LOG" ]; then
   LAST_KA_DATE=$(grep '^\- \*\*Date:\*\*' "$KNOWLEDGE_LOG" | head -1 | sed 's/.*\*\*Date:\*\* //' | sed 's/ .*//')
   if [ -n "$LAST_KA_DATE" ] && echo "$LAST_KA_DATE" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
@@ -72,19 +73,23 @@ if [ -f "$KNOWLEDGE_LOG" ]; then
     if [ -n "$LAST_KA_EPOCH" ]; then
       DAYS_SINCE_KA=$(( (TODAY_EPOCH - LAST_KA_EPOCH) / 86400 ))
       if [ "$DAYS_SINCE_KA" -ge "$KT_CADENCE_KNOWLEDGE" ]; then
-        MESSAGES="${MESSAGES}KNOWLEDGE AUDIT CHECK — It has been ${DAYS_SINCE_KA} days since the last knowledge audit (configured cadence: every ${KT_CADENCE_KNOWLEDGE} days). Prompt user: It has been ${DAYS_SINCE_KA} days since the last knowledge audit. Want me to scan for extractable knowledge? "
+        MESSAGES="${MESSAGES}Knowledge audit due (${DAYS_SINCE_KA} days). Run /audit-knowledge? "
       fi
     else
-      MESSAGES="${MESSAGES}KNOWLEDGE AUDIT CHECK — Could not parse last audit date ($LAST_KA_DATE). Prompt user: Knowledge audit date could not be parsed. Want me to scan for extractable knowledge? "
+      KA_DUE=true
     fi
   else
-    MESSAGES="${MESSAGES}KNOWLEDGE AUDIT CHECK — No previous knowledge audit found. Prompt user: No knowledge audit has been run yet. Want me to scan for extractable knowledge? "
+    KA_DUE=true
   fi
 else
-  MESSAGES="${MESSAGES}KNOWLEDGE AUDIT CHECK — Knowledge audit log not found. Prompt user: No knowledge audit has been run yet. Want me to scan for extractable knowledge? "
+  KA_DUE=true
+fi
+if [ "$KA_DUE" = "true" ]; then
+  MESSAGES="${MESSAGES}No previous Knowledge Audit found. Run /audit-knowledge? "
 fi
 
 # Check config audit cadence
+CA_DUE=false
 if [ -f "$CONFIG_LOG" ]; then
   LAST_CA_DATE=$(grep '^\- \*\*Date:\*\*' "$CONFIG_LOG" | head -1 | sed 's/.*\*\*Date:\*\* //' | sed 's/ .*//')
   if [ -n "$LAST_CA_DATE" ] && echo "$LAST_CA_DATE" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}$'; then
@@ -92,16 +97,19 @@ if [ -f "$CONFIG_LOG" ]; then
     if [ -n "$LAST_CA_EPOCH" ]; then
       DAYS_SINCE_CA=$(( (TODAY_EPOCH - LAST_CA_EPOCH) / 86400 ))
       if [ "$DAYS_SINCE_CA" -ge "$KT_CADENCE_CONFIG" ]; then
-        MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — It has been ${DAYS_SINCE_CA} days since the last config and docs audit (configured cadence: every ${KT_CADENCE_CONFIG} days). Prompt user: It has been ${DAYS_SINCE_CA} days since the last config audit. Want me to check for drift? "
+        MESSAGES="${MESSAGES}Config audit due (${DAYS_SINCE_CA} days). Run /audit-config? "
       fi
     else
-      MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — Could not parse last audit date ($LAST_CA_DATE). Prompt user: Config audit date could not be parsed. Want me to check for drift? "
+      CA_DUE=true
     fi
   else
-    MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — No previous config audit found. Prompt user: No config audit has been run yet. Want me to check for drift? "
+    CA_DUE=true
   fi
 else
-  MESSAGES="${MESSAGES}CONFIG AUDIT CHECK — Config audit log not found. Prompt user: No config audit has been run yet. Want me to check for drift? "
+  CA_DUE=true
+fi
+if [ "$CA_DUE" = "true" ]; then
+  MESSAGES="${MESSAGES}No previous Config Audit found. Run /audit-config? "
 fi
 
 # Check update cadence — parse last /setup date from config file
@@ -111,7 +119,7 @@ if [ -n "$LAST_SETUP_DATE" ]; then
   if [ -n "$LAST_SETUP_EPOCH" ]; then
     DAYS_SINCE_SETUP=$(( (TODAY_EPOCH - LAST_SETUP_EPOCH) / 86400 ))
     if [ "$DAYS_SINCE_SETUP" -ge "$KT_CADENCE_UPDATE" ]; then
-      MESSAGES="${MESSAGES}UPDATE CHECK — It has been ${DAYS_SINCE_SETUP} days since the last /setup run (configured cadence: every ${KT_CADENCE_UPDATE} days). Prompt user: It has been ${DAYS_SINCE_SETUP} days since you last ran /setup. Run /setup to check for plugin template updates. "
+      MESSAGES="${MESSAGES}ARIA Update check due (${DAYS_SINCE_SETUP} days). Run /setup? "
     fi
   fi
 fi
@@ -119,7 +127,7 @@ fi
 # Knowledge surfacing — prompt Claude to suggest /context after user states task
 INDEX_FILE="$KT_KNOWLEDGE_FOLDER/index.md"
 if [ -f "$INDEX_FILE" ]; then
-  MESSAGES="${MESSAGES}KNOWLEDGE CONTEXT — After the user describes their task, check if the knowledge index exists at ${KT_KNOWLEDGE_FOLDER}/index.md. If it does, suggest a /context command with tags relevant to their stated task. Only suggest once per session. Do not block — just offer. Example: 'Before we start — you have knowledge docs that may be relevant. Want me to run /context api pagination?' "
+  MESSAGES="${MESSAGES}ARIA CONTEXT — Knowledge index available at ${KT_KNOWLEDGE_FOLDER}/index.md. After user states task, check it for relevant tags and suggest a /context with any found relevant tags. Offer once per session and again when changing topics. Do not block. "
 fi
 
 # Output only if there are messages
