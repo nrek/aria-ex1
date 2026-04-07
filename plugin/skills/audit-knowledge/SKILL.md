@@ -1,6 +1,6 @@
 ---
 description: "Scan Claude memory and plans for extractable knowledge. Use when user asks for 'knowledge audit', 'audit knowledge', 'check for extractable knowledge', 'scan memory', or at session start when audit cadence is exceeded."
-argument-hint: ""
+argument-hint: "[detailed]"
 allowed-tools: Read, Glob, Grep, Write, Edit, Bash
 ---
 
@@ -55,12 +55,20 @@ For each entry, note it for presentation in Step 6. Feedback items are promoted 
 
 Scan `{knowledge_folder}/intake/pre-compact-captures/` for `.md` files. **If the directory doesn't exist or is empty**, skip silently to Step 3.
 
-For each transcript snapshot found:
-1. Note the filename (contains date and session ID, e.g., `2026-04-07_a1b2c3d4.md`)
-2. Scan the transcript for extractable content — look for the same categories as `/extract`: Insight blocks, architectural decisions, feedback corrections, project context, and reference pointers
-3. Note findings for presentation in Step 6 under a "Pre-Compact Captures" section
+**Digest mode (default):** For each transcript snapshot, run the digest script to extract high-signal content before reading:
 
-These are raw transcripts, so be selective — most conversation content is operational, not knowledge. Focus on the same high-value signals `/extract` looks for.
+```bash
+bash ${CLAUDE_PLUGIN_ROOT}/bin/digest-transcript.sh "{snapshot_path}" "/tmp/aria-digest-{filename}"
+```
+
+Then read the digest file (not the raw transcript). The digest extracts all user messages, first/last 5 lines of assistant turns, Insight blocks, and lines containing decision/feedback signal keywords. This reduces token cost from ~50K+ to ~2-3K per snapshot.
+
+**Detailed mode** (`/audit-knowledge detailed`): If the user passed `detailed` as an argument, skip the digest and read the full transcript snapshots directly. Use this when the digest missed something or the user wants exhaustive review.
+
+For each snapshot (digest or full):
+1. Note the filename (contains date and session ID, e.g., `2026-04-07_a1b2c3d4.md`)
+2. Scan for extractable content — look for the same categories as `/extract`: Insight blocks, architectural decisions, feedback corrections, project context, and reference pointers
+3. Note findings for presentation in Step 6 under a "Pre-Compact Captures" section
 
 After the user reviews findings in Step 7:
 - **Approved items** → append to the appropriate backlog file (insights-backlog.md, decisions-backlog.md, or extraction-backlog.md), then delete the snapshot file
