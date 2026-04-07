@@ -5,6 +5,22 @@
   "author": {
     "name": "Mike Prasad"
   },
+  "homepage": "https://github.com/mikeprasad/aria-knowledge",
+  "repository": "https://github.com/mikeprasad/aria-knowledge",
+  "license": "CC-BY-NC-SA-4.0",
+  "keywords": [
+    "knowledge-management",
+    "knowledge-capture",
+    "decision-framework",
+    "code-review",
+    "session-knowledge",
+    "audit",
+    "tag-index",
+    "context-retrieval",
+    "hooks",
+    "enforcement"
+  ],
+  "category": "productivity",
   "hooks": {
     "SessionStart": [
       {
