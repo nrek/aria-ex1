@@ -34,6 +34,7 @@ if [ -f "$KT_CONFIG" ]; then
   KT_STALENESS_MONTHS=${KT_STALENESS_MONTHS:-6}
   KT_CADENCE_UPDATE=${KT_CADENCE_UPDATE:-30}
   KT_AUTO_CAPTURE=${KT_AUTO_CAPTURE:-true}
+  # KT_CRITICAL_PATHS intentionally has no default — empty means no critical paths
 
   # Validate knowledge_folder is non-empty
   if [ -z "$KT_KNOWLEDGE_FOLDER" ]; then

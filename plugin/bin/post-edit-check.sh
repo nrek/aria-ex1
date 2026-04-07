@@ -32,5 +32,5 @@ fi
 if [ "$IS_PLANNING" = "true" ] && [ "$IS_PROTECTED" = "false" ]; then
   echo '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"PLANNING PATH — abbreviated scope check. Output: Scope OK — planning doc."}}'
 else
-  echo '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"POST-EDIT SCOPE CHECK — Output this REQUIRED format after edit. Check: (1) Stay in scope? (2) Was anything extra touched? (3) Any unnecessary rewrites? (4) Do changes match decision? (5) Any secondary impact on parents/siblings/dependents? --- PASS: Scope PASS — [brief context why pass, including secondary status]. --- PASS WITH SECONDARY: Scope PASS CONDITIONAL — [what was done as planned]. Then newline: Secondary: [what needs attention]. Then newline: Proposed: [recommended action]. --- FAIL: Scope FAIL — [what failed, what was affected]. Then newline: Proposed: [concrete next step or fix]."}}'
+  echo '{"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"Scope check — verify: in scope, no extras, no unnecessary rewrites, matches decision, no secondary impact. Output: Scope PASS/FAIL/CONDITIONAL with context."}}'
 fi

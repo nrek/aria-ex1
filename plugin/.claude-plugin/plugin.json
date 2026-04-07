@@ -73,6 +73,17 @@
           }
         ]
       }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/session-stop-check.sh",
+            "timeout": 5
+          }
+        ]
+      }
     ]
   }
 }

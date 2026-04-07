@@ -1,7 +1,7 @@
 ---
 description: "Show available aria-knowledge commands. Use when user says '/help', 'aria help', 'what commands are available', 'list commands', 'what can aria do'."
 argument-hint: ""
-allowed-tools: ""
+allowed-tools:
 ---
 
 # /help — aria-knowledge Commands

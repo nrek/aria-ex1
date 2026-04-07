@@ -140,7 +140,7 @@ Tag suggestions are based on:
 
 ## Step 6: Project-to-Tag Mapping Update
 
-Read the root project CLAUDE.md to find the project table. The table is at `/Users/mikeprasad/Projects/CLAUDE.md` (or the closest ancestor directory containing a `CLAUDE.md` with a project table).
+Read the root project CLAUDE.md to find the project table. Look for the closest ancestor directory containing a `CLAUDE.md` with a project table.
 
 For each project listed in the table:
 1. Read the project's CLAUDE.md (e.g., `cs/CLAUDE.md`, `ss/CLAUDE.md`)

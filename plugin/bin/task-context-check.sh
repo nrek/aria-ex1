@@ -25,6 +25,9 @@ INPUT=$(cat)
 
 # Extract session_id for cooldown
 SESSION_ID=$(echo "$INPUT" | grep -o '"session_id":"[^"]*"' | head -1 | sed 's/"session_id":"//;s/"//')
+if [ -z "$SESSION_ID" ]; then
+  exit 0
+fi
 
 # Check cooldown — skip if last fire was less than 30 seconds ago
 COOLDOWN_FILE="/tmp/aria-context-${SESSION_ID}"
@@ -83,19 +86,18 @@ if [ "$MATCH_COUNT" -lt 2 ]; then
 fi
 
 # Collect files for matched tags, dedup after
-rm -f "/tmp/aria-context-files-$$" 2>/dev/null
+TEMP_RAW=$(mktemp /tmp/aria-context-raw.XXXXXX)
+TEMP_FILES=$(mktemp /tmp/aria-context-files.XXXXXX)
 for TAG in $MATCHED_TAGS; do
   # Extract file lines under this tag's section (awk for portable range extraction)
-  awk "/^### ${TAG}\$/{found=1; next} /^##/{found=0} found && /^- /" "$INDEX_FILE" | sed 's/^- //' >> "/tmp/aria-context-files-raw-$$"
+  awk "/^### ${TAG}\$/{found=1; next} /^##/{found=0} found && /^- /" "$INDEX_FILE" | sed 's/^- //' >> "$TEMP_RAW"
 done
 
 # Dedup by file path (text before " — "), cap at 5
-if [ -f "/tmp/aria-context-files-raw-$$" ]; then
-  awk -F ' — ' '!seen[$1]++' "/tmp/aria-context-files-raw-$$" | head -5 > "/tmp/aria-context-files-$$"
-  rm -f "/tmp/aria-context-files-raw-$$" 2>/dev/null
+if [ -s "$TEMP_RAW" ]; then
+  awk -F ' — ' '!seen[$1]++' "$TEMP_RAW" | head -5 > "$TEMP_FILES"
 fi
-
-TEMP_FILES="/tmp/aria-context-files-$$"
+rm -f "$TEMP_RAW" 2>/dev/null
 if [ ! -f "$TEMP_FILES" ] || [ ! -s "$TEMP_FILES" ]; then
   rm -f "$TEMP_FILES" 2>/dev/null
   exit 0
