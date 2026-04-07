@@ -2,6 +2,16 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.5.1] - 2026-04-07
+
+### Fixed
+- Register Stop hook in plugin.json — `session-stop-check.sh` was never executing (dead code)
+- Guard empty `SESSION_ID` in task-context-check to prevent cooldown file collision across sessions
+- Remove hardcoded `/Users/mikeprasad/Projects/CLAUDE.md` path from `/index` skill
+- Fix `allowed-tools` frontmatter in `/help` skill (quoted empty string → bare empty)
+- Use `mktemp` for temp files in task-context-check instead of predictable `$$` PID names
+- Document intentional no-default for `KT_CRITICAL_PATHS` in config.sh
+
 ## [2.5.0] - 2026-04-07
 
 ### Added
