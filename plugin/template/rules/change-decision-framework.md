@@ -278,45 +278,10 @@ Proposed: revert parent wrapper changes, keep only the card removal.
 
 ## Hook Implementation
 
-These hooks enforce the framework automatically in Claude Code. Add them to your project's `.claude/settings.local.json`.
+These hooks enforce the framework automatically in Claude Code. They are pre-configured in the aria-knowledge plugin and fire without any manual setup.
 
-### PreToolUse Hook — Change Decision Check
-
-Fires before every Edit/Write operation. Requires impact assessment and the appropriate decision process output.
-
-```json
-"PreToolUse": [
-  {
-    "matcher": "Edit|Write",
-    "hooks": [
-      {
-        "type": "command",
-        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"CHANGE DECISION CHECK (Rule 22) — Output the following REQUIRED format before proceeding. Assess impact first: HIGH IMPACT (creating/modifying behavior, sensitive files like CLAUDE.md/working-rules.md/settings and project-specific files you configure, architecture, key logic, things with many dependents) or LOW IMPACT (adding/updating content, simple functions with limited dependents, docs, references). --- HIGH IMPACT FORMAT: Line 1: High Impact — [what] ([why high]). Then one line each: Change — [what + context]. Intake — [information gathered]. Criteria — [objective basis]. Solutions — [all options ranked, best first]. Rank — [winner + why]. Validate — [does it hold up? contradictions?]. Execute — [precise scope]. If Validate or Execute fails: add FLAG and a newline with Proposed: or Question: for next step. --- LOW IMPACT FORMAT: Line 1: Low Impact — [what] ([why low]). Then: Change — [what + intake + criteria in one line]. Solutions — [options ranked, best first]. Execute — [decision; scope check, secondary impact check, functional impact]. If Execute flags: add FLAG and a newline with Question: for clarification needed. --- If you have not completed this assessment, STOP and do so before proceeding.\"}}'",
-        "timeout": 5
-      }
-    ]
-  }
-]
-```
-
-### PostToolUse Hook — Post-Edit Scope Check
-
-Fires after every Edit/Write operation. Requires scope verification in compact format.
-
-```json
-"PostToolUse": [
-  {
-    "matcher": "Edit|Write",
-    "hooks": [
-      {
-        "type": "command",
-        "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PostToolUse\",\"additionalContext\":\"POST-EDIT SCOPE CHECK — Output the following REQUIRED format after this edit. Check: (1) Did edit stay in scope? (2) Was anything extra touched? (3) Were existing definitions rewritten unnecessarily? (4) Does change match the decision? (5) Any secondary impact on parents/siblings/dependents? --- PASS: Scope Pass — [brief context why pass, including secondary status]. --- PASS WITH SECONDARY: Scope Pass — [what was done as planned]. Then newline: Secondary: [what needs attention]. Then newline: Proposed: [recommended action]. --- FAIL: Scope FAIL — [what failed, which question, what was affected]. Then newline: Proposed: [concrete next step to fix].\"}}'",
-        "timeout": 5
-      }
-    ]
-  }
-]
-```
+- **PreToolUse** — fires before every Edit/Write, requires impact assessment and the appropriate decision process output
+- **PostToolUse** — fires after every Edit/Write, requires scope verification in compact format
 
 ### How It Works
 
