@@ -233,6 +233,56 @@ Django → approaches/api-pagination.md, guides/api-auth.md
 
 This data is used when generating the `## Entities` section in Step 9. No user interaction here — just collection.
 
+## Step 8c: Skill Connection Discovery
+
+Scan for connections between the plugin's skills and knowledge files. This enables `/audit-knowledge` to detect when a skill evolves but its related knowledge docs haven't been updated.
+
+**Scan skill files:**
+
+1. Glob for `${CLAUDE_PLUGIN_ROOT}/skills/*/SKILL.md` (or use the plugin's own skill directory)
+2. Also scan any other installed plugins: `~/.claude/plugins/**/skills/*/SKILL.md`
+3. For each skill: extract `name` from frontmatter or directory name, extract `description`, scan for `## Related` sections
+
+**Auto-discover connections** using these heuristics (in priority order):
+
+1. **Explicit references:** Knowledge file content mentions the skill name (e.g., `/codemap` appears in an approach doc). Grep promoted files for `/skillname`.
+2. **Skill `## Related` section:** Skill file explicitly references knowledge files. Parse relative paths.
+3. **Name overlap:** Skill name is a substring of a knowledge filename or vice versa (e.g., "codemap" matches `codebase-documentation`). Use fuzzy matching — strip hyphens and compare.
+4. **Tag/keyword overlap:** Skill description keywords match knowledge file tags. Extract significant nouns from the skill description and match against the Known Tags set + file tags.
+
+**Present discoveries for user confirmation:**
+
+```
+## Skill Connections
+
+Discovered N connections between skills and knowledge files:
+
+1. /codemap → approaches/codebase-documentation.md
+   Match: skill name referenced in file content
+   Relationship: [auto-suggest or ask user]
+
+2. /codemap → decisions/007-codebase-documentation-structure.md
+   Match: "/codemap" mentioned in decisions backlog clear comment
+   Relationship: [auto-suggest or ask user]
+
+3. /extract → decisions/002-knowledge-extraction-architecture.md
+   Match: name overlap ("extract" ↔ "extraction")
+   Relationship: [auto-suggest or ask user]
+
+Add connections? (all / numbers / skip / add manual)
+```
+
+For "add manual": let the user specify `skill → file → relationship` for connections the heuristics missed.
+
+**Relationship types** (suggest the most likely, let user override):
+- `documents the approach this skill implements`
+- `records decisions that shaped this skill`
+- `provides reference data used by this skill`
+- `defines rules enforced by this skill`
+- `guides usage patterns for this skill`
+
+Store approved connections for Step 9 output.
+
 ## Step 9: Rebuild and Write `index.md`
 
 Generate `{knowledge_folder}/index.md` with this structure:
@@ -287,6 +337,14 @@ Last updated: YYYY-MM-DD (N months ago) — threshold: M months
 - relative/path/to/file2.md
 
 (Repeat for each entity appearing in 2+ files, sorted alphabetically. Omit this section entirely if no entities detected or all are already covered by tags.)
+
+## Skill Connections
+
+| Skill | Related knowledge | Relationship |
+|-------|------------------|-------------|
+| /skillname | relative/path/to/file.md | documents the approach this skill implements |
+
+(Repeat for each approved connection from Step 8c, sorted by skill name. Omit this section entirely if no connections discovered or approved.)
 ```
 
 **File paths** in the index are relative to the knowledge folder root (e.g., `approaches/api-pagination.md`, not the absolute path).
@@ -307,6 +365,7 @@ Promotions: Q tags promoted to known
 Stale files: S (threshold: T months)
 Cross-references: R suggested, X added
 Entities: E detected (across 2+ files)
+Skill connections: C discovered, D approved
 Project mappings: updated/unchanged
 ```
 

@@ -125,6 +125,7 @@ Check for:
 - **Missing connections** — files that discuss the same concepts, patterns, or components but don't reference each other (e.g., an approach that implements a rule but doesn't cite it, or two decisions about the same system with no cross-link)
 - **Stale entity references** — if `index.md` has an `## Entities` section, check that listed files still exist and still mention the entity. Flag any entries pointing to archived, renamed, or deleted files.
 - **Missing entities** — scan promoted files for named tools, services, or frameworks that appear in 2+ files but are not listed in the entity index. These should be picked up by the next `/index` run, but flagging them during audit ensures awareness.
+- **Skill-knowledge drift** — if `index.md` has a `## Skill Connections` section, check each connection for staleness. For each row in the table: (1) Get the skill file's modification date via `stat` or `ls -l` on `${CLAUDE_PLUGIN_ROOT}/skills/{skill_name}/SKILL.md`. (2) Get the knowledge file's `Last updated` date from its YAML frontmatter. (3) If the skill file is newer than the knowledge file, flag as potential drift — the skill may have evolved past what the knowledge doc describes. Also scan the knowledge file content for terms that may be stale relative to the skill (e.g., old names, deprecated patterns). If no `## Skill Connections` section exists in the index, skip this check silently — it means `/index` hasn't been run with Step 8c yet.
 
 **Scope:** Only check files in `{knowledge_folder}/rules/`, `{knowledge_folder}/approaches/`, `{knowledge_folder}/decisions/`, `{knowledge_folder}/guides/`, and `{knowledge_folder}/references/`. Do not lint backlogs, logs, or templates.
 
@@ -230,10 +231,10 @@ For each Category C item:
 If Step 5b found any issues, present them:
 
 For each issue:
-- **Type:** contradiction / stale reference / superseded content / missing connection
-- **Files involved:** which knowledge files are affected
-- **Issue:** what's wrong
-- **Suggested fix:** specific edit or addition to resolve it
+- **Type:** contradiction / stale reference / superseded content / missing connection / stale entity reference / missing entity / skill-knowledge drift
+- **Files involved:** which knowledge files are affected (and which skill, for drift issues)
+- **Issue:** what's wrong (for drift: include both dates — skill modified date and knowledge file last-updated date)
+- **Suggested fix:** specific edit or addition to resolve it (for drift: "Review knowledge file for alignment with current skill behavior")
 
 If no issues found: "No integrity issues detected."
 
