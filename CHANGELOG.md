@@ -2,6 +2,13 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.7.5] - 2026-04-09
+
+### Added
+- CODEMAP-first enforcement — two mechanisms ensure CODEMAP.md is read before codebase exploration:
+  - **SessionStart hook** detects CODEMAP.md files in project directories and reminds at session start.
+  - **PreToolUse hook on Glob|Grep** fires once per project per session when exploring a directory that has a CODEMAP.md ancestor.
+
 ## [2.7.4] - 2026-04-09
 
 ### Added

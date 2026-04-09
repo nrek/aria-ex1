@@ -130,6 +130,13 @@ if [ -f "$INDEX_FILE" ]; then
   MESSAGES="${MESSAGES}ARIA CONTEXT — Knowledge index available at ${KT_KNOWLEDGE_FOLDER}/index.md. After user states task, check it for relevant tags and suggest a /context with any found relevant tags. Offer once per session and again when changing topics. Do not block. "
 fi
 
+# CODEMAP detection — find codemaps in project directories
+CODEMAPS=$(find "$PWD" -maxdepth 2 -name "CODEMAP.md" 2>/dev/null | head -5)
+if [ -n "$CODEMAPS" ]; then
+  CODEMAP_LIST=$(echo "$CODEMAPS" | sed "s|$PWD/||g" | tr '\n' ', ' | sed 's/, $//' | sed 's/,$//')
+  MESSAGES="${MESSAGES}CODEMAP Found: ${CODEMAP_LIST}. Before exploring a project's codebase, read its CODEMAP Directory section first. "
+fi
+
 # Output only if there are messages
 if [ -n "$MESSAGES" ]; then
   MESSAGES_ESCAPED=$(kt_json_escape "$MESSAGES")
