@@ -145,6 +145,18 @@ After every edit, check if the change affects parents, siblings, or dependents. 
 
 **Origin:** Removing a child element without checking whether the parent wrapper was still needed. Now also enforced via PostToolUse hook (question 5 in the scope check).
 
+### 28. Evaluate tool cost before using visual testing
+
+MCP browser tools (screenshots, snapshots, DOM queries) consume significant tokens per call. Before using them, assess whether the change actually requires visual confirmation:
+
+1. **Can the change be verified by reading the diff?** (DOM reordering, class swaps, prop changes, logic refactors) → Skip visual testing, proceed in code.
+2. **Does it involve unpredictable visual output?** (CSS layout interactions, image rendering, responsive behavior, third-party component rendering) → Visual testing recommended — ask the user before proceeding.
+3. **Is it a full E2E flow test?** → Ask the user and suggest alternatives (Playwright script, manual check) before defaulting to interactive MCP sessions.
+
+When visual testing is warranted, minimize token usage: use snapshots (text-based) over screenshots, target specific elements rather than full pages, and batch checks rather than screenshot-per-change.
+
+**Origin:** A simple DOM reorder (moving a save status indicator left in a flex container) triggered a full login + navigation + screenshot flow that consumed ~15% of session tokens to verify a change that was self-evident from the code.
+
 ### 26. Declare scope before building from references
 
 When creating or rebuilding a file based on an existing reference, declare what will change and what will be preserved before writing. The reference defines content scope — undeclared changes are out of scope. Present the declaration for user confirmation on multi-step or large builds. See `knowledge/rules/change-decision-framework.md` for the full scope declaration format.
