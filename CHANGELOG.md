@@ -2,6 +2,11 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.7.4] - 2026-04-09
+
+### Added
+- `/wrapup` skill — end-of-session handoff. Reviews session work, updates PROGRESS.md and CLAUDE.md if needed, prompts for commit, verifies next session can pick up cleanly, and prompts for `/extract`. Confirms before every write. Project-agnostic — detects project from cwd markers.
+
 ## [2.7.3] - 2026-04-09
 
 ### Added

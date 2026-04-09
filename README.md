@@ -70,6 +70,7 @@ ARIA gives that knowledge a durable home, enforces the discipline to make good d
 - Generate feature-organized codebase maps via `/codemap` — scans repos, detects frameworks, traces full-stack flows (routes → hooks → state → views → models → integrations), produces navigable CODEMAP.md with directory table for selective section loading
 - Four codemap modes: `create` (full generation), `inventory` (quick index), `update` (incremental refresh via git diff), `section` (rebuild one section)
 - Codemap staleness detection in `/audit-knowledge` — checks CODEMAP.md age against git changes, prompts for update
+- End-of-session handoff via `/wrapup` — reviews session work, updates PROGRESS.md/CLAUDE.md/memory, prompts for commit, verifies next session can pick up, prompts for `/extract`
 - Quick command reference via `/help` — lists all available skills with descriptions
 
 ## Install
