@@ -1,12 +1,12 @@
 # aria-knowledge
 
-Structured knowledge management for Claude Code. Captures session knowledge, enforces decision frameworks, and promotes validated insights into durable, findable documents.
+An active knowledge and development discipline plugin for Claude Code. Captures session knowledge, enforces structured decisions, and maps codebases — so each session builds on the last.
 
-**Knowledge Lifecycle** — auto capture, staging, review, promotion, staleness, archival. Pipeline from raw signal to validated knowledge.
+**Knowledge Lifecycle** — capture, stage, review, promote. Insights flow into backlogs during sessions. You decide what becomes canonical.
 
-**Decision Discipline & Enforcement** — decision-making rules, change framework, pre/post hooks, impact classification, scope verification, planning path abbreviation. Hook-enforced active application.
+**Decision Discipline** — change decision framework enforced at every file edit via hooks. Impact assessment, alternatives analysis, scope verification.
 
-**Contextual Retrieval & Indexing** — tag index, /context with project expansion, /index with cross-reference suggestions, session-start surfacing, bidirectional linking. The right knowledge for each session at the right time.
+**Understanding & Retrieval** — tag index, contextual retrieval with project expansion, cross-reference suggestions, session-start surfacing, bidirectional linking. Feature-organized codebase maps with full-stack flow tracing, framework detection, and staleness tracking.
 
 ## Quick Start
 

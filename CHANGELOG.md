@@ -2,6 +2,24 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.7.3] - 2026-04-09
+
+### Added
+- Rule 28 (concise, precise writing) — all communication should be semantically accurate, concise, and precise. Preserves detail and nuance while eliminating verbosity.
+
+## [2.7.2] - 2026-04-09
+
+### Added
+- Rule 28 (template) — evaluate tool cost before visual testing. Code-verifiable changes skip visual testing; unpredictable visual output warrants testing with user confirmation first.
+- **Origin:** DOM reorder consumed ~15% session tokens on visual testing self-evident from the code diff.
+
+## [2.7.1] - 2026-04-09
+
+### Added
+- Skill-to-knowledge connection discovery in `/index` (Step 8c) — scans plugin skill files and auto-discovers connections to knowledge files using 4 heuristics (explicit references, Related sections, name overlap, tag/keyword overlap). Stored in `## Skill Connections` section in `index.md`.
+- Skill-knowledge drift detection in `/audit-knowledge` (Step 5b) — compares skill modification dates against connected knowledge file dates to flag when a skill evolves past its documentation.
+- Index freshness check in `/audit-knowledge` (Step 1b) — verifies index.md is current before audit begins.
+
 ## [2.7.0] - 2026-04-09
 
 ### Added

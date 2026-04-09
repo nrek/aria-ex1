@@ -1,26 +1,30 @@
 # ARIA — Anchored Reasoning and Insight Architecture
 
-A structured knowledge management plugin for Claude Code. Captures what you learn during AI-assisted development sessions, stages it for review, and promotes validated knowledge into durable, findable documents.
+An active knowledge and development discipline plugin for Claude Code. Captures session knowledge, enforces structured decisions, and maps codebases — so each session builds on the last.
 
-**Knowledge Lifecycle** — auto capture, staging, review, promotion, staleness, archival. Pipeline from raw signal to validated knowledge.
+**Knowledge Lifecycle** — capture, stage, review, promote. Insights, decisions, and feedback flow into backlogs during sessions. You decide what becomes canonical. Nothing is auto-promoted.
 
-**Decision Discipline & Enforcement** — decision-making rules, change framework, pre/post hooks, impact classification, scope verification, planning path abbreviation. Hook-enforced active application.
+**Decision Discipline** — a change decision framework enforced at every file edit via hooks. Impact assessment, alternatives analysis, scope verification. Makes reasoning visible and auditable.
 
-**Contextual Retrieval & Indexing** — tag index, /context with project expansion, /index with cross-reference suggestions, session-start surfacing, bidirectional linking. The right knowledge for each session at the right time.
+**Understanding & Retrieval** — tag index, contextual retrieval with project expansion, cross-reference suggestions, session-start surfacing, bidirectional linking. Feature-organized codebase maps that trace full-stack flows, detect frameworks, and stay current through incremental updates and staleness detection.
 
 ## The Problem
 
-Every time an AI session ends, context disappears. Insights, decisions, and corrections vanish into compacted conversation history. ARIA gives that knowledge a durable home.
+AI sessions are stateless. Insights, decisions, and corrections vanish when context compacts. The next session starts from scratch — or repeats mistakes you already corrected.
+
+ARIA gives that knowledge a durable home, enforces the discipline to make good decisions, and documents your codebase so new sessions orient fast.
 
 ## How It Works
 
-Knowledge moves through a pipeline: **Capture → Review → Promote**
+**Knowledge** moves through a pipeline: **Capture → Review → Promote**
 
 - **Capture** — Session hooks and `/extract` catch insights, decisions, and feedback as they happen
 - **Review** — Configurable audit cadences surface what's worth keeping vs. what's noise
 - **Promote** — You decide what becomes canonical. Nothing is auto-promoted.
 
-The plugin also enforces structured decision-making at the point of code changes (Rule 22), making the reasoning process visible and auditable.
+**Decisions** follow a structured framework (Rule 22) enforced at every Edit/Write — impact assessment, alternatives considered, scope defined, then verified after execution.
+
+**Codebases** get mapped via `/codemap` — scans repos, detects frameworks, traces full-stack flows per feature, and produces navigable reference documents that new sessions can selectively load.
 
 ## All Features
 

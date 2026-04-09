@@ -1,8 +1,8 @@
 # Knowledge Repository
 
-Universal knowledge, approaches, insights, and reference material shared across projects.
+Durable knowledge, validated approaches, and architectural decisions — organized for execution, not just reference.
 
-See [OVERVIEW.md](OVERVIEW.md) for the project philosophy, design principles, and how the system works. See [LOCAL.md](LOCAL.md) for project-specific conventions, format templates, and detailed usage guide.
+See [OVERVIEW.md](OVERVIEW.md) for the design philosophy and how the system works. See [LOCAL.md](LOCAL.md) for project-specific conventions and format templates.
 
 ## Structure
 
@@ -17,7 +17,8 @@ knowledge/
 │   ├── extraction-backlog.md
 │   ├── notes/               # Your own notes and rough drafts
 │   ├── attachments/         # Files from elsewhere (screenshots, PDFs)
-│   └── clippings/           # Saved external content
+│   ├── clippings/           # Saved external content
+│   └── pre-compact-captures/ # Transcript snapshots before context compaction
 ├── logs/                    # Operational logs — audit dates and results
 │   ├── knowledge-audit-log.md
 │   └── config-audit-log.md

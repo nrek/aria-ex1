@@ -2,7 +2,7 @@
 
 **Anchored Reasoning and Insight Architecture**
 
-A structured knowledge management system for AI-assisted development. Built for teams that use Claude Code (or similar AI coding tools) and want to stop losing what they learn between sessions.
+An active knowledge and development discipline system for AI-assisted development. Built for developers and teams using Claude Code who want each session to build on the last — capturing knowledge, enforcing structured decisions, and mapping codebases so context compounds instead of disappearing.
 
 ## The Problem
 
@@ -60,21 +60,31 @@ Knowledge Repository is powered by **aria-knowledge**, a Claude Code plugin that
 
 | Skill | What it does |
 |-------|-------------|
-| `/setup` | Configure your knowledge folder, validate structure, set audit cadences |
-| `/extract` | Scan the current conversation for uncaptured knowledge and dump it to backlogs |
-| `/audit-knowledge` | Review backlogs and memory for promotable knowledge, detect themes, present findings |
-| `/audit-config` | Check CLAUDE.md files, configs, and docs for drift, broken references, and staleness |
-| `/backlog` | View and manage pending items across all backlogs |
-| `/rules` | Quick lookup into your working rules by number or keyword |
+| `/setup` | Configure knowledge folder, validate structure, set audit cadences |
+| `/extract` | Scan conversation for uncaptured knowledge and stage to backlogs |
+| `/audit-knowledge` | Review backlogs and memory for promotable knowledge, detect themes, check integrity |
+| `/audit-config` | Check CLAUDE.md files, configs, and docs for drift, broken references, staleness |
+| `/context [tags]` | Load relevant knowledge by topic with project tag expansion |
+| `/index` | Rebuild tag index with cross-references, entity detection, and skill-knowledge connections |
+| `/codemap [mode]` | Generate feature-organized codebase maps (create/inventory/update/section) |
+| `/ask [question]` | Research a question, check existing knowledge, save answer directly |
+| `/intake [path/url]` | Bulk import knowledge from files, directories, or URLs |
+| `/clip [url/text]` | Quick-save a URL or snippet to intake |
+| `/rules [number]` | Quick lookup into working rules by number or keyword |
+| `/backlog [type]` | View and manage pending intake items |
+| `/stats` | Knowledge base health dashboard |
+| `/help` | Command reference |
 
 ### Hooks
 
 The plugin includes hooks that fire automatically during sessions:
 
-- **Session start** checks audit cadences and prompts when reviews are overdue
-- **Pre-edit** enforces structured decision-making before every code change (impact assessment, alternatives considered, scope defined)
-- **Post-edit** verifies that changes stayed within the decided scope
-- **Session end** prompts for knowledge capture before context is lost
+- **Session start** — checks audit cadences and prompts when reviews are overdue; first-run welcome for new users
+- **Pre-edit (Edit/Write)** — enforces structured decision-making before every code change (impact assessment, alternatives considered, scope defined). Detects planning paths for abbreviated assessment. Protects critical files.
+- **Post-edit (Edit/Write)** — verifies changes stayed within decided scope, checks for secondary impact on parents/siblings/dependents
+- **Pre-compact** — saves transcript snapshot before context compaction to prevent knowledge loss
+- **Post-compact** — prompts to review captured snapshots after compaction
+- **Task created** — matches task keywords against the tag index and surfaces relevant knowledge files
 
 The pre/post edit hooks implement a change decision framework that prevents common failure modes: rewriting code that should have been extended, touching files outside the decision scope, skipping alternatives analysis. The enforcement is prompt-based — it shapes reasoning at the moment of action rather than blocking execution.
 

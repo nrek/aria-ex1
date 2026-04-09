@@ -1,6 +1,6 @@
 # ARIA Quick Start
 
-Your first 3 sessions with aria-knowledge.
+Your first 3 sessions with aria-knowledge — knowledge capture, decision discipline, and codebase mapping.
 
 ## After Install
 
@@ -51,6 +51,8 @@ With an index built, ARIA surfaces relevant knowledge automatically:
 | `/ask [question]` | Research a question, save answer as a knowledge doc |
 | `/clip [url or text]` | Quick-save a URL or snippet to intake |
 | `/intake [path or url]` | Bulk import knowledge from files, directories, or URLs |
+| `/codemap [mode]` | Generate or update a feature-organized codebase map |
+| `/help` | Command reference |
 
 ## Configuration
 

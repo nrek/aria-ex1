@@ -2,7 +2,7 @@
 
 ## What This Is
 
-ARIA (Anchored Reasoning and Insight Architecture) — a Claude Code plugin for structured knowledge management. Captures session knowledge, enforces decision frameworks, and promotes validated insights into durable documents.
+ARIA (Anchored Reasoning and Insight Architecture) — an active knowledge and development discipline plugin for Claude Code. Three pillars: knowledge lifecycle (capture → review → promote), decision discipline (Rule 22 enforcement at every edit), and codebase understanding (/codemap with full-stack tracing).
 
 ## Project Structure
 
