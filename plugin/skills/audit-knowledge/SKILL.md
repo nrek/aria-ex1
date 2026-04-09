@@ -27,6 +27,22 @@ Note the "Last Audit" date and calculate days since.
   - If **cadence exceeded**: Prompt the user — *"It's been N days since the last knowledge audit. Want me to scan for extractable knowledge?"* If they agree, proceed to Step 2. If not, stop.
   - If **within cadence**: Report the last audit date and stop. *"Last knowledge audit was N day(s) ago (YYYY-MM-DD). Next check due in M days."*
 
+## Step 1b: Check Index Freshness
+
+Read `{knowledge_folder}/index.md` if it exists.
+
+Several audit steps depend on index data (Step 5b entity refs + skill-knowledge drift, Step 5c tag matching, Step 6 stale files). Running against a stale or missing index produces incomplete results.
+
+**Check:**
+1. If `index.md` doesn't exist → note: "No index found. Steps 5b (entity/skill checks), 5c (tag matching), and stale file detection will be limited. Consider running `/index` after this audit."
+2. If `index.md` exists → read the `Last rebuilt:` date from the header. Compare against today.
+   - If **older than 7 days** AND there are pending backlog entries (from a quick line count of the 3 backlog files) → prompt: *"Index was last rebuilt N days ago and there are pending backlog items. Run `/index` first for more accurate integrity checks? (y/n)"*
+   - If user says yes → run the full `/index` logic (Steps 0-10 from the /index skill), then continue with Step 2
+   - If user says no → continue with degraded checks (note in Step 6 output which checks were limited)
+   - If **7 days or fewer** → continue normally, index is fresh enough
+
+This is a lightweight check — it reads one file header and counts backlog lines. The expensive work (full index rebuild) only happens if the user opts in.
+
 ## Step 2: Review Insights Backlog
 
 Read `{knowledge_folder}/intake/insights-backlog.md`. **If the file is missing**, report it in Step 6 and suggest running `/setup` to repair the structure. Do not create it.
