@@ -153,6 +153,30 @@ For each pending backlog entry (from Steps 2, 2b, 2c), check whether it overlaps
 
 Note all cross-references for presentation in Step 6. These inform the user's promotion decisions — they're not blockers.
 
+## Step 5d: Check Codemap Staleness
+
+Scan the current working directory for CODEMAP.md files:
+
+```
+Glob for **/CODEMAP.md in the project root
+```
+
+For each CODEMAP.md found:
+
+1. **Read the header only** (first ~10 lines) to extract the `Last updated:` date
+2. **Calculate age** in days since last update
+3. **Check for codebase changes** — run `git log --name-only --since="{last_updated}" --pretty=format:"" -- {project_path}` to count files changed since the codemap was last updated
+4. **Read the Build Log** (last ~30 lines) to check per-section update dates
+
+**Staleness criteria:**
+- **Stale** if more than 30 days since last update AND the codebase has changed files in that period
+- **Possibly stale** if more than 14 days and >20 files changed
+- **Current** otherwise
+
+Note findings for presentation in Step 6 under a "Codemap Staleness" section.
+
+**Do not run `/codemap update` automatically** — it consumes significant tokens. Only present the finding and let the user decide.
+
 ## Step 6: Present Findings
 
 Present a table with ALL files scanned and their category. Only show details for Category C items.
@@ -263,6 +287,24 @@ For each: review and update Last updated date? Update content? Archive if no lon
 
 If no index exists, skip this section with a note: "Run `/index` to enable staleness detection."
 
+### Codemap Staleness (from Step 5d)
+
+If any CODEMAP.md files were found, present their status:
+
+```
+## Codemap Status
+
+| Codemap | Last Updated | Age | Files Changed Since | Status |
+|---------|-------------|-----|--------------------| -------|
+| ss/CODEMAP.md | 2026-04-09 | 14 days | 23 files | Possibly stale |
+| cs/CODEMAP.md | 2026-03-01 | 53 days | 87 files | Stale |
+
+Stale codemaps can be refreshed with `/codemap update` (runs in the project directory).
+Note: codemap updates involve significant codebase scanning and may consume substantial tokens.
+```
+
+If no CODEMAP.md files found: omit this section silently.
+
 ### Cross-Reference Findings (from Step 5c)
 
 For each cross-reference found:
@@ -282,6 +324,7 @@ Present Category C items, pending insights, and pending decisions. Ask the user 
 - Approved synthesis drafts → create the new file in the appropriate category, clear source entries from backlogs
 - Approved integrity fixes → apply the fix (edit existing file, add cross-reference, archive superseded content)
 - **Update existing** → for items with Step 5c cross-reference matches, merge the new content into the matched file instead of creating a new one. Read the existing file, identify where the new content fits (new section, addition to existing section, or replacement of outdated content), make the edit, update the `Last updated` date, and add/update tags if needed. Clear from backlog after updating.
+- **Stale codemaps** → if the user wants to refresh a stale codemap, do NOT run it inline. Instead tell them: *"Run `/codemap update` in the {project} directory in a separate session or after this audit completes. Codemap updates scan many files and are best run as a focused task."* This avoids blowing the context window mid-audit.
 - Rejected items → clear from their respective backlogs
 
 ### Cross-References on Promotion

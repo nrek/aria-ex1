@@ -63,6 +63,9 @@ The plugin also enforces structured decision-making at the point of code changes
 - First-run welcome message introduces features progressively for new users
 - Periodic update check prompts to run `/setup` for plugin template updates (configurable cadence)
 - Gate all automatic features behind a single `auto_capture` toggle
+- Generate feature-organized codebase maps via `/codemap` — scans repos, detects frameworks, traces full-stack flows (routes → hooks → state → views → models → integrations), produces navigable CODEMAP.md with directory table for selective section loading
+- Four codemap modes: `create` (full generation), `inventory` (quick index), `update` (incremental refresh via git diff), `section` (rebuild one section)
+- Codemap staleness detection in `/audit-knowledge` — checks CODEMAP.md age against git changes, prompts for update
 - Quick command reference via `/help` — lists all available skills with descriptions
 
 ## Install

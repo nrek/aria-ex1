@@ -2,6 +2,21 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.7.0] - 2026-04-09
+
+### Added
+- `/codemap` skill — generate feature-organized CODEMAP.md for any codebase. Scans repos, detects frameworks (Django, Next.js, Express, Rails, etc.), identifies features by clustering routes/models/views, traces full-stack flows per feature (frontend routes → hooks → Redux → backend views → models → integrations), and produces a navigable reference document
+- Four codemap modes: `create` (full generation from scratch), `inventory` (quick index of files/routes/models), `update` (incremental refresh using git diff), `section` (rebuild a single section)
+- Directory table at top of CODEMAP.md for selective section loading — new sessions read ~50 lines to orient, then load only relevant sections via offset/limit
+- Mermaid diagrams for entity relationships (erDiagram), auth flows (flowchart), and dependency graphs (flowchart) — renderable in GitHub/Obsidian for team members
+- Common Change Patterns section — "how to add X" procedural recipes per framework
+- Integrations summary table — all external services with env keys and consuming features
+- Build Log for tracking per-section completeness and staleness
+- Security issues flagged inline at point of occurrence in feature sections
+- Codemap staleness detection in `/audit-knowledge` (Step 5d) — scans for CODEMAP.md files, checks last-updated date against git changes, reports status (Current/Possibly stale/Stale)
+- Codemap staleness findings in `/audit-knowledge` Step 6 report with token usage warning
+- Codemap update guidance in `/audit-knowledge` Step 7 — directs users to run `/codemap update` in a separate session to avoid context blow-up
+
 ## [2.6.0] - 2026-04-07
 
 ### Added

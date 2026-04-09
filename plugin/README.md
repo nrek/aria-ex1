@@ -33,6 +33,7 @@ See [QUICKSTART.md](QUICKSTART.md) for a detailed walkthrough of your first 3 se
 | `/ask [question]` | Research a question, save answer as a knowledge doc |
 | `/clip [url/text]` | Quick-save a URL or snippet to intake |
 | `/intake [path/url]` | Bulk import knowledge from files, directories, or URLs |
+| `/codemap [mode]` | Generate or update a feature-organized codebase map (create/inventory/update/section) |
 | `/help` | Command reference |
 
 ## How It Works
