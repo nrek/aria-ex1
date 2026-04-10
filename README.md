@@ -1,5 +1,5 @@
-<p align="center">
-  <img src="aria-icon.png" width="120" alt="ARIA">
+<p align="left">
+  <img src="aria-icon-rounded.png" width="120" alt="ARIA">
 </p>
 
 # ARIA — Anchored Reasoning and Insight Architecture
