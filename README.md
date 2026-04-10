@@ -1,77 +1,57 @@
 # ARIA — Anchored Reasoning and Insight Architecture
 
-An active knowledge and development discipline plugin for Claude Code. Captures session knowledge, enforces structured decisions, and maps codebases — so each session builds on the last.
+ARIA is a Claude Code plugin that gives AI coding sessions persistent memory and structured discipline. It manages a complete knowledge lifecycle — capturing insights, decisions, and feedback during sessions, staging them in backlogs for human review, and promoting what matters into a searchable, tag-indexed knowledge base. Session hooks prevent knowledge loss during context compaction, surface relevant knowledge when tasks are created, and enforce a change decision framework at every file edit, requiring visible impact assessment and scope verification before and after changes. The result is that each session builds on the last instead of starting from scratch.
 
-**Knowledge Lifecycle** — capture, stage, review, promote. Insights, decisions, and feedback flow into backlogs during sessions. You decide what becomes canonical. Nothing is auto-promoted.
-
-**Decision Discipline** — a change decision framework enforced at every file edit via hooks. Impact assessment, alternatives analysis, scope verification. Makes reasoning visible and auditable.
-
-**Understanding & Retrieval** — tag index, contextual retrieval with project expansion, cross-reference suggestions, session-start surfacing, bidirectional linking. Feature-organized codebase maps that trace full-stack flows, detect frameworks, and stay current through incremental updates and staleness detection.
-
-## The Problem
-
-AI sessions are stateless. Insights, decisions, and corrections vanish when context compacts. The next session starts from scratch — or repeats mistakes you already corrected.
-
-ARIA gives that knowledge a durable home, enforces the discipline to make good decisions, and documents your codebase so new sessions orient fast.
+Beyond knowledge capture, ARIA provides active tooling for codebase understanding and session workflow. `/codemap` generates feature-organized maps that trace full-stack flows across entire repositories. `/ask` researches questions and saves answers directly as knowledge docs. `/intake` bulk-imports from files, URLs, or directories. `/audit-config` and `/audit-knowledge` detect drift, staleness, and gaps on configurable cadences. `/wrapup` handles end-of-session handoff — updating progress files, prompting for commits, and ensuring the next session can pick up cleanly. Everything is plain markdown, works as an Obsidian vault, and follows a core philosophy: the AI captures, the human promotes.
 
 ## How It Works
 
-**Knowledge** moves through a pipeline: **Capture → Review → Promote**
+### Knowledge Lifecycle
 
-- **Capture** — Session hooks and `/extract` catch insights, decisions, and feedback as they happen
-- **Review** — Configurable audit cadences surface what's worth keeping vs. what's noise
-- **Promote** — You decide what becomes canonical. Nothing is auto-promoted.
+Knowledge moves through a pipeline: **Capture → Review → Promote.**
 
-**Decisions** follow a structured framework (Rule 22) enforced at every Edit/Write — impact assessment, alternatives considered, scope defined, then verified after execution.
+- `/extract` — Scan conversations for uncaptured insights, decisions, feedback, and references. Deduplicates against existing entries.
+- `/clip` — Quick-save URLs or text snippets to intake without leaving the session.
+- `/ask` — Research a question, check existing knowledge first, save the answer directly as a knowledge doc.
+- `/intake` — Bulk import from files, directories, or URLs with preview before staging.
+- `/backlog` — View and manage pending items across all three backlogs.
+- `/audit-knowledge` — Review backlogs and memory for promotable knowledge. Detects emerging themes across entries. Checks codemap staleness.
+- `/index` — Rebuild the tag index. Normalizes tags, flags untagged files, suggests cross-references, updates project mappings.
+- `/context` — Load relevant knowledge by topic using the tag index with project expansion.
+- `/rules` — Quick lookup into the 24 working rules by number or keyword.
+- `/stats` — Knowledge base health dashboard — file counts, backlog depth, audit status, tag coverage, gaps.
 
-**Codebases** get mapped via `/codemap` — scans repos, detects frameworks, traces full-stack flows per feature, and produces navigable reference documents that new sessions can selectively load.
+### Decision Discipline
 
-## All Features
+A change decision framework (Rule 22) is enforced at every Edit/Write via hooks.
 
-- Configure knowledge folder location, structure, and audit cadences via `/setup`
-- Validate folder structure against template and create missing directories/files
-- Diff managed files against plugin version on setup, with keep/update/show-diff options
-- Detect and check for companion plugin dependencies (explanatory-output-style)
-- Scan conversations for uncaptured insights, decisions, feedback, project context, and references via `/extract`
-- Deduplicate extracted knowledge against existing backlog entries
-- Stage all captured knowledge in backlogs for human review — nothing is auto-promoted
-- Review backlogs and memory files for promotable knowledge via `/audit-knowledge`
-- Categorize findings as already-captured, implementation-specific, or worth-extracting
-- Detect emerging themes across backlog entries that individually don't justify a doc but together reveal a pattern
-- Scan CLAUDE.md files, configs, and docs for drift, broken references, and staleness via `/audit-config`
-- View and manage pending items across all three backlogs via `/backlog`
-- Quick lookup into working rules by number or keyword via `/rules`
-- Check audit cadences at session start and prompt when knowledge or config review is overdue
-- Enforce structured change decision framework (Rule 22) before every Edit/Write — requires visible impact assessment, alternatives analysis, and scope definition
-- Classify changes as HIGH or LOW impact with format-specific reasoning requirements
-- Flag changes that fail validation or exceed declared scope, with proposed next steps
-- Verify scope after every Edit/Write — checks for extra changes, unnecessary rewrites, and secondary impact on parents/siblings/dependents
-- Prompt for knowledge capture before session ends
-- Ship 24 living working rules governing coding, architecture, and development decisions
-- Ship a 7-step change decision framework with real examples and hook configuration
-- Ship enforcement mechanisms documentation covering soft (prompt-driven) through hard (system-level) enforcement layers
-- Provide cross-references between related rule files
-- Create and maintain 11-directory taxonomy for organizing knowledge by type (rules, approaches, decisions, guides, references, archive, intake with notes/attachments/clippings, logs)
-- Ship user-owned templates for project-specific conventions and directory stubs
-- Maintain audit logs tracking when reviews ran and what they found
-- Store configuration in `~/.claude/aria-knowledge.local.md` readable by hook scripts
-- Work with Obsidian as a vault, including Web Clipper integration for `intake/clippings/`
-- Save transcript snapshots before context compaction to prevent knowledge loss (PreCompact hook)
-- Prompt to review captured snapshots immediately after compaction (PostCompact hook)
-- Automatically surface relevant knowledge files when tasks are created (TaskCreated hook with tag index matching)
-- Quick-save URLs or text snippets to intake via `/clip` without leaving the session
-- Research questions and save answers directly as knowledge docs via `/ask` — checks existing knowledge first, skips backlogs
-- Bulk import knowledge from files, directories, or URLs via `/intake` with preview before staging
-- View knowledge base health dashboard via `/stats` — file counts, backlog depth, audit status, tag stats, coverage gaps
-- Configure project-specific critical paths that always require full impact assessment
-- First-run welcome message introduces features progressively for new users
-- Periodic update check prompts to run `/setup` for plugin template updates (configurable cadence)
-- Gate all automatic features behind a single `auto_capture` toggle
-- Generate feature-organized codebase maps via `/codemap` — scans repos, detects frameworks, traces full-stack flows (routes → hooks → state → views → models → integrations), produces navigable CODEMAP.md with directory table for selective section loading
-- Four codemap modes: `create` (full generation), `inventory` (quick index), `update` (incremental refresh via git diff), `section` (rebuild one section)
-- Codemap staleness detection in `/audit-knowledge` — checks CODEMAP.md age against git changes, prompts for update
-- End-of-session handoff via `/wrapup` — reviews session work, updates PROGRESS.md/CLAUDE.md/memory, prompts for commit, verifies next session can pick up, prompts for `/extract`
-- Quick command reference via `/help` — lists all available skills with descriptions
+- **PreToolUse hook** — Before every file edit: assess impact (HIGH/LOW), state alternatives considered, define scope.
+- **PostToolUse hook** — After every edit: verify scope wasn't exceeded, check for secondary impact on parents/siblings/dependents.
+- Configurable critical paths that always require full impact assessment.
+- Ships 24 working rules, a 7-step change decision framework with real examples, and enforcement mechanisms documentation.
+
+### Codebase Understanding
+
+`/codemap` generates feature-organized reference documents from any repository.
+
+- Scans repos, detects frameworks, traces full-stack flows (routes → hooks → state → views → models → integrations).
+- Four modes: `create` (full generation), `inventory` (quick index), `update` (incremental via git diff), `section` (rebuild one section).
+- Produces navigable CODEMAP.md with a directory table for selective section loading.
+- **PreToolUse hook** on Glob/Grep — Reminds to check CODEMAP.md before exploring a codebase directly.
+
+### Session Workflow
+
+Hooks and skills that keep sessions continuous across compaction and between conversations.
+
+- `/wrapup` — End-of-session handoff: reviews work, updates PROGRESS.md/CLAUDE.md/memory, prompts for commit and `/extract`, verifies the next session can pick up.
+- `/setup` — Configure knowledge folder, validate structure, diff managed files against plugin version, detect companion plugins.
+- `/audit-config` — Scan CLAUDE.md files, configs, and docs for drift, broken references, and staleness.
+- `/help` — Quick command reference.
+- **SessionStart hook** — Checks audit cadences, prompts when review is overdue. First-run welcome for new users. Periodic update check.
+- **PreCompact hook** — Saves transcript snapshot before context compaction.
+- **PostCompact hook** — Prompts to review captured snapshot after compaction.
+- **TaskCreated hook** — Surfaces relevant knowledge files when tasks are created (tag index matching).
+- `auto_capture` toggle gates all automatic features.
 
 ## Install
 
