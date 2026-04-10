@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="aria-icon.png" width="120" alt="ARIA">
+</p>
+
 # ARIA — Anchored Reasoning and Insight Architecture
 
 ARIA is a Claude Code plugin that gives AI coding sessions persistent memory and structured discipline. It manages a complete knowledge lifecycle — capturing insights, decisions, and feedback during sessions, staging them in backlogs for human review, and promoting what matters into a searchable, tag-indexed knowledge base. Session hooks prevent knowledge loss during context compaction, surface relevant knowledge when tasks are created, and enforce a change decision framework at every file edit, requiring visible impact assessment and scope verification before and after changes. The result is that each session builds on the last instead of starting from scratch.
