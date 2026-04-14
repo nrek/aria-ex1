@@ -1,6 +1,6 @@
 # Working Rules
 
-**Last updated:** 2026-04-05
+**Last updated:** 2026-04-14
 *Established: April 2, 2026*
 
 -----
@@ -145,7 +145,19 @@ After every edit, check if the change affects parents, siblings, or dependents. 
 
 **Origin:** Removing a child element without checking whether the parent wrapper was still needed. Now also enforced via PostToolUse hook (question 5 in the scope check).
 
-### 28. Evaluate tool cost before using visual testing
+### 26. Declare scope before building from references
+
+When creating or rebuilding a file based on an existing reference, declare what will change and what will be preserved before writing. The reference defines content scope — undeclared changes are out of scope. Present the declaration for user confirmation on multi-step or large builds. See `knowledge/rules/change-decision-framework.md` for the full scope declaration format.
+
+**Origin:** A file migration where Rule 22 hooks passed (format-compliant) but undeclared content changes slipped through.
+
+### 28. Write only as much as needed — no more, no less
+
+All communication — chat, documentation, code comments, knowledge files — should be semantically accurate, concise, and precise. Preserve all detail and nuance, but eliminate verbosity. Every word should earn its place.
+
+This applies to both Claude's output and project documentation. The goals are: preserve token budget, increase precision, and improve reading speed. Say what needs to be said, then stop.
+
+### 29. Evaluate tool cost before using visual testing
 
 MCP browser tools (screenshots, snapshots, DOM queries) consume significant tokens per call. Before using them, assess whether the change actually requires visual confirmation:
 
@@ -156,9 +168,3 @@ MCP browser tools (screenshots, snapshots, DOM queries) consume significant toke
 When visual testing is warranted, minimize token usage: use snapshots (text-based) over screenshots, target specific elements rather than full pages, and batch checks rather than screenshot-per-change.
 
 **Origin:** A simple DOM reorder (moving a save status indicator left in a flex container) triggered a full login + navigation + screenshot flow that consumed ~15% of session tokens to verify a change that was self-evident from the code.
-
-### 26. Declare scope before building from references
-
-When creating or rebuilding a file based on an existing reference, declare what will change and what will be preserved before writing. The reference defines content scope — undeclared changes are out of scope. Present the declaration for user confirmation on multi-step or large builds. See `knowledge/rules/change-decision-framework.md` for the full scope declaration format.
-
-**Origin:** A file migration where Rule 22 hooks passed (format-compliant) but undeclared content changes slipped through.

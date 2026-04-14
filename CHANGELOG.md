@@ -22,7 +22,7 @@ All notable changes to ARIA will be documented in this file.
 ## [2.7.2] - 2026-04-09
 
 ### Added
-- Rule 28 (template) — evaluate tool cost before visual testing. Code-verifiable changes skip visual testing; unpredictable visual output warrants testing with user confirmation first.
+- Rule 28 (template; renumbered to Rule 29 in v2.7.6) — evaluate tool cost before visual testing. Code-verifiable changes skip visual testing; unpredictable visual output warrants testing with user confirmation first.
 - **Origin:** DOM reorder consumed ~15% session tokens on visual testing self-evident from the code diff.
 
 ## [2.7.1] - 2026-04-09

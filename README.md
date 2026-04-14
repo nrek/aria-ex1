@@ -22,7 +22,7 @@ Knowledge moves through a pipeline: **Capture → Review → Promote.**
 - `/audit-knowledge` — Review backlogs and memory for promotable knowledge. Detects emerging themes across entries. Checks codemap staleness.
 - `/index` — Rebuild the tag index. Normalizes tags, flags untagged files, suggests cross-references, updates project mappings.
 - `/context` — Load relevant knowledge by topic using the tag index with project expansion.
-- `/rules` — Quick lookup into the 24 working rules by number or keyword.
+- `/rules` — Quick lookup into the 29 working rules by number or keyword.
 - `/stats` — Knowledge base health dashboard — file counts, backlog depth, audit status, tag coverage, gaps.
 
 ### Decision Discipline
@@ -32,7 +32,7 @@ A change decision framework (Rule 22) is enforced at every Edit/Write via hooks.
 - **PreToolUse hook** — Before every file edit: assess impact (HIGH/LOW), state alternatives considered, define scope.
 - **PostToolUse hook** — After every edit: verify scope wasn't exceeded, check for secondary impact on parents/siblings/dependents.
 - Configurable critical paths that always require full impact assessment.
-- Ships 24 working rules, a 7-step change decision framework with real examples, and enforcement mechanisms documentation.
+- Ships 29 working rules, a 7-step change decision framework with real examples, and enforcement mechanisms documentation.
 
 ### Codebase Understanding
 
