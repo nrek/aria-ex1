@@ -57,6 +57,18 @@ Hooks and skills that keep sessions continuous across compaction and between con
 - **TaskCreated hook** — Surfaces relevant knowledge files when tasks are created (tag index matching).
 - `auto_capture` toggle gates all automatic features.
 
+## Key Habits
+
+Two habits determine how much value you get from ARIA:
+
+1. **Run `/extract` before ending sessions** — stages insights, decisions, and feedback into backlogs while the full conversation is in context. Skip it, and knowledge only survives via raw pre-compact transcript snapshots (higher token cost to review later, lower fidelity). The Stop hook and `/wrapup` both prompt for this.
+
+2. **Respond to audit prompts** — when "Knowledge audit due" appears at session start, pending backlog items are waiting for review. Until audited, they can't be surfaced by `/context`, theme clusters go undetected, and items grow stale. A few minutes of review keeps the pipeline flowing.
+
+Everything else — Rule 22 enforcement, transcript capture, context surfacing, codemap reminders — runs automatically via hooks.
+
+See [OVERVIEW.md](plugin/template/OVERVIEW.md) for the full explanation of why these matter.
+
 ## Install
 
 ### CLI

@@ -184,3 +184,27 @@ Neither system is universally better. They solve different problems. The questio
 The knowledge folder is plain markdown — it works great as an [Obsidian](https://obsidian.md) vault. We recommend using [Obsidian Web Clipper](https://obsidian.md/clipper) to save articles and references directly into `intake/clippings/`, where ARIA's audit process can review and promote them.
 
 See [README.md](README.md) for the folder structure, conventions, and operational details. See [LOCAL.md](LOCAL.md) for format templates and detailed usage guidance.
+
+## Getting the Most from ARIA
+
+ARIA's value compounds over time, but only if knowledge moves through the full pipeline. Two habits make the biggest difference:
+
+### Run `/extract` before ending sessions
+
+`/extract` scans your conversation for insights, decisions, feedback, and references — and stages them in backlogs for later review. **If you skip it, that knowledge only survives if compaction happened to trigger a transcript snapshot** — and even then, it sits in a raw capture file until a future audit digests it (at higher token cost and lower fidelity than a direct extract).
+
+The session Stop hook prompts for `/extract`, and `/wrapup` includes it as part of its flow. Either works. The important thing is that knowledge gets staged while the full conversation is still in context.
+
+### Respond to audit prompts
+
+When ARIA prompts "Knowledge audit due" at session start, that means backlogs have accumulated items waiting for your review. Until you run the audit and promote (or clear) those items:
+
+- **`/context` can't surface them** — only promoted knowledge files are indexed and retrievable by topic. Backlog items are invisible to `/context`.
+- **Emerging themes go undetected** — the audit's cluster detection only runs during review. Patterns across multiple sessions won't be identified until you audit.
+- **Backlogs grow stale** — insights captured weeks ago lose context. Reviewing them while they're still fresh produces better promotion decisions.
+
+You don't need to audit every session — the configurable cadence (default: every 3 days) balances review frequency against interruption. But when the prompt appears, it means there's pending knowledge worth a few minutes of review.
+
+### Everything else is automatic
+
+The hooks handle the rest without user action: Rule 22 enforcement on every edit, transcript capture before compaction, context surfacing when tasks are created, codemap reminders before codebase exploration, and `/context` suggestions at session start. These features work passively as long as the plugin is installed and configured.

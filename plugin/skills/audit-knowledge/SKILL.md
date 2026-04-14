@@ -71,15 +71,27 @@ For each entry, note it for presentation in Step 6. Feedback items are promoted 
 
 Scan `{knowledge_folder}/intake/pre-compact-captures/` for `.md` files. **If the directory doesn't exist or is empty**, skip silently to Step 3.
 
+**If snapshots exist**, report the count and total size, then ask the user:
+
+> "Found N pre-compaction transcript snapshot(s) (total ~X KB) from previous sessions. These may contain uncaptured knowledge. Options:"
+> 1. **Digest** — extract high-signal content via script, then review (~1-3K tokens per snapshot; default)
+> 2. **Detailed** — read full transcripts for exhaustive review (~30-50K tokens per snapshot)
+> 3. **Skip** — leave them for a future audit
+> 4. **Clear** — delete all snapshots without reviewing
+
+- If **Skip** → skip to Step 3, leave files untouched
+- If **Clear** → delete all `.md` files in the captures directory, report count deleted, skip to Step 3
+- If **Digest** or **Detailed** → continue with the selected mode below
+
 **Digest mode (default):** For each transcript snapshot, run the digest script to extract high-signal content before reading:
 
 ```bash
 bash ${CLAUDE_PLUGIN_ROOT}/bin/digest-transcript.sh "{snapshot_path}" "/tmp/aria-digest-{filename}"
 ```
 
-Then read the digest file (not the raw transcript). The digest extracts all user messages, first/last 5 lines of assistant turns, Insight blocks, and lines containing decision/feedback signal keywords. This reduces token cost from ~50K+ to ~2-3K per snapshot.
+Then read the digest file (not the raw transcript). The digest keeps all user messages (truncated at 500 chars), first/last 5 lines of each assistant turn, Insight blocks, and lines containing decision/feedback signal keywords. Tool calls and results are dropped entirely. Typical reduction: **~97% fewer tokens** vs raw transcript (~1-3K tokens per snapshot vs ~30-50K+ raw).
 
-**Detailed mode** (`/audit-knowledge detailed`): If the user passed `detailed` as an argument, skip the digest and read the full transcript snapshots directly. Use this when the digest missed something or the user wants exhaustive review.
+**Detailed mode:** Read the full transcript snapshots directly. Use this when digest mode missed something in a previous audit or when the session contained complex multi-step work where mid-response context matters. Note: a single snapshot can consume 30-50K+ context tokens, so use sparingly.
 
 For each snapshot (digest or full):
 1. Note the filename (contains date and session ID, e.g., `2026-04-07_a1b2c3d4.md`)

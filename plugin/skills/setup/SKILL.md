@@ -184,4 +184,9 @@ Setup complete!
 - Files added: [N]
 - Files updated: [N]
 - Files kept (user version): [N]
+
+Two habits that make ARIA most effective:
+- Run /extract before ending sessions — captures knowledge while the full conversation is in context
+- Respond to "Knowledge audit due" prompts — promotes pending items so /context can surface them later
+Everything else runs automatically via hooks.
 ```
