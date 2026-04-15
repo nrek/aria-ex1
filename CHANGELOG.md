@@ -2,6 +2,24 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.8.2] - 2026-04-15
+
+### Added — Per-Task Insight Batch Capture
+
+Insight blocks (★) are now automatically captured at task completion boundaries, closing the gap where insights were lost if `/extract` wasn't run before session end.
+
+- **`session-start-check.sh`** — injects a behavioral instruction at session start telling Claude to batch-append uncaptured Insight blocks to `insights-backlog.md` after completing discrete tasks (not mid-task). Gated by `auto_capture` config toggle.
+- **`/extract` dedup** — already checks `insights-backlog.md` before appending, so running `/extract` after per-task capture produces no duplicates.
+
+### Removed — Dead Stop Hook
+
+- **`session-stop-check.sh`** — removed. Was never registered in `plugin.json` (dead code since creation). Its session-end cleanup responsibilities are covered by `/wrapup` (Step 8) and the new per-task capture. The CHANGELOG entry in v2.7.0 previously noted it was dead code.
+
+### Changed
+
+- **`config.sh`** — updated comment to remove stale `session-stop-check.sh` reference.
+- **`OVERVIEW.md`** — updated hooks list to document per-task insight capture; replaced stale Stop hook paragraph with auto-capture description.
+
 ## [2.8.1] - 2026-04-15
 
 ### Added — User Rules Separation

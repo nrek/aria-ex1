@@ -138,6 +138,11 @@ if [ "$KT_PROJECTS_ENABLED" = "true" ] && [ "$KT_AUTO_LOAD_PROJECT_CONTEXT" = "t
   fi
 fi
 
+# Per-task insight batch capture — gated by auto_capture
+if [ "$KT_AUTO_CAPTURE" != "false" ]; then
+  MESSAGES="${MESSAGES}INSIGHT CAPTURE — After completing discrete tasks, batch-append any uncaptured ★ Insight blocks to ${KT_KNOWLEDGE_FOLDER}/intake/insights-backlog.md. Do not capture mid-task — only at task completion boundaries. "
+fi
+
 # CODEMAP detection — find codemaps in project directories
 CODEMAPS=$(find "$PWD" -maxdepth 2 -name "CODEMAP.md" 2>/dev/null | head -5)
 if [ -n "$CODEMAPS" ]; then

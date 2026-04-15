@@ -1,6 +1,6 @@
 #!/bin/sh
 # config.sh — shared config reader for aria-knowledge hooks
-# Sourced by session-start-check.sh and session-stop-check.sh
+# Sourced by session-start-check.sh and other hook scripts
 
 KT_CONFIG="${KT_CONFIG:-$HOME/.claude/aria-knowledge.local.md}"
 KT_CONFIGURED=false

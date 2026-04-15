@@ -105,7 +105,7 @@ Knowledge Repository is powered by **aria-knowledge**, a Claude Code plugin that
 
 The plugin includes hooks that fire automatically during sessions:
 
-- **Session start** — checks audit cadences and prompts when reviews are overdue; first-run welcome for new users
+- **Session start** — checks audit cadences and prompts when reviews are overdue; injects per-task insight capture instruction; first-run welcome for new users
 - **Pre-edit (Edit/Write)** — enforces structured decision-making before every code change (impact assessment, alternatives considered, scope defined). Detects planning paths for abbreviated assessment. Protects critical files.
 - **Post-edit (Edit/Write)** — verifies changes stayed within decided scope, checks for secondary impact on parents/siblings/dependents
 - **Pre-compact** — saves transcript snapshot before context compaction to prevent knowledge loss
@@ -217,9 +217,9 @@ ARIA's value compounds over time, but only if knowledge moves through the full p
 
 ### Run `/extract` before ending sessions
 
-`/extract` scans your conversation for insights, decisions, feedback, and references — and stages them in backlogs for later review. **If you skip it, that knowledge only survives if compaction happened to trigger a transcript snapshot** — and even then, it sits in a raw capture file until a future audit digests it (at higher token cost and lower fidelity than a direct extract).
+`/extract` scans your conversation for insights, decisions, feedback, and references — and stages them in backlogs for later review. **Insight blocks are now auto-captured at task completion boundaries** via a session-start instruction, but decisions, feedback, project context, and references still require `/extract` to capture.
 
-The session Stop hook prompts for `/extract`, and `/wrapup` includes it as part of its flow. Either works. The important thing is that knowledge gets staged while the full conversation is still in context.
+`/wrapup` includes `/extract` as part of its flow. The important thing is that knowledge gets staged while the full conversation is still in context.
 
 ### Respond to audit prompts
 
