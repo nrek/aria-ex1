@@ -24,6 +24,7 @@ knowledge/
 │   └── config-audit-log.md
 ├── rules/                   # Living rules and principles
 │   ├── working-rules.md
+│   ├── user-rules.md
 │   ├── change-decision-framework.md
 │   └── enforcement-mechanisms.md
 ├── approaches/              # Validated methodologies and patterns

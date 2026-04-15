@@ -1,6 +1,6 @@
 # ARIA Implementation Plan: Project-Specific Knowledge Management
 
-**Status:** Ready for implementation
+**Status:** Implemented (v2.8.0–v2.8.2). This is the pre-implementation design doc — see CHANGELOG.md for what actually shipped. Notable divergence: `session-stop-check.sh` was removed in v2.8.2 (never registered in plugin.json).
 **Target version:** v2.8.0
 **Date drafted:** 2026-04-15
 **Companion design doc:** `aria/docs/plans/2026-04-15-project-specific-knowledge-feature.md` (architectural rationale + open questions)

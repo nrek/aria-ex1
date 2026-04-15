@@ -108,6 +108,8 @@ kt_project_for_path() {
   IFS=','
   for _kt_entry in $KT_PROJECTS_LIST; do
     [ -z "$_kt_entry" ] && continue
+    # Skip malformed entries missing colon separator
+    case "$_kt_entry" in *:*) ;; *) continue ;; esac
     _kt_tag="${_kt_entry%%:*}"
     _kt_proj_path="${_kt_entry#*:}"
     [ -z "$_kt_proj_path" ] && continue
@@ -128,6 +130,8 @@ kt_project_for_path() {
   IFS=','
   for _kt_entry in $KT_PROJECTS_REMOTES; do
     [ -z "$_kt_entry" ] && continue
+    # Skip malformed entries missing colon separator
+    case "$_kt_entry" in *:*) ;; *) continue ;; esac
     _kt_tag="${_kt_entry%%:*}"
     _kt_remote_pattern="${_kt_entry#*:}"
     [ -z "$_kt_remote_pattern" ] && continue

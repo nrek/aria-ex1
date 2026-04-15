@@ -217,7 +217,7 @@ ARIA's value compounds over time, but only if knowledge moves through the full p
 
 ### Run `/extract` before ending sessions
 
-`/extract` scans your conversation for insights, decisions, feedback, and references — and stages them in backlogs for later review. **Insight blocks are now auto-captured at task completion boundaries** via a session-start instruction, but decisions, feedback, project context, and references still require `/extract` to capture.
+`/extract` scans your conversation for insights, decisions, feedback, and references — and stages them in backlogs for later review. **Insight blocks are now auto-captured at task completion boundaries** via a best-effort session-start instruction (Claude may occasionally miss a boundary under context pressure), but decisions, feedback, project context, and references still require `/extract` to capture.
 
 `/wrapup` includes `/extract` as part of its flow. The important thing is that knowledge gets staged while the full conversation is still in context.
 
