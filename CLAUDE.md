@@ -40,3 +40,21 @@ aria/
 - Follow the universal rules in `Projects/CLAUDE.md`
 - The plugin's own template content (working-rules, change-decision-framework, enforcement-mechanisms) is both shipped content AND documentation of how the plugin works — edits to these have dual impact
 - Bump version in `plugin.json` when making release-worthy changes
+
+## Knowledge Repository
+
+Project-specific architecture decisions live in `~/Projects/knowledge/projects/aria/`:
+
+- `decisions/002-knowledge-extraction-architecture.md` — task-based /extract + audit promotion model
+- `decisions/006-full-rule22-format-every-edit.md` — full format on every edit (no compression)
+- `decisions/008-skill-knowledge-connections.md` — skill-knowledge connection discovery + drift detection
+
+Cross-project knowledge that applies to ARIA:
+- `knowledge/rules/working-rules.md` — the 27 universal rules (ARIA's source of truth ships in plugin/template)
+- `knowledge/rules/change-decision-framework.md` — Rule 22 framework
+- `knowledge/rules/enforcement-mechanisms.md` — enforcement tier model
+- `knowledge/guides/claude/plugin-development.md` — Claude Code plugin patterns
+
+Pre-staged for next audit (in decisions-backlog.md): three-pillar architecture, LLM-captures-human-promotes philosophy, auto_capture toggle, audit cadence with first-run detection, plugin/installed-copy diffability, backlog deduplication, hook exit-code pattern.
+
+Use `/context aria` to load relevant knowledge by project tag.
