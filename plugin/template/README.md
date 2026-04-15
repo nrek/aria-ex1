@@ -30,6 +30,9 @@ knowledge/
 ├── decisions/               # Cross-project architectural decisions (ADR format)
 ├── guides/                  # Operational knowledge — how things work in your environment
 ├── references/              # External resources, evaluations, research
+├── projects/                # Optional — project-specific decisions and patterns (opt-in via /setup)
+│   ├── README.md            # Explains the projects/ tier
+│   └── {project-tag}/       # Per-project subdirectories (decisions/, patterns/, ...)
 └── archive/                 # Retired or superseded content
 ```
 
@@ -43,6 +46,7 @@ knowledge/
 | `guides/` | Operational knowledge, how things work | "Here's how X works" |
 | `references/` | External research, evaluations, bookmarks | "What others say about X" |
 | `archive/` | Retired content with pointers | "What we used to do" |
+| `projects/` | Project-specific decisions & patterns (opt-in) | "This is specific to one project" |
 | `intake/` | Staging — backlogs, notes, clippings | "Not yet categorized" |
 | `logs/` | Audit timestamps and results | System metadata |
 
@@ -72,11 +76,17 @@ External research, vendor evaluations, tool comparisons, and bookmarked resource
 ### `archive/`
 Retired content. When something is superseded, move it here with a pointer from the original location.
 
+### `projects/` (opt-in, since v2.8.0)
+
+Project-specific architecture decisions and patterns that are valuable to preserve but specific to one project — not yet validated across multiple projects. Sits between ephemeral memory files and cross-project knowledge in `approaches/`/`decisions/`/`rules/`.
+
+Enable via `/setup` Advanced Options. When enabled, each configured project gets `projects/{project-tag}/{decisions,patterns}/` scaffolded with a per-project README. See `projects/README.md` for the full promotion ladder (project → cross-project approach → universal rule) and multi-project tagging convention.
+
 ## Conventions
 
 - **File naming:** kebab-case (`api-design-patterns.md`)
 - **Dates:** Include `**Last updated:** YYYY-MM-DD` near the top of each file
-- **Decision files:** Use numeric prefix (`001-`, `002-`)
+- **Decision files:** Cross-project ADRs in `decisions/` use `YYYY-NNN-` prefix (e.g., `2026-001-auth-strategy.md`) — self-dating and resetting per year. Project-level ADRs in `projects/{tag}/decisions/` use sequential numeric prefix (`001-`, `002-`) per-project, since each project's ADRs are a separate namespace.
 - **Don't delete — archive:** Move deprecated content to `archive/` with pointers
 - **Tag your files:** Include `tags: [tag1, tag2]` in YAML frontmatter for all promoted files. See `LOCAL.md` for the tag convention.
 - **`index.md` is generated:** Rebuilt by `/index` and `/audit-knowledge`. Never hand-edit it.

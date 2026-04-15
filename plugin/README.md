@@ -2,7 +2,7 @@
 
 An active knowledge and development discipline plugin for Claude Code. Captures session knowledge, enforces structured decisions, and maps codebases — so each session builds on the last.
 
-**Knowledge Lifecycle** — capture, stage, review, promote. Insights flow into backlogs during sessions. You decide what becomes canonical.
+**Knowledge Lifecycle** — capture, stage, review, promote. Insights flow into backlogs during sessions. You decide what becomes canonical. Optional project-specific tier (`projects/{tag}/`) for architecture decisions and patterns scoped to a single project; promotes to cross-project when patterns appear in 2+ projects.
 
 **Decision Discipline** — change decision framework enforced at every file edit via hooks. Impact assessment, alternatives analysis, scope verification.
 

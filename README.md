@@ -6,7 +6,7 @@
 
 ARIA is a Claude Code plugin that gives AI coding sessions persistent memory and structured discipline. It manages a complete knowledge lifecycle — capturing insights, decisions, and feedback during sessions, staging them in backlogs for human review, and promoting what matters into a searchable, tag-indexed knowledge base. Session hooks prevent knowledge loss during context compaction, surface relevant knowledge when tasks are created, and enforce a change decision framework at every file edit, requiring visible impact assessment and scope verification before and after changes. The result is that each session builds on the last instead of starting from scratch.
 
-Beyond knowledge capture, ARIA provides active tooling for codebase understanding and session workflow. `/codemap` generates feature-organized maps that trace full-stack flows across entire repositories. `/ask` researches questions and saves answers directly as knowledge docs. `/intake` bulk-imports from files, URLs, or directories. `/audit-config` and `/audit-knowledge` detect drift, staleness, and gaps on configurable cadences. `/wrapup` handles end-of-session handoff — updating progress files, prompting for commits, and ensuring the next session can pick up cleanly. Everything is plain markdown, works as an Obsidian vault, and follows a core philosophy: the AI captures, the human promotes.
+Beyond knowledge capture, ARIA provides active tooling for codebase understanding and session workflow. `/codemap` generates feature-organized maps that trace full-stack flows across entire repositories. `/ask` researches questions and saves answers directly as knowledge docs. `/intake` bulk-imports from files, URLs, or directories. `/audit-config` and `/audit-knowledge` detect drift, staleness, and gaps on configurable cadences. `/wrapup` handles end-of-session handoff — updating progress files, prompting for commits, and ensuring the next session can pick up cleanly. An optional project-specific knowledge tier (v2.8.0+) organizes architecture decisions and patterns by project, with automatic cross-project promotion detection when patterns validate across multiple projects. Everything is plain markdown, works as an Obsidian vault, and follows a core philosophy: the AI captures, the human promotes.
 
 ## How It Works
 
@@ -21,7 +21,7 @@ Knowledge moves through a pipeline: **Capture → Review → Promote.**
 - `/backlog` — View and manage pending items across all three backlogs.
 - `/audit-knowledge` — Review backlogs and memory for promotable knowledge. Detects emerging themes across entries. Checks codemap staleness.
 - `/index` — Rebuild the tag index. Normalizes tags, flags untagged files, suggests cross-references, updates project mappings.
-- `/context` — Load relevant knowledge by topic using the tag index with project expansion.
+- `/context` — Load relevant knowledge by topic using the tag index with project expansion. When a project tier is configured, `/context {project-tag}` also loads project-specific files from `projects/{tag}/**`, grouped separately from cross-project results.
 - `/rules` — Quick lookup into the 29 working rules by number or keyword.
 - `/stats` — Knowledge base health dashboard — file counts, backlog depth, audit status, tag coverage, gaps.
 

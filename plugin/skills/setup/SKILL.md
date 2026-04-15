@@ -49,13 +49,15 @@ Read the expected structure from `${CLAUDE_PLUGIN_ROOT}/template/`.
 - For existing **files**: do NOT overwrite — collect for diffing in Step 4.
 - Report: "Created N directories, added N files, found N existing files to check."
 
+**Project tier scaffolding** (if `projects_enabled: true` in current or pending config) is deferred to **Step 7c** — it runs after the config is written so it uses the final values (including answers from Step 6 that aren't in the config file yet during Step 3).
+
 ## Step 4: File Diffing
 
 For each templated file that already exists in the user's folder, compare against the plugin's shipped version in `${CLAUDE_PLUGIN_ROOT}/template/`.
 
-**Files to diff:** `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `README.md`, `OVERVIEW.md`
+**Files to diff:** `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `README.md`, `OVERVIEW.md`, `projects/README.md` (plugin-managed if present)
 
-**Never diff:** `LOCAL.md` (user-owned), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`), and audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`) — these contain user data or user-customizable content.
+**Never diff:** `LOCAL.md` (user-owned), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`), audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`), and per-project READMEs (`projects/{tag}/README.md` and any other content under `projects/{tag}/**`) — these contain user data or user-customizable content.
 
 For each file with differences:
 1. Notify: "[filename] differs from the plugin version."
@@ -105,10 +107,35 @@ If the user asks about advanced options or re-runs setup with existing config, a
 > - **Staleness threshold:** 6 months (flag knowledge files not updated within this period)
 > - **Auto-capture on compaction:** true (save transcript snapshot before context compaction)
 > - **Critical paths:** (empty) comma-separated path patterns that always require HIGH impact assessment (e.g., auth/*,payments/*,migrations/*)
+> - **Project-specific knowledge tier:** disabled (creates `projects/{tag}/` subdirectories for project-specific decisions and patterns; opt in if you want to organize knowledge by project alongside the cross-project tree)
+> - **Auto-load project context on session start:** disabled (when enabled AND project tier is enabled AND CWD matches a configured project, the SessionStart hook suggests `/context {project}` automatically; second opt-in for power users who want hook-driven convenience)
 >
 > Want to change any? (Enter new values or press enter to keep defaults)"
 
 Record the values. If the user doesn't ask about advanced options during initial setup, use the defaults silently.
+
+### Project Setup (only if user enables the project-specific knowledge tier)
+
+If the user enables the project-specific knowledge tier in Advanced Options, ask three follow-up questions:
+
+1. **Project list** — "Comma-separated `tag:relative-path` pairs (e.g., `cs-builder:cs/cs-space-builder,df:df,ss:ss`). Paths are relative to the parent of your knowledge folder (typically `~/Projects/`). Press enter to defer adding projects:"
+2. **Project remotes (optional)** — "Optional git-remote URL patterns for fallback project detection when CWD doesn't match a configured path. Comma-separated `tag:url-substring` pairs (e.g., `cs-builder:craftxlogic/cs-space-builder`). Press enter to skip:"
+3. **Promotion threshold** — "Minimum number of projects that must share a similar pattern before `/audit-knowledge` suggests cross-project promotion (default 2):"
+
+**Validate input:**
+- Project tags cannot contain `:` or `,` (these are the parser delimiters). If invalid, show the offending tag and re-prompt.
+- Promotion threshold must be a plain integer ≥ 1. If invalid, re-prompt.
+- For each `tag:path` pair, warn (don't error) if the resolved path doesn't exist on disk yet — the user may be configuring projects they haven't created.
+
+**Existing-folder detection:**
+
+Before prompting, scan the user's knowledge folder for an existing `projects/` subdirectory:
+
+- **If found AND `projects_enabled` is unset in config:** Skip the Advanced Options bullet for this feature; instead prompt directly: "Detected existing `projects/` folder with these subdirectories: [list]. Enable project-specific knowledge tier? (y/n)" — if yes, auto-populate `projects_list` from detected subdirectories (prompt only for the path mapping per detected tag).
+- **If found AND `projects_enabled: false` explicitly in config:** Leave the existing folder untouched; note in verbose output: "An existing `projects/` folder was detected but the projects tier is disabled in config. Folder is preserved; automation is off."
+- **If found AND `projects_enabled: true`:** Verify each detected subdirectory is in `projects_list`; prompt to add any missing ones.
+
+**Never auto-delete or auto-rewrite existing `projects/` content.**
 
 ## Step 7: Write Config
 
@@ -125,6 +152,11 @@ freeform_promotion_threshold: [value from Step 6, default 3]
 staleness_threshold_months: [value from Step 6, default 6]
 auto_capture: [true/false from Step 6, default true]
 critical_paths: [comma-separated patterns from Step 6, default empty]
+projects_enabled: [true/false from Step 6, default false]
+projects_list: [comma-separated tag:path pairs from Step 6, default empty]
+projects_remotes: [comma-separated tag:url-pattern pairs from Step 6, default empty]
+projects_promotion_threshold: [integer from Step 6, default 2]
+auto_load_project_context: [true/false from Step 6, default false]
 ---
 ```
 
@@ -145,6 +177,11 @@ In **update mode:** preserve any user-added content in the markdown body below t
 - Values must NOT be quoted — write `knowledge_folder: /path/to/folder`, not `knowledge_folder: "/path/to/folder"`
 - `knowledge_folder` must be an absolute path (starts with `/`) and must not contain `..`
 - Cadence values must be plain integers (no units, no quotes)
+- `projects_enabled` must be exactly `true` or `false` (not `True`, `yes`, `1`, etc.)
+- `projects_list` and `projects_remotes`: comma-separated `tag:value` pairs, no spaces around the colon or comma (e.g., `cs-builder:cs/cs-space-builder,df:df`)
+- Project tags cannot contain colons or commas (the parser splits on these)
+- `projects_promotion_threshold` must be a plain integer ≥ 1 (no units, no quotes)
+- `auto_load_project_context` must be exactly `true` or `false` (not `True`, `yes`, `1`, etc.)
 - No blank lines between frontmatter entries
 
 ## Step 7b: Verify Config Round-Trip
@@ -164,10 +201,56 @@ After writing the config file, read it back and verify that each value can be ex
    - `staleness_threshold_months` — confirm it's the integer from Step 6
    - `auto_capture` — confirm it's `true` or `false`
    - `critical_paths` — confirm it's a comma-separated string of path patterns (or empty)
+   - `projects_enabled` — confirm it's `true` or `false`
+   - `projects_list` — confirm it's a comma-separated string of `tag:path` pairs (or empty); validate no project tag contains `:` or `,`
+   - `projects_remotes` — confirm it's a comma-separated string of `tag:url-pattern` pairs (or empty); validate no project tag contains `:` or `,`
+   - `projects_promotion_threshold` — confirm it's a plain integer ≥ 1 (matches Step 6 input)
+   - `auto_load_project_context` — confirm it's `true` or `false`
 
 **If any check fails:** rewrite the file with corrected formatting and verify again. Report which value failed and what was fixed.
 
-**If all checks pass:** proceed to Step 8 silently.
+**If all checks pass:** proceed to Step 7c silently.
+
+## Step 7c: Project Tier Scaffolding
+
+Runs only if the config just written has `projects_enabled: true` and a non-empty `projects_list`. Skip entirely otherwise — no action, no output.
+
+Scaffold the project tier using the final config values:
+
+1. **Create `projects/` directory** if it doesn't exist.
+2. **Copy `${CLAUDE_PLUGIN_ROOT}/template/projects/README.md` to `projects/README.md`** if missing (plugin-managed; will be diffed on future `/setup` runs).
+3. **For each entry in `projects_list` (parsed as `tag:path` pairs):**
+   - Create `projects/{tag}/` if missing.
+   - Create `projects/{tag}/decisions/` and `projects/{tag}/patterns/` if missing.
+   - If `projects/{tag}/README.md` does not exist, generate it from this per-project template:
+     ```markdown
+     ---
+     Last updated: [today's date]
+     tags: [{tag}, knowledge-structure]
+     ---
+
+     # {Project Display Name} Project Knowledge
+
+     Project-specific architecture decisions, patterns, and gotchas for {project display name}.
+
+     ## Structure
+
+     - `decisions/` — Architecture Decision Records (ADRs) — numbered sequentially per project (001, 002, ...)
+     - `patterns/` — Reusable patterns specific to this project
+     - `guides/` (optional) — Operational knowledge specific to this project; create on demand
+     - `references/` (optional) — External resources specific to this project; create on demand
+
+     ## Promotion
+
+     When a pattern in this folder is validated in another project, `/audit-knowledge` will surface it as a candidate to promote to `knowledge/approaches/`. See `knowledge/projects/README.md` for the full promotion ladder.
+
+     ## Related
+     - [../README.md](../README.md) — projects/ tier overview
+     - [../../index.md](../../index.md) — tag index
+     ```
+     - **Project Display Name** is derived from the tag with hyphens converted to spaces and title-cased (e.g., `cs-builder` → `Cs Builder`). If the tag doesn't produce a sensible display name, use the tag as-is and prompt the user to edit the README header.
+4. **Never overwrite** existing per-project READMEs or content under `projects/{tag}/` — these are user-owned.
+5. **Report** what was scaffolded: "Project tier: created N directories, N per-project READMEs."
 
 ## Step 8: Confirm
 

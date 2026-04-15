@@ -130,6 +130,14 @@ if [ -f "$INDEX_FILE" ]; then
   MESSAGES="${MESSAGES}ARIA CONTEXT — Knowledge index available at ${KT_KNOWLEDGE_FOLDER}/index.md. After user states task, check it for relevant tags and suggest a /context with any found relevant tags. Offer once per session and again when changing topics. Do not block. "
 fi
 
+# Project context suggestion — only if both opt-ins are enabled AND CWD matches a configured project
+if [ "$KT_PROJECTS_ENABLED" = "true" ] && [ "$KT_AUTO_LOAD_PROJECT_CONTEXT" = "true" ]; then
+  CURRENT_PROJECT=$(kt_project_for_path "$PWD")
+  if [ -n "$CURRENT_PROJECT" ]; then
+    MESSAGES="${MESSAGES}ARIA Project Context — You're working in project '${CURRENT_PROJECT}'. Suggest the user run /context ${CURRENT_PROJECT} to load project-specific knowledge (decisions, patterns) plus cross-project items tagged ${CURRENT_PROJECT}. Offer once per session. Do not block. "
+  fi
+fi
+
 # CODEMAP detection — find codemaps in project directories
 CODEMAPS=$(find "$PWD" -maxdepth 2 -name "CODEMAP.md" 2>/dev/null | head -5)
 if [ -n "$CODEMAPS" ]; then

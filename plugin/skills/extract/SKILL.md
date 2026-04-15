@@ -8,11 +8,33 @@ allowed-tools: Read, Glob, Grep, Write, Edit
 
 Scan the current conversation since the last extraction for uncaptured insights, decisions, feedback, project context, and references. Dump everything to backlogs for review at the next knowledge audit. No confirmation dialog — just scan, deduplicate, and append.
 
-## Step 0: Resolve Config
+## Step 0: Resolve Config and Detect Project Context
 
-Read `~/.claude/aria-knowledge.local.md` and extract `knowledge_folder`. If the file doesn't exist, stop: "aria-knowledge is not configured. Run /setup to get started."
+Read `~/.claude/aria-knowledge.local.md` and extract:
+- `knowledge_folder` — required
+- `projects_enabled` — default `false`
+- `projects_list` — default empty (only relevant if `projects_enabled: true`)
+
+If the config file doesn't exist, stop: "aria-knowledge is not configured. Run /setup to get started."
 
 Use `{knowledge_folder}` as the base path for all file operations in subsequent steps.
+
+### Detect current project (only if `projects_enabled: true`)
+
+Determine the current working directory and check if it matches a configured project path:
+
+1. Get the current working directory (typically the user's primary working directory, e.g., `~/Projects/cs/cs-space-builder`).
+2. Parse `projects_list` into `tag:path` pairs.
+3. For each pair, check if the CWD contains the configured path as a substring. If so, set `current_project` to that tag and stop iterating (first match wins).
+4. If no path-based match is found AND `projects_remotes` is configured AND git is available, fall back to git-remote matching: run `git config --get remote.origin.url` from the CWD; for each `tag:url-pattern` pair in `projects_remotes`, check if the remote URL contains the pattern; if so, set `current_project` to that tag.
+5. If still no match, leave `current_project` unset — subsequent steps will skip auto-tagging.
+
+This logic mirrors the `kt_project_for_path` shell helper in `bin/config.sh`. Skills can either invoke that helper via Bash or replicate the matching logic in markdown-driven flow as above.
+
+Examples:
+- CWD = `~/Projects/myproject/sub-module/file.md`, `projects_list: myproject:myproject,other:other` → `current_project = myproject` (substring match on `myproject`)
+- CWD = `~/Projects/other`, `projects_list: myproject:myproject,other:other` → `current_project = other`
+- CWD = `~/Downloads/scratch-folder`, `projects_list: myproject:myproject,other:other` → `current_project` unset (no configured path matches)
 
 ## Step 1: Determine Extraction Scope
 
@@ -75,6 +97,21 @@ For each finding, check against:
 ## Step 4: Append to Backlogs
 
 Route each finding to the appropriate backlog file. Do NOT ask for confirmation — just append.
+
+### Project tag auto-prepending
+
+If `current_project` was set in Step 0:
+- For findings that don't already have a project attribution, use `current_project` as the `[project]` value in the entry header.
+- For findings that already have an explicit project attribution that conflicts (e.g., user said "this is a cross-project pattern" while CWD is `cs/cs-space-builder`), preserve the explicit attribution — don't override it.
+- The auto-tag is a default, not a forced override. The audit process will refine it during promotion.
+
+If `current_project` is unset, use the existing rules: tag with the project (or "cross") when identifiable from conversation context; otherwise omit `[project]` from the header (use `[no-project]` or just the context label).
+
+Examples:
+- CWD inside cs-builder, finding doesn't mention a project → `### 2026-04-15 — cs-builder — feedback — [context]`
+- CWD inside cs-builder, finding explicitly says "this is cross-project" → `### 2026-04-15 — cross — decision — [context]`
+- CWD outside any configured project, finding mentions df → `### 2026-04-15 — df — insight — [context]`
+- CWD outside any configured project, finding has no clear project → `### 2026-04-15 — [no-project] — reference — [context]`
 
 ### Insights → `{knowledge_folder}/intake/insights-backlog.md`
 

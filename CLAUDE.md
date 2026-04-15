@@ -4,6 +4,8 @@
 
 ARIA (Anchored Reasoning and Insight Architecture) — an active knowledge and development discipline plugin for Claude Code. Three pillars: knowledge lifecycle (capture → review → promote), decision discipline (Rule 22 enforcement at every edit), and codebase understanding (/codemap with full-stack tracing).
 
+**Repository:** GitHub (`mikeprasad/aria-knowledge`) — **public repo**
+
 ## Project Structure
 
 ```
@@ -38,6 +40,7 @@ aria/
 ## Rules
 
 - Follow the universal rules in `Projects/CLAUDE.md`
+- **This is a public repository** — never commit personal information, API keys, secrets, credentials, internal URLs, or any sensitive data. Content here is visible to anyone on GitHub.
 - The plugin's own template content (working-rules, change-decision-framework, enforcement-mechanisms) is both shipped content AND documentation of how the plugin works — edits to these have dual impact
 - Bump version in `plugin.json` when making release-worthy changes
 

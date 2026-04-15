@@ -25,8 +25,17 @@ if [ ! -d "$KT_KNOWLEDGE_FOLDER" ]; then
   exit 0
 fi
 
+# Detect current project for project-specific extract suggestion (only if projects feature is enabled)
+PROJECT_NOTE=""
+if [ "$KT_PROJECTS_ENABLED" = "true" ]; then
+  CURRENT_PROJECT=$(kt_project_for_path "$PWD")
+  if [ -n "$CURRENT_PROJECT" ]; then
+    PROJECT_NOTE=" (4) Session ran in project '${CURRENT_PROJECT}' — /extract will auto-tag findings with the project tag for routing to projects/${CURRENT_PROJECT}/ during the next audit."
+  fi
+fi
+
 # Build cleanup checklist
-CHECKLIST="SESSION CHECK: (1) Review and append any uncaptured Insight blocks to insights-backlog.md (2) Review and append any uncaptured cross-project decisions to decisions-backlog.md (3) Suggest /extract if meaningful work was completed this session."
+CHECKLIST="SESSION CHECK: (1) Review and append any uncaptured Insight blocks to insights-backlog.md (2) Review and append any uncaptured cross-project decisions to decisions-backlog.md (3) Suggest /extract if meaningful work was completed this session.${PROJECT_NOTE}"
 
 # Escape for JSON
 CHECKLIST_ESCAPED=$(kt_json_escape "$CHECKLIST")

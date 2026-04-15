@@ -51,7 +51,7 @@ tags: [tag1, tag2, tag3]
 [Links to related rules, decisions, or other approaches]
 ```
 
-### Decisions (`decisions/`)
+### Decisions (`decisions/` or `projects/{tag}/decisions/`)
 
 ```markdown
 ---
@@ -78,6 +78,12 @@ tags: [tag1, tag2]
 [Links to related rules, approaches, or other decisions]
 ```
 
+**Numbering:**
+- Cross-project ADRs in `decisions/` use `YYYY-NNN-` prefix (e.g., `2026-001-auth-strategy.md`) — self-dating, resets per year.
+- Project-level ADRs in `projects/{tag}/decisions/` use sequential `NNN-` per project (e.g., `001-app-router-as-spa.md`) — each project is its own namespace.
+
+**Provenance (for cross-project promotions):** When `/audit-knowledge` Step 5e promotes a project-specific ADR or pattern to the cross-project tree, the new file gets an `originally_at:` YAML frontmatter field documenting the source(s). Greppable consolidation history.
+
 ### Guides (`guides/`)
 
 ```markdown
@@ -103,12 +109,14 @@ tags: [tag1, tag2]
 | Content | Location | Reason |
 |---------|----------|--------|
 | Principles and constraints | `rules/` | "We must / must not" |
-| Validated methodologies | `approaches/` | "How we do X (proven)" |
-| Architectural choices | `decisions/` | "We chose X because Y" |
+| Validated methodologies (cross-project) | `approaches/` | "How we do X (proven across projects)" |
+| Cross-project architectural choices | `decisions/` (YYYY-NNN) | "We chose X because Y, applies across projects" |
 | Operational knowledge | `guides/` | "Here's how X works" |
 | External research | `references/` | "What others say about X" |
 | Retired content | `archive/` | "What we used to do" |
 | Unprocessed input | `intake/` | "Not yet categorized" |
+| Project-specific decisions | `projects/{tag}/decisions/` (opt-in, sequential `001-`) | "Single-project decision not yet proven elsewhere" |
+| Project-specific patterns | `projects/{tag}/patterns/` (opt-in) | "Pattern valuable within one project" |
 | Project-specific context | Project's CLAUDE.md | Loaded automatically per project |
 | Session history | Project's PROGRESS.md | Ephemeral project state |
 

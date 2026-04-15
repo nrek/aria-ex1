@@ -52,6 +52,32 @@ Approved knowledge moves to its permanent home based on what type it is. Each ty
 
 This taxonomy is complete — every type of reusable knowledge fits into exactly one category. If it doesn't fit any of them, it's either ephemeral (belongs in session notes) or not yet validated (stays in the backlog until it is).
 
+### Project-Specific Tier (opt-in, since v2.8.0)
+
+The five-type taxonomy above is for **cross-project** knowledge — patterns and decisions validated across multiple projects, applicable beyond a single codebase. But not all valuable knowledge clears that bar.
+
+Some architecture decisions are important for a specific project but have no evidence of broader applicability. The choice was right for this codebase but might not generalize. Forcing it into the cross-project tree creates noise; leaving it uncaptured loses durable context.
+
+The optional `projects/` tier solves this. When enabled via `/setup`, ARIA scaffolds:
+
+```
+projects/
+├── README.md              (plugin-managed)
+├── {project-tag}/
+│   ├── README.md          (per-project, user-owned)
+│   ├── decisions/         (project ADRs)
+│   ├── patterns/          (reusable within this project)
+│   ├── guides/            (optional)
+│   └── references/        (optional)
+└── {another-project}/
+```
+
+Files under `projects/{tag}/**` are automatically tagged with the project tag (path-derived), surfaced via `/context {tag}` alongside cross-project files, and considered for cross-project promotion when patterns appear in ≥`projects_promotion_threshold` projects (default 2).
+
+The promotion ladder extends to three tiers: **project pattern → cross-project approach → universal rule**. `/audit-knowledge` Step 5e detects when project-specific patterns deserve promotion to the cross-project tree, synthesizes the merged content with provenance preservation (`originally_at:` frontmatter), and offers stub-and-reference disposition for the source files.
+
+This tier is fully opt-in — `projects_enabled: false` by default. Existing users see no behavior change unless they explicitly enable it. New users can opt in during `/setup` Advanced Options.
+
 ## The Plugin
 
 Knowledge Repository is powered by **aria-knowledge**, a Claude Code plugin that automates the capture-review-promote lifecycle.

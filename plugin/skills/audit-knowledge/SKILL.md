@@ -10,7 +10,14 @@ Scan `~/.claude/` memory and plan files, compare against what's already in the k
 
 ## Step 0: Resolve Config
 
-Read `~/.claude/aria-knowledge.local.md` and extract `knowledge_folder` and `audit_cadence_knowledge`. If the file doesn't exist, stop: "aria-knowledge is not configured. Run /setup to get started."
+Read `~/.claude/aria-knowledge.local.md` and extract:
+- `knowledge_folder` — required base path
+- `audit_cadence_knowledge` — required cadence in days
+- `projects_enabled` — default `false`; controls whether project tier is audited (Step 5e)
+- `projects_list` — default empty; comma-separated `tag:path` pairs; only relevant if `projects_enabled: true`
+- `projects_promotion_threshold` — default `2`; minimum projects sharing a similar pattern before Step 5e suggests cross-project promotion
+
+If the config file doesn't exist, stop: "aria-knowledge is not configured. Run /setup to get started."
 
 Use `{knowledge_folder}` as the base path for all file operations in subsequent steps.
 
@@ -206,6 +213,72 @@ Note findings for presentation in Step 6 under a "Codemap Staleness" section.
 
 **Do not run `/codemap update` automatically** — it consumes significant tokens. Only present the finding and let the user decide.
 
+## Step 5e: Cross-Project Pattern Detection
+
+Skip this step entirely if `projects_enabled: false` or `projects_list` has fewer than 2 entries.
+
+Scan `{knowledge_folder}/projects/{*}/patterns/*.md` (and optionally `projects/{*}/decisions/*.md` for cross-project decision detection) for files that may represent the same pattern across multiple projects.
+
+**Detection heuristics** (consistent with `/index` Step 8d so the two skills surface the same candidates):
+
+1. **Filename similarity:** Files with similar kebab-case names (e.g., `state-management-patterns.md` in two project subfolders). Case-insensitive equality of stem; allow minor variants (`-patterns` vs `-pattern`, plural vs singular).
+2. **Tag overlap:** Files sharing 3+ tags excluding the project tags themselves (which are auto-derived from path per Decision #9).
+3. **Title/summary similarity:** Files whose H1 (first `#` heading) shares 3+ significant terms (excluding stop words and project names).
+
+**Threshold:** if a pattern appears in ≥`projects_promotion_threshold` projects (default 2), surface as a candidate.
+
+For each candidate group, present to the user:
+
+```
+## Cross-Project Promotion Candidates
+
+1. Pattern: "state-sync between AI and wizard"
+   - projects/cs-builder/patterns/state-sync.md (Last updated: 2026-04-12)
+   - projects/ss/patterns/state-sync.md (Last updated: 2026-04-14)
+   - Shared tags: state-management, agentic-ui
+   - Suggested cross-project location: approaches/state-sync-between-ai-and-ui.md
+
+   Promote to cross-project approach? (yes / no / skip)
+```
+
+If the user approves promotion:
+
+1. **Synthesize content from the project-specific files.** Read each source file, identify common patterns, identify project-specific specializations. Draft a merged document with:
+   - The shared pattern as the core content
+   - Project-specific specializations called out as variants or notes
+   - Original example references preserved with project attribution
+2. **Show the user the synthesized draft for review.** Ask for edits or approval before writing.
+3. **Write the new cross-project file** at the suggested location (typically `approaches/{name}.md`).
+4. **Add the `originally_at:` provenance frontmatter field** to the new file:
+
+```yaml
+---
+Last updated: YYYY-MM-DD
+tags: [tag1, tag2, ...]
+originally_at: projects/cs-builder/patterns/state-sync.md (merged with projects/ss/patterns/state-sync.md on YYYY-MM-DD during cross-project promotion)
+---
+```
+
+This makes consolidations greppable (`grep -r "originally_at:" knowledge/`) and survives git history truncation.
+
+5. **Decide what to do with the source files** — present to the user:
+   - **Remove** — delete each source file (the cross-project file is the new home; project context is preserved via `originally_at`)
+   - **Stub-and-reference** — replace each source file with a 3-line redirect:
+     ```markdown
+     # [Title]
+
+     This pattern was promoted to [approaches/{name}.md](../../approaches/{name}.md) on YYYY-MM-DD as it was validated across multiple projects.
+     ```
+   - **Keep** — leave both source and cross-project files; useful when the project has unique context worth preserving alongside the shared pattern (rare)
+
+   Default: **stub-and-reference** — preserves discoverability while avoiding duplication. Document the choice in Step 8's audit log entry.
+
+6. **Update `index.md`** — append the new file to the appropriate tag sections; remove deleted source files from the index. (This happens automatically in Step 7b's index rebuild.)
+
+If no candidates are detected, skip silently.
+
+If candidates are detected but the user declines all promotions, note in Step 8's audit log entry: "N cross-project promotion candidates declined" (so they don't get re-suggested every audit unless evidence changes).
+
 ## Step 6: Present Findings
 
 Present a table with ALL files scanned and their category. Only show details for Category C items.
@@ -250,9 +323,23 @@ If no snapshots exist or none had extractable content: omit this section.
 
 For each Category C item:
 - **Source:** file path
-- **Knowledge type:** approaches / decisions / rules / references
+- **Knowledge type:** approaches / decisions / rules / references / **project-decisions / project-patterns** (when feature enabled)
 - **Suggested location:** where in the knowledge folder it should go
 - **Content summary:** what would be extracted
+
+**Project routing logic (only if `projects_enabled: true`):**
+
+Before defaulting to cross-project locations, check the item's tags or content for project context:
+
+1. If the item carries a tag matching a configured project tag (from `projects_list`), suggest the corresponding project subfolder:
+   - Decisions → `projects/{tag}/decisions/`
+   - Reusable patterns → `projects/{tag}/patterns/`
+   - Operational guides specific to the project → `projects/{tag}/guides/` (will be created on first promotion)
+   - Project-specific external references → `projects/{tag}/references/` (will be created on first promotion)
+2. If the item's content clearly references a project by name (e.g., mentions cs-builder, ss, df) but lacks the explicit tag, prompt the user to confirm the project tag before suggesting the location.
+3. If neither tag nor content indicates a specific project, default to the cross-project tree (`approaches/`, `decisions/`, etc.) as before.
+
+This biases new promotions toward project subfolders when the evidence is single-project, leaving the cross-project tree for genuinely cross-cutting knowledge.
 
 ### Integrity Issues (from Step 5b)
 
@@ -350,6 +437,8 @@ Present Category C items, pending insights, and pending decisions. Ask the user 
 
 - Approved insights → move to the appropriate knowledge file, clear from backlog
 - Approved decisions → create full ADR in `{knowledge_folder}/decisions/`, clear from backlog
+- Approved project-tier promotions (only if `projects_enabled: true`) → before writing, validate the target project subfolder exists. If `projects/{tag}/` is not in the user's knowledge folder, prompt: *"Project '{tag}' is not in your config (`projects_list`). Add it now? (yes adds the tag to projects_list, creates `projects/{tag}/{decisions,patterns}/` with a per-project README, then writes the file)."* If the user says yes, edit `~/.claude/aria-knowledge.local.md` to append the tag to `projects_list` (preserving existing entries), create the directory structure (mirror `/setup` Step 3's project tier scaffolding), then write the promoted file. If the user says no, fall back to the cross-project location (`approaches/` or `decisions/`) and warn that the project context is being lost.
+- Approved cross-project promotion candidates from Step 5e → already handled inline in Step 5e (synthesis + `originally_at` + source disposition). No additional action here.
 - Approved synthesis drafts → create the new file in the appropriate category, clear source entries from backlogs
 - Approved integrity fixes → apply the fix (edit existing file, add cross-reference, archive superseded content)
 - **Update existing** → for items with Step 5c cross-reference matches, merge the new content into the matched file instead of creating a new one. Read the existing file, identify where the new content fits (new section, addition to existing section, or replacement of outdated content), make the edit, update the `Last updated` date, and add/update tags if needed. Clear from backlog after updating.

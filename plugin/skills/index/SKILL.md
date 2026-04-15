@@ -14,6 +14,9 @@ Read `~/.claude/aria-knowledge.local.md` and extract:
 - `knowledge_folder` — base path for all operations
 - `freeform_promotion_threshold` — minimum file count before suggesting promotion (default: 3)
 - `staleness_threshold_months` — months before a file is flagged stale (default: 6)
+- `projects_enabled` — default `false`; controls whether project tier is scanned and indexed
+- `projects_list` — default empty; comma-separated `tag:path` pairs; only relevant if `projects_enabled: true`
+- `projects_promotion_threshold` — default `2`; minimum projects sharing a similar pattern to surface as a cross-project promotion candidate
 
 If the config file doesn't exist, stop: "aria-knowledge is not configured. Run /setup to get started."
 
@@ -34,9 +37,25 @@ For each `.md` file found:
    - `tags:` — array of tags (e.g., `tags: [api, pagination, django]`). If missing, record as untagged.
    - `Last updated:` — date string (YYYY-MM-DD). If missing, record as unknown.
 4. Extract the first `#` heading as the file's description
-5. Store: `{path, tags[], description, last_updated}`
+5. Store: `{path, tags[], description, last_updated, source: "cross-project"}`
 
 Report: "Scanned N files in approaches/, decisions/, guides/, references/."
+
+### Project tier scan (only if `projects_enabled: true` and `projects_list` is non-empty)
+
+After the cross-project scan, scan the project tier:
+
+For each `tag:path` pair in `projects_list`:
+1. Glob `{knowledge_folder}/projects/{tag}/**/*.md` recursively
+2. **Exclude** `projects/{tag}/README.md` (per-project navigation, not knowledge content)
+3. **Exclude** `projects/README.md` (the projects/ tier README, plugin-managed)
+4. For each file found, perform the same frontmatter extraction as above.
+5. **Path-derived tag union (Decision #9):** automatically add `{tag}` to the file's tag set even if not in YAML frontmatter. The union of YAML tags + path tag is what gets indexed. This means project files don't have to manually include the project tag in their frontmatter.
+6. Store: `{path, tags[], description, last_updated, source: "project-specific", project: tag}`
+
+Report: "Scanned M files across N project subdirectories: [project tags]."
+
+If `projects_enabled: false` or `projects_list` is empty, skip this sub-step entirely. Project tier files (if any exist on disk) won't be indexed.
 
 ## Step 2: Read Existing Index
 
@@ -140,13 +159,17 @@ Tag suggestions are based on:
 
 ## Step 6: Project-to-Tag Mapping Update
 
-Read the root project CLAUDE.md to find the project table. Look for the closest ancestor directory containing a `CLAUDE.md` with a project table.
+Determine the authoritative project list using this priority:
 
-For each project listed in the table:
-1. Read the project's CLAUDE.md (e.g., `cs/CLAUDE.md`, `ss/CLAUDE.md`)
+1. **If `projects_enabled: true` and `projects_list` is non-empty:** use `projects_list` as the project enumeration. Each `tag:path` pair contributes a project entry where the tag is the project key and the path is the project location. This is the configured set of projects ARIA recognizes.
+2. **Otherwise** (or as a supplement when `projects_enabled: false`): read the root project CLAUDE.md to find a project table. Look for the closest ancestor directory containing a `CLAUDE.md` with a project table.
+
+For each project (from either source):
+1. Read the project's CLAUDE.md (e.g., `cs/CLAUDE.md`, `ss/CLAUDE.md`) if it exists at the configured path
 2. Extract tech stack, tools, frameworks, and services mentioned
 3. Match extracted keywords against the Known Tags set (including any newly promoted tags from Step 4)
 4. Also check which tags appear on files that mention the project name in their path or content
+5. **If projects tier is enabled:** add tags inferred from project-tier files (i.e., tags appearing on files under `projects/{tag}/**` from Step 1's project tier scan) to the project's relevant tag set
 
 Build a mapping:
 ```
@@ -283,6 +306,29 @@ For "add manual": let the user specify `skill → file → relationship` for con
 
 Store approved connections for Step 9 output.
 
+## Step 8d: Cross-Project Promotion Candidate Detection
+
+Skip this step entirely if `projects_enabled: false` or `projects_list` has fewer than 2 entries.
+
+Scan files indexed under the project tier (from Step 1's project tier scan) for patterns that may represent the same concept across multiple projects.
+
+**Detection heuristics** (compute pairwise across all project-tier files):
+
+1. **Filename similarity:** Files with similar kebab-case names (e.g., `state-management-patterns.md` in `projects/cs-builder/patterns/` AND `projects/ss/patterns/`). Use case-insensitive equality of stem (filename without `.md`) as the primary match; allow minor variants (`-patterns` vs `-pattern`, plural vs singular).
+2. **Tag overlap:** Files sharing 3+ tags (excluding the project tags themselves, which are auto-derived from path).
+3. **Title/H1 similarity:** Files whose H1 (first `#` heading) shares 3+ significant terms (excluding stop words and project names).
+
+**Threshold:** if a pattern (i.e., a similar file) appears in ≥`projects_promotion_threshold` projects (default 2), surface as a candidate.
+
+For each candidate group, collect:
+- The set of project-tier files that triggered the match
+- The shared tags (excluding project tags)
+- A suggested cross-project location (typically `approaches/{descriptive-name-derived-from-shared-tags-or-title}.md`)
+
+This data is used when generating the `## Cross-Project Promotion Candidates` section in Step 9. **No user interaction at this step** — just collection. Promotion itself happens in `/audit-knowledge` Step 5e (Phase 3 of the project knowledge feature).
+
+**Rationale for surfacing in the index:** the index is a regularly-rebuilt artifact. Detecting candidates here means users see them whenever they look at the index, not only when they explicitly run `/audit-knowledge`. Lower-friction discovery, same downstream promotion workflow.
+
 ## Step 9: Rebuild and Write `index.md`
 
 Generate `{knowledge_folder}/index.md` with this structure:
@@ -296,8 +342,13 @@ Last rebuilt: YYYY-MM-DD
 
 ### [project_key] — [project_name]
 Relevant tags: tag1, tag2, tag3
+Project-tier files: N (decisions: D, patterns: P, other: O)
+Last project-tier update: YYYY-MM-DD
+Promotion candidates: M (see below — same pattern appears in ≥`projects_promotion_threshold` projects)
 
-(repeat for each project)
+(repeat for each project. If `projects_enabled: false`, the per-project metrics lines after "Relevant tags:" are omitted — just the project key and tag mapping appear, mirroring v2.7.x format.)
+
+(For projects with zero project-tier files, show `Project-tier files: 0` and omit "Last project-tier update" — Decision #8: list configured projects even if empty so the user sees what's available.)
 
 ## Known Tags
 
@@ -345,6 +396,16 @@ Last updated: YYYY-MM-DD (N months ago) — threshold: M months
 | /skillname | relative/path/to/file.md | documents the approach this skill implements |
 
 (Repeat for each approved connection from Step 8c, sorted by skill name. Omit this section entirely if no connections discovered or approved.)
+
+## Cross-Project Promotion Candidates
+
+### [shared-tag-or-title-derived-name]
+- Appears in: projects/{tag1}/patterns/file.md, projects/{tag2}/patterns/file.md
+- Shared tags: tag-a, tag-b, tag-c
+- Suggested location: approaches/{descriptive-name}.md
+- Run `/audit-knowledge` Step 5e to promote (synthesizes content + adds `originally_at:` provenance)
+
+(Repeat for each candidate group from Step 8d, sorted by number of projects involved descending then alphabetically. Omit this section entirely if `projects_enabled: false` or no candidates detected.)
 ```
 
 **File paths** in the index are relative to the knowledge folder root (e.g., `approaches/api-pagination.md`, not the absolute path).
