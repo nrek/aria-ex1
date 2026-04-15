@@ -2,6 +2,27 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.8.3] - 2026-04-15
+
+### Changed — Setup Flow Polish
+
+Refinements to `/setup` for the project-specific knowledge tier (v2.8.0 feature), plus parser-robustness clarifications and re-run discoverability fixes.
+
+- **Inline consent for `auto_load_project_context`** — removed the standalone Advanced Options bullet for this flag. It's now asked as the 4th follow-up question in the Project Setup subsection, only when the user enables (or keeps enabled) the project tier. Keeps the two flags (`projects_enabled` + `auto_load_project_context`) as independent opt-ins while improving discoverability at the moment of relevance.
+- **Re-run and shortcut discoverability** — Project Setup follow-ups now fire for "keeps enabled" re-runs in update mode. The existing-folder detection path asks Q4 on fresh enable-via-shortcut and surfaces a Q4 status-check when the tier was previously enabled. All four user-reachable state transitions now have a `/setup` path without requiring manual config-file editing.
+- **Step 7 parser rationale** — added a preamble to the formatting rules explaining that the config is parsed with pure `grep + sed` (no jq/yq/python), so future contributors understand why the constraints are strict and any deviation breaks parsing silently.
+- **Empty-value formatting rule** — documented the exact byte sequence for empty values (`key:` with nothing after the colon). Explicitly called out that `key: null`, `key: ""`, `key: none`, and `key: []` parse as literal strings and silently mis-behave against validators.
+- **Step 7b empty-sentinel verification** — round-trip verification now rejects the literal-string empty sentinels (`null`, `""`, `none`, `[]`) for string-valued keys with empty defaults (`critical_paths`, `projects_list`, `projects_remotes`) and rewrites them as truly empty.
+
+### Changed — OVERVIEW.md
+
+- Added `/wrapup` row to the skills table; the skill already exists in the plugin but wasn't listed in the user-facing overview.
+
+### Backward Compatibility
+
+- No schema, parser, or hook changes. Existing `~/.claude/aria-knowledge.local.md` configs continue to work unchanged.
+- Users who previously enabled `projects_enabled: true` without `auto_load_project_context` explicitly set: next `/setup` run will surface the Q4 status-check in the existing-folder detection branch, giving them a discoverable toggle path.
+
 ## [2.8.2] - 2026-04-15
 
 ### Added — Per-Task Insight Batch Capture

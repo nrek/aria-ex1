@@ -107,8 +107,7 @@ If the user asks about advanced options or re-runs setup with existing config, a
 > - **Staleness threshold:** 6 months (flag knowledge files not updated within this period)
 > - **Auto-capture on compaction:** true (save transcript snapshot before context compaction)
 > - **Critical paths:** (empty) comma-separated path patterns that always require HIGH impact assessment (e.g., auth/*,payments/*,migrations/*)
-> - **Project-specific knowledge tier:** disabled (creates `projects/{tag}/` subdirectories for project-specific decisions and patterns; opt in if you want to organize knowledge by project alongside the cross-project tree)
-> - **Auto-load project context on session start:** disabled (when enabled AND project tier is enabled AND CWD matches a configured project, the SessionStart hook suggests `/context {project}` automatically; second opt-in for power users who want hook-driven convenience)
+> - **Project-specific knowledge tier:** disabled (creates `projects/{tag}/` subdirectories for project-specific decisions and patterns; opt in if you want to organize knowledge by project alongside the cross-project tree. If enabled, you'll be asked an inline follow-up about auto-loading project context on session start.)
 >
 > Want to change any? (Enter new values or press enter to keep defaults)"
 
@@ -116,24 +115,26 @@ Record the values. If the user doesn't ask about advanced options during initial
 
 ### Project Setup (only if user enables the project-specific knowledge tier)
 
-If the user enables the project-specific knowledge tier in Advanced Options, ask three follow-up questions:
+If the user enables (or keeps enabled) the project-specific knowledge tier in Advanced Options, ask four follow-up questions. In **update mode** where values already exist in the config, show the current value for each question and let the user keep it (press enter) or enter a new value — this is the discoverable path for toggling `auto_load_project_context` on a re-run when the tier was previously enabled:
 
 1. **Project list** — "Comma-separated `tag:relative-path` pairs (e.g., `cs-builder:cs/cs-space-builder,df:df,ss:ss`). Paths are relative to the parent of your knowledge folder (typically `~/Projects/`). Press enter to defer adding projects:"
 2. **Project remotes (optional)** — "Optional git-remote URL patterns for fallback project detection when CWD doesn't match a configured path. Comma-separated `tag:url-substring` pairs (e.g., `cs-builder:craftxlogic/cs-space-builder`). Press enter to skip:"
 3. **Promotion threshold** — "Minimum number of projects that must share a similar pattern before `/audit-knowledge` suggests cross-project promotion (default 2):"
+4. **Auto-load project context on session start** — "When your CWD matches a configured project, should SessionStart automatically suggest `/context {tag}`? This is a runtime convenience — the project tier works fine without it, and you can change this later by editing `auto_load_project_context` in `~/.claude/aria-knowledge.local.md`. (y/n, default n):"
 
 **Validate input:**
 - Project tags cannot contain `:` or `,` (these are the parser delimiters). If invalid, show the offending tag and re-prompt.
 - Promotion threshold must be a plain integer ≥ 1. If invalid, re-prompt.
+- Auto-load answer must be `y`/`n` (or empty for default). If invalid, re-prompt.
 - For each `tag:path` pair, warn (don't error) if the resolved path doesn't exist on disk yet — the user may be configuring projects they haven't created.
 
 **Existing-folder detection:**
 
 Before prompting, scan the user's knowledge folder for an existing `projects/` subdirectory:
 
-- **If found AND `projects_enabled` is unset in config:** Skip the Advanced Options bullet for this feature; instead prompt directly: "Detected existing `projects/` folder with these subdirectories: [list]. Enable project-specific knowledge tier? (y/n)" — if yes, auto-populate `projects_list` from detected subdirectories (prompt only for the path mapping per detected tag).
+- **If found AND `projects_enabled` is unset in config:** Skip the Advanced Options bullet for this feature; instead prompt directly: "Detected existing `projects/` folder with these subdirectories: [list]. Enable project-specific knowledge tier? (y/n)" — if yes, auto-populate `projects_list` from detected subdirectories (prompt for the path mapping per detected tag), then ask question 4 from the Project Setup flow above so the user can opt into `auto_load_project_context` at the same time.
 - **If found AND `projects_enabled: false` explicitly in config:** Leave the existing folder untouched; note in verbose output: "An existing `projects/` folder was detected but the projects tier is disabled in config. Folder is preserved; automation is off."
-- **If found AND `projects_enabled: true`:** Verify each detected subdirectory is in `projects_list`; prompt to add any missing ones.
+- **If found AND `projects_enabled: true`:** Verify each detected subdirectory is in `projects_list`; prompt to add any missing ones. Then surface the current `auto_load_project_context` value as a status check: "Auto-load project context on session start is currently [on/off]. Change? (y/n, default n — keep current)." — this is the re-run discoverability path for toggling the flag when the tier was previously enabled.
 
 **Never auto-delete or auto-rewrite existing `projects/` content.**
 
@@ -170,11 +171,12 @@ Configured by /setup on [today's date].
 
 In **update mode:** preserve any user-added content in the markdown body below the frontmatter when rewriting.
 
-**Formatting rules** — the config file MUST follow these exact conventions or the hook scripts cannot parse it:
+**Formatting rules** — the config file MUST follow these exact conventions or the hook scripts cannot parse it. The hooks parse this file using pure `grep + sed` (no jq/yq/python) — these constraints exist so the substitution patterns in `bin/config.sh` work correctly, and any deviation breaks parsing silently.
 - Frontmatter delimiters must be exactly `---` on their own line (no leading spaces, no trailing content)
 - Each key must start at column 1 with no indentation
 - Keys use the exact names shown above (no quoting, no trailing spaces)
 - Values must NOT be quoted — write `knowledge_folder: /path/to/folder`, not `knowledge_folder: "/path/to/folder"`
+- **Empty values:** write `key:` with nothing after the colon (optionally one trailing space). Do NOT write `key: null`, `key: ""`, `key: none`, or `key: []` — the parser treats those as literal string values (`"null"`, `"\"\""`, etc.) and validators won't normalize them to empty
 - `knowledge_folder` must be an absolute path (starts with `/`) and must not contain `..`
 - Cadence values must be plain integers (no units, no quotes)
 - `projects_enabled` must be exactly `true` or `false` (not `True`, `yes`, `1`, etc.)
@@ -206,6 +208,7 @@ After writing the config file, read it back and verify that each value can be ex
    - `projects_remotes` — confirm it's a comma-separated string of `tag:url-pattern` pairs (or empty); validate no project tag contains `:` or `,`
    - `projects_promotion_threshold` — confirm it's a plain integer ≥ 1 (matches Step 6 input)
    - `auto_load_project_context` — confirm it's `true` or `false`
+   - **Empty-sentinel check** — for string-valued keys with an empty default (`critical_paths`, `projects_list`, `projects_remotes`): confirm the raw extracted value is not the literal string `null`, `""`, `none`, or `[]`. If the key is intended to be empty, the value after the colon must be truly empty (nothing or a single trailing space). Rewrite the key as `key:` and re-verify.
 
 **If any check fails:** rewrite the file with corrected formatting and verify again. Report which value failed and what was fixed.
 

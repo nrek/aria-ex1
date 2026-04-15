@@ -88,6 +88,7 @@ Knowledge Repository is powered by **aria-knowledge**, a Claude Code plugin that
 |-------|-------------|
 | `/setup` | Configure knowledge folder, validate structure, set audit cadences |
 | `/extract` | Scan conversation for uncaptured knowledge and stage to backlogs |
+| `/wrapup` | End-of-session handoff — runs `/extract`, updates PROGRESS.md/CLAUDE.md, prompts for commit |
 | `/audit-knowledge` | Review backlogs and memory for promotable knowledge, detect themes, check integrity |
 | `/audit-config` | Check CLAUDE.md files, configs, and docs for drift, broken references, staleness |
 | `/context [tags]` | Load relevant knowledge by topic with project tag expansion |
