@@ -1,6 +1,6 @@
 # Working Rules
 
-**Last updated:** 2026-04-14
+**Last updated:** 2026-04-15
 *Established: April 2, 2026*
 
 -----
@@ -10,6 +10,8 @@
 These rules govern how you and Claude approach coding, architecture, and development decisions. They apply across all projects.
 
 Rules are living — they get added, refined, or retired based on real experience (see Rule 2 and Rule 22). Rule numbers are permanent IDs — never renumber. Retired rules keep their number and get marked `[RETIRED]`.
+
+**For your own project/team rules,** use [`user-rules.md`](user-rules.md) in this directory. ARIA never touches that file on updates — you can add, retire, and renumber freely there without worrying about plugin numbering collisions. The `/rules` skill searches both files.
 
 -----
 
@@ -168,3 +170,17 @@ MCP browser tools (screenshots, snapshots, DOM queries) consume significant toke
 When visual testing is warranted, minimize token usage: use snapshots (text-based) over screenshots, target specific elements rather than full pages, and batch checks rather than screenshot-per-change.
 
 **Origin:** A simple DOM reorder (moving a save status indicator left in a flex container) triggered a full login + navigation + screenshot flow that consumed ~15% of session tokens to verify a change that was self-evident from the code.
+
+### 30. Signal context pressure — don't silently degrade
+
+When the context window is filling up with file contents, tool results, and conversation history, say so explicitly rather than silently cutting corners, skipping checks, or making assumptions. Long sessions with many file reads are where discipline breaks down most — the user needs to know when quality is at risk so they can choose to start a fresh session or reduce scope.
+
+Context pressure is not permission to skip process steps (Rules 20, 22, 25). If you can't follow the process properly, flag it instead of producing lower-quality output.
+
+### 31. Diff rewrites against the original — verify nothing was dropped
+
+When rewriting, restructuring, or migrating a file, diff against the original to verify no content was silently lost. Rewrites naturally focus on the new structure, and existing details fall out — not maliciously, but because the attention shifts. This applies to any operation that produces a new version of an existing file.
+
+This complements Rule 26 (declare scope before building from references): Rule 26 prevents undeclared *additions*; this rule prevents undeclared *omissions*.
+
+**Origin:** Observed pattern where file restructuring silently dropped content that wasn't part of the new organizational focus.

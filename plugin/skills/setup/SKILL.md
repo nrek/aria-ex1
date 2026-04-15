@@ -37,9 +37,9 @@ Read the expected structure from `${CLAUDE_PLUGIN_ROOT}/template/`.
 
 **Expected directories:** `intake/`, `intake/notes/`, `intake/attachments/`, `intake/clippings/`, `intake/pre-compact-captures/`, `logs/`, `rules/`, `approaches/`, `decisions/`, `guides/`, `references/`, `archive/`
 
-**Expected files:** `README.md`, `OVERVIEW.md`, `LOCAL.md`, `intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `logs/knowledge-audit-log.md`, `logs/config-audit-log.md`, `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`
+**Expected files:** `README.md`, `OVERVIEW.md`, `LOCAL.md`, `intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `logs/knowledge-audit-log.md`, `logs/config-audit-log.md`, `rules/working-rules.md`, `rules/user-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`
 
-**User-owned files (created once from template, never overwritten or diffed):** `LOCAL.md` (project-specific guide), `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md` (directory stubs users may customize).
+**User-owned files (created once from template, never overwritten or diffed):** `LOCAL.md` (project-specific guide), `rules/user-rules.md` (your custom rules — ARIA never touches this file), `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md` (directory stubs users may customize).
 
 **In create mode:** Create all directories and copy all template files.
 
@@ -57,7 +57,7 @@ For each templated file that already exists in the user's folder, compare agains
 
 **Files to diff:** `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `README.md`, `OVERVIEW.md`, `projects/README.md` (plugin-managed if present)
 
-**Never diff:** `LOCAL.md` (user-owned), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`), audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`), and per-project READMEs (`projects/{tag}/README.md` and any other content under `projects/{tag}/**`) — these contain user data or user-customizable content.
+**Never diff:** `LOCAL.md` (user-owned), `rules/user-rules.md` (user-owned — your custom rules), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`), audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`), and per-project READMEs (`projects/{tag}/README.md` and any other content under `projects/{tag}/**`) — these contain user data or user-customizable content.
 
 For each file with differences:
 1. Notify: "[filename] differs from the plugin version."
