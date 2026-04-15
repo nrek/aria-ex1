@@ -129,6 +129,23 @@ Load which files? (all / numbers / none)
 
 Do NOT pad results with empty folder notes for project tags that weren't queried.
 
+**Pending Ideas surfacing:** if the query includes a configured project tag AND `{knowledge_folder}/intake/ideas-backlog.md` exists, scan the file for entries whose header project field matches (or includes) the query's project tag. Present matches as a compact informational section after the file list, before the "Load which files?" prompt:
+
+```
+## Pending Ideas for cs-builder (3)
+- 2026-04-15 (1 day ago) — feature — /setup diff prompts ahead vs diverged
+- 2026-03-22 (25 days ago) — bug — theme tokens missing from blueprint XYZ [STALE — still relevant?]
+- 2026-03-12 (35 days ago) — refactor — simplify blueprint merge logic [STALE — still relevant?]
+```
+
+Details:
+- **Age computation:** `(today - entry date)` in days; show as "(N day ago)" or "(N days ago)".
+- **Stale marker:** append ` [STALE — still relevant?]` when age > `KT_IDEAS_STALENESS_DAYS` (default 21). Read the threshold from `~/.claude/aria-knowledge.local.md` via `config.sh` or fall back to 21.
+- **Multi-project entries:** if the entry header has comma-separated project tags (e.g., `cs,ss`), include it for each matching project query.
+- **Not selectable:** ideas are informational. They do NOT appear in the numbered file list and are not loadable via "all" or numbers. To triage them, use `/audit-knowledge` (structured disposition flow) or edit `intake/ideas-backlog.md` directly.
+- **Omission:** if no ideas match, omit the section entirely (do not show an empty "Pending Ideas" heading).
+- **Non-project queries:** skip this section entirely when the query is topic-only (e.g., `/context api` or `/context architecture`). Ideas surfacing is project-scoped; cross-project ideas reach the user through `/audit-knowledge`, not `/context`.
+
 Show the file's tags in brackets after the description so the user can see why each file matched.
 
 **If no matches at all:**

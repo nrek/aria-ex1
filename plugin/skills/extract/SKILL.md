@@ -44,12 +44,13 @@ The timestamp is tracked as the last entry date in the backlogs from this sessio
 - `{knowledge_folder}/intake/insights-backlog.md`
 - `{knowledge_folder}/intake/decisions-backlog.md`
 - `{knowledge_folder}/intake/extraction-backlog.md`
+- `{knowledge_folder}/intake/ideas-backlog.md`
 
 If no entries exist from today's date, treat the entire conversation as unscanned.
 
 ## Step 2: Scan Conversation for Uncaptured Knowledge
 
-Review the conversation and categorize findings into five buckets:
+Review the conversation and categorize findings into six buckets. The first five (insights, decisions, feedback, project context, references) capture **observations about what IS** — they promote to knowledge during audit. The sixth bucket (ideas) captures **proposals about what SHOULD BE different** — these route out to your external tracker, not into knowledge files.
 
 ### Insights
 - Insight blocks that were output but NOT yet appended to `insights-backlog.md` (per-task capture may have already appended some — Step 3 dedup handles this)
@@ -80,15 +81,24 @@ Review the conversation and categorize findings into five buckets:
 - Linear projects, Slack channels, or other system pointers
 - Documentation locations discovered during the session
 
+### Ideas (proposals, not observations)
+- Feature proposals for any project ("this should support X", "X could be better if Y")
+- Bug reports noticed in passing ("X silently fails when Y", "this UX is broken in case Z")
+- Design ideas or refactoring proposals not yet scoped for implementation
+- Workflow improvements ("it would help if the tool did X")
+- **Classification signal:** phrases like "should", "could be", "missing handling for", "UX gap", "would help if", "this is broken" typically indicate an idea rather than an observation
+- **Soft routing:** classification is a suggestion, not a hard rule. An item can legitimately be both observation and proposal — if so, put the observation in its appropriate bucket (insights/decisions/etc.) AND a separate entry in ideas-backlog covering just the proposal. The audit step can refine routing if needed.
+
 ## Step 3: Deduplicate
 
 For each finding, check against:
 1. Existing entries in `{knowledge_folder}/intake/insights-backlog.md`
 2. Existing entries in `{knowledge_folder}/intake/decisions-backlog.md`
 3. Existing entries in `{knowledge_folder}/intake/extraction-backlog.md`
-4. CLAUDE.md files in the current working directory (root and project-level)
-5. Memory files in `~/.claude/projects/` for the current project
-6. Knowledge files in `{knowledge_folder}/`
+4. Existing entries in `{knowledge_folder}/intake/ideas-backlog.md`
+5. CLAUDE.md files in the current working directory (root and project-level)
+6. Memory files in `~/.claude/projects/` for the current project
+7. Knowledge files in `{knowledge_folder}/`
 
 **Skip anything already captured.** Be conservative — if the content is substantively the same even with different wording, skip it.
 
@@ -141,6 +151,19 @@ Use this format:
 **Source:** Where in the conversation this came from (brief description)
 ```
 
+### Ideas → `{knowledge_folder}/intake/ideas-backlog.md`
+
+Use this format:
+```markdown
+### YYYY-MM-DD — [project] — [short title]
+**Type:** feature | bug | design | refactor | workflow
+**Proposal:** What change is being proposed
+**Motivation:** Why it would help (what gap or friction it addresses)
+**Source:** Where in the conversation it came up (brief description)
+```
+
+Ideas do NOT promote to knowledge files — they route out of ARIA to the user's external tracker (Linear, GitHub Issues, Jira, etc.) during audit review.
+
 ### Before appending:
 - Remove the "(No pending ...)" placeholder if it exists — replace with the new entries
 - If entries already exist, append below them with a blank line separator
@@ -158,9 +181,10 @@ After appending, output a brief summary:
 - **Feedback:** N new (appended to extraction-backlog.md)
 - **Project context:** N new (appended to extraction-backlog.md)
 - **References:** N new (appended to extraction-backlog.md)
+- **Ideas:** N new (appended to ideas-backlog.md — route to tracker, not knowledge)
 - **Skipped:** N duplicates
 
-Knowledge staged in backlogs for next audit to review and promote.
+Knowledge staged in backlogs for next audit to review and promote. Ideas staged for routing out to your external tracker.
 ```
 
 If nothing was found:

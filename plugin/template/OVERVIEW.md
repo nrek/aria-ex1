@@ -52,6 +52,14 @@ Approved knowledge moves to its permanent home based on what type it is. Each ty
 
 This taxonomy is complete — every type of reusable knowledge fits into exactly one category. If it doesn't fit any of them, it's either ephemeral (belongs in session notes) or not yet validated (stays in the backlog until it is).
 
+### Ideas Backlog (capture vs. track boundary)
+
+ARIA captures observations about **what IS** (knowledge) and stages proposals about **what SHOULD BE different** (ideas). The five knowledge types above are observations; ideas are a separate bucket with a distinct disposition.
+
+Feature proposals, bug reports, and design ideas all flow into `intake/ideas-backlog.md` during `/extract`. The audit surfaces them in their own section without suggesting promotion targets — ideas never promote to knowledge files. Instead, they route out of ARIA to your external tracker (Linear, GitHub Issues, Jira, etc.) when ready to schedule, or get discarded if rejected.
+
+**ARIA captures; your tracker schedules.** This boundary keeps ARIA tool-agnostic and prevents a common drift mode where proposals get misfiled as documentation of features that don't exist yet.
+
 ### Project-Specific Tier (opt-in, since v2.8.0)
 
 The five-type taxonomy above is for **cross-project** knowledge — patterns and decisions validated across multiple projects, applicable beyond a single codebase. But not all valuable knowledge clears that bar.

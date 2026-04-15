@@ -37,7 +37,7 @@ Read the expected structure from `${CLAUDE_PLUGIN_ROOT}/template/`.
 
 **Expected directories:** `intake/`, `intake/notes/`, `intake/attachments/`, `intake/clippings/`, `intake/pre-compact-captures/`, `logs/`, `rules/`, `approaches/`, `decisions/`, `guides/`, `references/`, `archive/`
 
-**Expected files:** `README.md`, `OVERVIEW.md`, `LOCAL.md`, `intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `logs/knowledge-audit-log.md`, `logs/config-audit-log.md`, `rules/working-rules.md`, `rules/user-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`
+**Expected files:** `README.md`, `OVERVIEW.md`, `LOCAL.md`, `intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `intake/ideas-backlog.md`, `logs/knowledge-audit-log.md`, `logs/config-audit-log.md`, `rules/working-rules.md`, `rules/user-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`
 
 **User-owned files (created once from template, never overwritten or diffed):** `LOCAL.md` (project-specific guide), `rules/user-rules.md` (your custom rules — ARIA never touches this file), `guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md` (directory stubs users may customize).
 
@@ -57,7 +57,7 @@ For each templated file that already exists in the user's folder, compare agains
 
 **Files to diff:** `rules/working-rules.md`, `rules/change-decision-framework.md`, `rules/enforcement-mechanisms.md`, `README.md`, `OVERVIEW.md`, `projects/README.md` (plugin-managed if present)
 
-**Never diff:** `LOCAL.md` (user-owned), `rules/user-rules.md` (user-owned — your custom rules), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`), audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`), and per-project READMEs (`projects/{tag}/README.md` and any other content under `projects/{tag}/**`) — these contain user data or user-customizable content.
+**Never diff:** `LOCAL.md` (user-owned), `rules/user-rules.md` (user-owned — your custom rules), directory README stubs (`guides/README.md`, `approaches/README.md`, `decisions/README.md`, `references/README.md`, `archive/README.md`), backlog files (`intake/insights-backlog.md`, `intake/decisions-backlog.md`, `intake/extraction-backlog.md`, `intake/ideas-backlog.md`), audit log files (`logs/knowledge-audit-log.md`, `logs/config-audit-log.md`), and per-project READMEs (`projects/{tag}/README.md` and any other content under `projects/{tag}/**`) — these contain user data or user-customizable content.
 
 For each file with differences:
 1. Notify: "[filename] differs from the plugin version."
@@ -105,6 +105,7 @@ If the user asks about advanced options or re-runs setup with existing config, a
 > "Advanced settings (defaults are fine for most users):
 > - **Freeform tag promotion threshold:** 3 (suggest promoting a freeform tag to known after it appears on this many files)
 > - **Staleness threshold:** 6 months (flag knowledge files not updated within this period)
+> - **Ideas staleness threshold:** 21 days (during `/audit-knowledge`, mark ideas-backlog entries older than this with `[STALE — still relevant?]` to prompt Accept/Reject/Defer decisions)
 > - **Auto-capture on compaction:** true (save transcript snapshot before context compaction)
 > - **Critical paths:** (empty) comma-separated path patterns that always require HIGH impact assessment (e.g., auth/*,payments/*,migrations/*)
 > - **Project-specific knowledge tier:** disabled (creates `projects/{tag}/` subdirectories for project-specific decisions and patterns; opt in if you want to organize knowledge by project alongside the cross-project tree. If enabled, you'll be asked an inline follow-up about auto-loading project context on session start.)
@@ -151,6 +152,7 @@ explanatory_plugin: [true/false from Step 5]
 audit_cadence_update: [value from Step 6, default 30]
 freeform_promotion_threshold: [value from Step 6, default 3]
 staleness_threshold_months: [value from Step 6, default 6]
+ideas_staleness_threshold_days: [value from Step 6, default 21]
 auto_capture: [true/false from Step 6, default true]
 critical_paths: [comma-separated patterns from Step 6, default empty]
 projects_enabled: [true/false from Step 6, default false]
@@ -201,6 +203,7 @@ After writing the config file, read it back and verify that each value can be ex
    - `audit_cadence_update` — confirm it's the integer from Step 6
    - `freeform_promotion_threshold` — confirm it's the integer from Step 6
    - `staleness_threshold_months` — confirm it's the integer from Step 6
+   - `ideas_staleness_threshold_days` — confirm it's the integer from Step 6
    - `auto_capture` — confirm it's `true` or `false`
    - `critical_paths` — confirm it's a comma-separated string of path patterns (or empty)
    - `projects_enabled` — confirm it's `true` or `false`

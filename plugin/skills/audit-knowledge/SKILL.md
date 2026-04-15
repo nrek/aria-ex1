@@ -74,6 +74,25 @@ If there are entries below the `---` separator, these are feedback, project cont
 
 For each entry, note it for presentation in Step 6. Feedback items are promoted to `~/.claude/projects/` memory as feedback memories. Project context items become project memories. Reference items become reference memories or go to `{knowledge_folder}/references/`. Rejected items get cleared from the backlog.
 
+**Reclassification check:** If any entry reads as a feature proposal, bug report, or design idea (rather than an observation about what IS), flag it for re-routing to `ideas-backlog.md` during Step 7. Common signals: "should", "could be better if", "missing handling for", "UX gap", "would help if". Misclassified proposals will otherwise get promoted into knowledge files where they sit as documentation of things that don't exist — a known drift mode.
+
+## Step 2c2: Review Ideas Backlog
+
+Read `{knowledge_folder}/intake/ideas-backlog.md`. **If the file is missing**, report it in Step 6 and suggest running `/setup` to repair the structure. Do not create it.
+
+If there are entries below the `---` separator, these are feature proposals, bug reports, and design ideas captured via `/extract`. Ideas have a **distinct disposition** from other backlogs — they do NOT promote to knowledge files. Present them in their own section in Step 6 with the options:
+
+- **Accept** — user copies the idea to their external tracker (Linear, GitHub Issues, Jira, etc.), then the entry is cleared from the backlog with a note of where it went
+- **Reject** — entry is cleared with a one-line reason
+- **Defer** — entry stays in backlog for the next audit cycle
+- **Reclassify** — if on review the item is actually an observation, move it to the appropriate knowledge backlog (insights/decisions/extraction) for normal promotion
+
+Do NOT suggest promotion targets (approaches/, decisions/, etc.) for ideas — that's the whole point of the separation. The audit report for ideas is presentational only; routing out to trackers is a user action, not a promotion.
+
+**Age annotation and stale marker:** For each idea entry, compute age as `(today - entry date)` in days from the `YYYY-MM-DD` in the entry header. Annotate each entry with its age (`filed N days ago`). Read the staleness threshold from `~/.claude/aria-knowledge.local.md` (`ideas_staleness_threshold_days`, default 21) via `config.sh` or fallback. When `age > threshold`, append a `[STALE — still relevant?]` marker to the entry and escalate its visual weight in Step 6 (place stale entries first within the Pending Ideas section, and prompt explicitly for Accept/Reject/Defer rather than allowing implicit Defer).
+
+This is the audit's mechanism for forcing action on long-sitting ideas. Without staleness surfacing, items accumulate silently; with it, every audit cycle either confirms an idea still matters or retires it.
+
 ## Step 2d: Review Pre-Compact Captures
 
 Scan `{knowledge_folder}/intake/pre-compact-captures/` for `.md` files. **If the directory doesn't exist or is empty**, skip silently to Step 3.
@@ -303,6 +322,39 @@ For each insight entry:
 - **Insight:** the bullet points
 - **Suggested location:** where in the knowledge folder it should go (or "clear" if not worth keeping)
 
+### Pending Ideas (from ideas-backlog.md)
+
+Present ideas in their own section. **Sort stale entries first** (age > `ideas_staleness_threshold_days`, default 21). For each entry, show:
+- Date, age annotation (`filed N days ago`), project tag, short title, type (feature/bug/design/refactor/workflow)
+- Stale marker `[STALE — still relevant?]` appended when age > threshold
+- Proposal and motivation (one-line summary if long)
+- **Disposition options (no promotion targets):** Accept → copy to tracker | Reject → clear with reason | Defer → keep in backlog | Reclassify → move to appropriate knowledge backlog if this is actually an observation
+
+For stale entries, prompt explicitly for a disposition choice (don't allow implicit Defer). For non-stale entries, Defer is fine as a no-op.
+
+Example:
+```
+### Pending Ideas (3)
+
+- 2026-03-12 (35 days ago) — aria — refactor — simplify blueprint merge logic [STALE — still relevant?]
+  Proposal: ...
+  Accept / Reject / Defer / Reclassify?
+
+- 2026-03-22 (25 days ago) — cs-builder — bug — theme tokens missing from blueprint XYZ [STALE — still relevant?]
+  Proposal: ...
+  Accept / Reject / Defer / Reclassify?
+
+- 2026-04-15 (1 day ago) — aria — feature — /setup diff prompts ahead vs diverged
+  Proposal: ...
+  Accept / Reject / Defer / Reclassify?
+```
+
+Do NOT suggest promotion to approaches/decisions/rules/etc. Ideas route out to external trackers; ARIA is staging only.
+
+**Between audits:** remind the user that `/context {project}` also surfaces pending ideas scoped to that project (informational, non-selectable) — for keeping the staged list visible between audit cycles without running a full review. Audit-time is for disposition; `/context` is for awareness.
+
+If no ideas exist: omit this section.
+
 ### Pending Decisions (from decisions-backlog.md)
 
 For each decision entry:
@@ -498,13 +550,41 @@ If this is the first audit (no index exists yet), note: "Building knowledge inde
 
 ## Step 8: Update the Audit Log (always, even if nothing extracted)
 
-After presenting findings (and completing any approved extractions), update `{knowledge_folder}/logs/knowledge-audit-log.md`:
+After presenting findings (and completing any approved extractions), update `{knowledge_folder}/logs/knowledge-audit-log.md`.
+
+Use the **structured format** below — it keeps audit logs scannable over many passes, and fields like "Counts" and "New files" are grep-able for trend analysis across audits. Previous entries in free-form paragraphs remain valid; apply this template to new entries going forward.
+
+**If items were promoted:**
 
 ```markdown
 ## Last Audit
-- **Date:** YYYY-MM-DD
-- **Result:** [describe outcome — e.g., "No new items" or "Extracted N items — brief description"]
+- **Date:** YYYY-MM-DD (Nth pass — short label: "routine check", "v2.8.0 continuation", "post-restructure", etc.)
+- **Counts:** X insights, Y decisions, Z extractions reviewed
+- **Ideas disposition:** W reviewed — A accepted → tracker, B rejected, C deferred, D reclassified (omit field entirely if no ideas were in the audit)
+- **New files:** N total — [breakdown: K approaches, L ADRs (split by tier), M patterns, etc.]
+- **Extended files:** P total — [list filename: brief change, e.g. "css-gotchas.md +2 gotchas"]
+- **Memory:** A new feedback, B new project, C new reference, D updates
+- **Integrity fixes:** E total — [one-line each, e.g. "decisions/README.md naming convention per ADR 014"]
+- **Themes:** [1-3 phrases naming the pattern clusters that drove promotions, e.g. "audit methodology synthesis", "ARIA v2.8.0 patterns"]
+- **Notes:** [free text — deferred items, cross-references, notable decisions, 1-3 sentences max]
 ```
+
+**If nothing promoted (empty-audit case):**
+
+```markdown
+## Last Audit
+- **Date:** YYYY-MM-DD (Nth pass — "no new items" or short label)
+- **Result:** No new items — [X memory files all Category A, Y plan files Category B, backlogs empty OR K entries all cleared as already-captured/stale]
+- **Ideas disposition:** [optional — omit if no ideas were in the audit, else: W reviewed — A accepted → tracker, B rejected, C deferred, D reclassified]
+- **Notes:** [optional — anything worth flagging even though nothing was promoted, e.g. "clusters forming around theme X but below threshold"]
+```
+
+**Formatting rules:**
+- Every field on its own line (no paragraph mashing)
+- Counts are numeric; lists are comma- or newline-separated but bounded (don't dump 30 filenames into one bullet — use "27 total — [3-5 highlights]" plus "See [file] for full list" if needed)
+- Notes is the escape hatch for things that don't fit — but cap at a few sentences. If the Notes section balloons past that, the audit produced enough content to deserve a dedicated summary doc, not a bloated log entry.
+
+Also demote the previous "Last Audit" entry to the "## Previous Audits" section. If multiple audits happened in a single day (continuation passes like Pass 2 or tenth-pass), nest them under a single date header rather than creating sibling "Date: YYYY-MM-DD" entries.
 
 ## Rules
 

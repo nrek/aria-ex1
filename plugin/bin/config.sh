@@ -30,6 +30,7 @@ if [ -f "$KT_CONFIG" ]; then
   KT_PROJECTS_REMOTES=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^projects_remotes:' | sed 's/^projects_remotes: *//')
   KT_PROJECTS_PROMOTION_THRESHOLD=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^projects_promotion_threshold:' | sed 's/^projects_promotion_threshold: *//')
   KT_AUTO_LOAD_PROJECT_CONTEXT=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^auto_load_project_context:' | sed 's/^auto_load_project_context: *//')
+  KT_IDEAS_STALENESS_DAYS=$(sed -n '/^---$/,/^---$/p' "$KT_CONFIG" | grep '^ideas_staleness_threshold_days:' | sed 's/^ideas_staleness_threshold_days: *//')
 
   # Defaults if not set
   KT_CADENCE_KNOWLEDGE=${KT_CADENCE_KNOWLEDGE:-3}
@@ -42,6 +43,7 @@ if [ -f "$KT_CONFIG" ]; then
   KT_PROJECTS_ENABLED=${KT_PROJECTS_ENABLED:-false}
   KT_PROJECTS_PROMOTION_THRESHOLD=${KT_PROJECTS_PROMOTION_THRESHOLD:-2}
   KT_AUTO_LOAD_PROJECT_CONTEXT=${KT_AUTO_LOAD_PROJECT_CONTEXT:-false}
+  KT_IDEAS_STALENESS_DAYS=${KT_IDEAS_STALENESS_DAYS:-21}
   # KT_CRITICAL_PATHS intentionally has no default — empty means no critical paths
   # KT_PROJECTS_LIST and KT_PROJECTS_REMOTES intentionally have no defaults — empty means "no projects configured"
 
@@ -89,6 +91,9 @@ if [ -f "$KT_CONFIG" ]; then
   case "$KT_AUTO_LOAD_PROJECT_CONTEXT" in
     true|false) ;; # valid
     *) KT_AUTO_LOAD_PROJECT_CONTEXT=false ;;
+  esac
+  case "$KT_IDEAS_STALENESS_DAYS" in
+    ''|*[!0-9]*) KT_IDEAS_STALENESS_DAYS=21 ;;
   esac
 fi
 

@@ -2,6 +2,35 @@
 
 All notable changes to ARIA will be documented in this file.
 
+## [2.8.4] - 2026-04-15
+
+### Added — Ideas Backlog (capture/track boundary)
+
+Fourth intake backlog for feature proposals, bug reports, and design ideas. Distinct from the other three backlogs: ideas **never promote to knowledge files** — they route out of ARIA to the user's external tracker (Linear, GitHub Issues, Jira, etc.) during audit review, or get discarded.
+
+Motivated by a common drift mode observed in practice: feature proposals and bug reports captured during work were getting misfiled as knowledge, ending up in `approaches/` or `guides/` as documentation of features that don't exist yet. The ideas-backlog creates a staging area with a different disposition — ARIA captures; your tracker schedules.
+
+- **New template file** — `plugin/template/intake/ideas-backlog.md` ships with format + disposition explanation. Scaffolded on first `/setup` for new installs, auto-added on next `/setup` re-run for existing installs (Step 3 missing-file detection).
+- **/extract updates** — new "Ideas (proposals, not observations)" bucket with classification signals ("should", "could be better if", "missing handling for", "UX gap", "would help if"). Soft-routing — items can legitimately split between observation (insights/decisions) and proposal (ideas); audit can refine if misclassified.
+- **/audit-knowledge updates** — new Step 2c2 reviews ideas-backlog with distinct disposition options (Accept → tracker, Reject, Defer, Reclassify). Step 2c adds a reclassification check flagging misfiled proposals in the extraction-backlog. Step 6 presents ideas in their own report section without promotion targets.
+- **/setup updates** — Expected files list includes `intake/ideas-backlog.md`; Never-diff list excludes it from template reconciliation (it's a user data file once scaffolded).
+- **Docs** — OVERVIEW.md gains a "capture vs. track boundary" section explaining the philosophical separation. README.md directory tree includes the new file with inline routing note.
+
+No breaking changes. Existing backlog formats and disposition rules are unchanged; this is purely additive.
+
+### Added — Ideas Surfacing (project-scoped + aging)
+
+Two surfacing mechanisms so staged ideas reach the user during normal workflow instead of only during explicit `/audit-knowledge` review. Addresses the dead-letter-office problem: a staging backlog nobody looks at stops being staging and starts being noise.
+
+- **`/context {project}` extension** — when the query includes a configured project tag, `/context` appends a "Pending Ideas for {project}" section showing entries tagged with that project. Items include age (`filed N days ago`) and a `[STALE — still relevant?]` marker when age exceeds `ideas_staleness_threshold_days`. Non-selectable informational section — to triage, use `/audit-knowledge` or edit `ideas-backlog.md` directly. Pairs with the existing `auto_load_project_context` flag: users who opt into auto-loading see pending ideas for their current project every time `/context` fires.
+- **`/audit-knowledge` Step 2c2 aging** — each idea entry gets an age annotation and stale marker. Stale entries sort first in the Pending Ideas section and prompt explicitly for Accept/Reject/Defer/Reclassify (implicit Defer is disallowed for stale items). Forces triage on long-sitting ideas each audit cycle.
+- **New config field** — `ideas_staleness_threshold_days` (default 21). Extractable via `config.sh` like other numeric settings. Configurable through `/setup` Advanced Options.
+- **Design trade-off** — urgency/priority fields were considered and deferred. Aging is a cheaper triage signal (counted, not predicted) and the audit pass is the right place for deliberate Accept/Reject/Defer decisions. If usage reveals a need for priority beyond age, add an optional `**Urgency:**` field to the ideas-backlog schema in a future release.
+
+### Changed — Audit Log Structured Template
+
+`/audit-knowledge` Step 8 replaces the prior single-paragraph "Result:" template with a multi-field structured format (counts / new-files / extended-files / memory / integrity-fixes / themes / notes / ideas-disposition). Keeps audit logs scannable over many passes and makes counts grep-able for trend analysis across audits. Previous free-form entries remain valid — the new template applies to entries going forward. Includes an empty-audit variant for "no new items" passes and explicit nesting rules for same-day continuation passes (Pass 2 / Pass 2 final / tenth-pass) to avoid sibling date headers.
+
 ## [2.8.3] - 2026-04-15
 
 ### Changed — Setup Flow Polish
