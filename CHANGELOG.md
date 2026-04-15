@@ -13,7 +13,7 @@ Insight blocks (★) are now automatically captured at task completion boundarie
 
 ### Removed — Dead Stop Hook
 
-- **`session-stop-check.sh`** — removed. Was never registered in `plugin.json` (dead code since creation). Its session-end cleanup responsibilities are covered by `/wrapup` (Step 8) and the new per-task capture. The CHANGELOG entry in v2.7.0 previously noted it was dead code.
+- **`session-stop-check.sh`** — removed. Was never registered in `plugin.json` (dead code since creation). Its session-end cleanup responsibilities are covered by `/wrapup` (Step 8) and the new per-task capture. The CHANGELOG entry in v2.6.0 previously noted it was dead code.
 
 ### Changed
 

@@ -9,13 +9,13 @@ Run `/setup` to configure your knowledge folder. This creates the folder structu
 **What's immediately active:**
 - **Rule 22 checks** appear before every file edit — a brief impact assessment to keep changes intentional
 - **Session start** checks if any audits are due and reminds you
-- **Session stop** prompts you to capture knowledge before ending
+- **Insight capture** auto-appends Insight blocks to backlogs at task completion boundaries
 
 ## Session 1: Just Work
 
-Work normally. ARIA observes in the background.
+Work normally. ARIA observes in the background. Insight blocks are auto-captured at task boundaries.
 
-Before wrapping up, run **`/extract`** to capture insights and decisions from the conversation. Items go to intake backlogs for review — nothing is promoted automatically.
+Before wrapping up, run **`/extract`** to capture decisions, feedback, and references from the conversation. Items go to intake backlogs for review — nothing is promoted automatically.
 
 ## Session 2: Review and Promote
 
@@ -61,7 +61,7 @@ All settings are in `~/.claude/aria-knowledge.local.md`. Run `/setup` to change 
 **Key settings:**
 - `audit_cadence_knowledge` — days between knowledge audit prompts (default: 3)
 - `audit_cadence_config` — days between config audit prompts (default: 14)
-- `auto_capture` — save transcript snapshots before context compaction (default: true)
+- `auto_capture` — auto-capture insights at task boundaries and save transcript snapshots before compaction (default: true)
 - `critical_paths` — file patterns that always require full impact assessment (default: empty)
 
 See [OVERVIEW.md](template/OVERVIEW.md) for the full design philosophy and detailed documentation.

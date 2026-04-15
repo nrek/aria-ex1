@@ -52,7 +52,7 @@ If no entries exist from today's date, treat the entire conversation as unscanne
 Review the conversation and categorize findings into five buckets:
 
 ### Insights
-- Insight blocks that were output but NOT yet appended to `insights-backlog.md`
+- Insight blocks that were output but NOT yet appended to `insights-backlog.md` (per-task capture may have already appended some — Step 3 dedup handles this)
 - Non-obvious technical observations discussed in conversation
 - Patterns discovered during debugging or exploration
 - Codebase behaviors that surprised either party
