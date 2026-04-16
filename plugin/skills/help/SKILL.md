@@ -1,33 +1,24 @@
 ---
-description: "Show available aria-knowledge commands. Use when user says '/help', 'aria help', 'what commands are available', 'list commands', 'what can aria do'."
+description: "List aria-ex1 commands. Trigger: '/help', 'aria-ex1 help'."
 argument-hint: ""
-allowed-tools:
+allowed-tools: Read
 ---
 
-# /help — aria-knowledge Commands
-
-Print the command reference table. No config or file access needed.
-
-## Output
+# /help — aria-ex1 commands
 
 ```
-## aria-knowledge Commands
+## aria-ex1 commands
 
 | Command | Description |
 |---------|-------------|
-| /setup | Configure knowledge folder, audit cadences, and plugin settings |
-| /extract | Capture insights, decisions, and feedback from the current conversation |
-| /audit-knowledge | Review backlogs, promote to knowledge files, rebuild index |
-| /audit-config | Check project configs and docs for drift and broken references |
-| /context [tags] | Load relevant knowledge files by topic (supports AND/OR, project expansion) |
-| /index | Rebuild the tag-based knowledge index with cross-references |
-| /rules [number] | Look up a working rule by number or keyword |
-| /backlog [type] | View and manage pending intake items |
-| /stats | Knowledge base health dashboard — file counts, backlogs, audit status |
-| /ask [question] | Research a question, check existing knowledge, save answer as a knowledge doc |
-| /clip [url or text] | Quick-save a URL or text snippet to intake for later review |
-| /intake [path or url] | Bulk import knowledge from files, directories, or URLs |
-| /help | This command reference |
+| /setup | Create ~/.claude/aria-ex1.local.md — repo_groups, critical_paths |
+| /codemap | Per-repo CODEMAP.md (create / inventory / update / section) |
+| /stitch | Group STITCH.md — create / verify / diff / section |
+| /distill | Tiered task spec (TASK.schema.md); --group --tier |
+| /rules | Look up execution rules by number or keyword |
+| /help | This reference |
 
-Run /setup to configure. See QUICKSTART.md for a walkthrough of your first 3 sessions.
+Hooks: edit-time change assessment; Glob/Grep nudge toward CODEMAP (+ STITCH if present).
+
+See plugin/QUICKSTART.md for a short walkthrough.
 ```

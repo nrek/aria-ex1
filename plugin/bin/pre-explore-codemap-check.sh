@@ -1,7 +1,6 @@
 #!/bin/sh
 # pre-explore-codemap-check.sh — PreToolUse hook for Glob|Grep
-# Reminds to read CODEMAP.md Directory section before exploring a project codebase.
-# Fires once per project per session (cooldown via temp file).
+# Reminds to read CODEMAP.md (and STITCH.md if present) before wide exploration.
 
 # Read the tool input to get the target path
 INPUT=$(cat)
@@ -71,5 +70,12 @@ DISPLAY_PATH=$(echo "$CODEMAP_PATH" | sed "s|$PWD/||")
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 . "$SCRIPT_DIR/config.sh"
 
-MSG=$(kt_json_escape "CODEMAP exists at ${DISPLAY_PATH} — Read Directory section before exploring further. This fires once per project per session.")
+EXTRA=""
+STITCH_SIBLING=$(dirname "$CODEMAP_PATH")/STITCH.md
+if [ -f "$STITCH_SIBLING" ]; then
+  STITCH_DISP=$(echo "$STITCH_SIBLING" | sed "s|$PWD/||")
+  EXTRA=" Also read STITCH.md at ${STITCH_DISP} (endpoint / entity tables) for this product group."
+fi
+
+MSG=$(kt_json_escape "CODEMAP exists at ${DISPLAY_PATH} — Read Directory section before exploring further.${EXTRA} This fires once per project per session.")
 echo '{"hookSpecificOutput":{"hookEventName":"PreToolUse","additionalContext":"'"$MSG"'"}}'

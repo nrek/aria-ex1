@@ -278,7 +278,7 @@ Proposed: revert parent wrapper changes, keep only the card removal.
 
 ## Hook Implementation
 
-These hooks enforce the framework automatically in Claude Code. They are pre-configured in the aria-knowledge plugin and fire without any manual setup.
+These hooks enforce the framework automatically in Claude Code. They are pre-configured in the aria-ex1 plugin and fire without any manual setup.
 
 - **PreToolUse** — fires before every Edit/Write, requires impact assessment and the appropriate decision process output
 - **PostToolUse** — fires after every Edit/Write, requires scope verification in compact format
@@ -296,7 +296,7 @@ The hooks are prompt-based — they inject context into Claude's reasoning at th
 
 ## Reference-Based Builds (Rule 26)
 
-The standard pre-edit check (Rule 22) relies on Edit's structural diff — `old_string`/`new_string` makes scope violations visible. When using Write to create a file based on an existing reference, there is no structural diff. The "comparison" between source and output happens entirely in the assessment, and the hooks check format compliance but can't verify assessment quality.
+The standard pre-edit check relies on Edit's structural diff — `old_string`/`new_string` makes scope violations visible. When using Write to create a file based on an existing reference, there is no structural diff. The "comparison" between source and output happens entirely in the assessment, and the hooks check format compliance but can't verify assessment quality.
 
 Reference-based builds require an explicit scope declaration before writing.
 

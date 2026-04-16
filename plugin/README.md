@@ -1,48 +1,17 @@
-# aria-knowledge
+# aria-ex1
 
-An active knowledge and development discipline plugin for Claude Code. Captures session knowledge, enforces structured decisions, and maps codebases — so each session builds on the last.
+Execution-First Claude Code plugin: per-repo codemaps, cross-repo stitching, tiered task distillation, edit-time enforcement.
 
-**Knowledge Lifecycle** — capture, stage, review, promote. Insights flow into backlogs during sessions. You decide what becomes canonical. Optional project-specific tier (`projects/{tag}/`) for architecture decisions and patterns scoped to a single project; promotes to cross-project when patterns appear in 2+ projects.
+## Quick start
 
-**Decision Discipline** — change decision framework enforced at every file edit via hooks. Impact assessment, alternatives analysis, scope verification.
+1. Install this `plugin/` directory as a Claude Code plugin.
+2. Run `/setup` — creates `~/.claude/aria-ex1.local.md` with `repo_groups` and optional `critical_paths`.
+3. In each repo root, run `/codemap create` (or `inventory` / `update` / `section`).
+4. For a registered group, run `/stitch create <group>` to emit `STITCH.md` at the configured `stitch_path`.
+5. Use `/distill` with optional `--group=` and `--tier=micro|standard|full`.
 
-**Understanding & Retrieval** — tag index, contextual retrieval with project expansion, cross-reference suggestions, session-start surfacing, bidirectional linking. Feature-organized codebase maps with full-stack flow tracing, framework detection, and staleness tracking.
-
-## Quick Start
-
-1. Run `/setup` to configure your knowledge folder
-2. Start working — hooks capture knowledge automatically
-3. Run `/extract` after tasks to save insights
-4. Run `/audit-knowledge` to review and promote
-
-See [QUICKSTART.md](QUICKSTART.md) for a detailed walkthrough of your first 3 sessions.
-
-## Commands
-
-| Command | Description |
-|---------|-------------|
-| `/setup` | Configure knowledge folder and plugin settings |
-| `/extract` | Capture insights and decisions from the current conversation |
-| `/audit-knowledge` | Review backlogs and promote to knowledge files |
-| `/audit-config` | Check configs and docs for drift |
-| `/context [tags]` | Load relevant knowledge by topic |
-| `/index` | Rebuild the tag-based knowledge index |
-| `/rules [number]` | Look up a working rule |
-| `/backlog [type]` | View pending intake items |
-| `/stats` | Knowledge base health dashboard |
-| `/ask [question]` | Research a question, save answer as a knowledge doc |
-| `/clip [url/text]` | Quick-save a URL or snippet to intake |
-| `/intake [path/url]` | Bulk import knowledge from files, directories, or URLs |
-| `/codemap [mode]` | Generate or update a feature-organized codebase map (create/inventory/update/section) |
-| `/wrapup` | End-of-session handoff — update PROGRESS.md/CLAUDE.md/memory, commit, extract |
-| `/help` | Command reference |
-
-## How It Works
-
-**Capture** — Session hooks and `/extract` catch insights, decisions, and feedback as they happen.
-**Review** — Configurable audit cadences surface what's worth keeping.
-**Promote** — You decide what becomes canonical. Nothing is auto-promoted.
+See [QUICKSTART.md](QUICKSTART.md) for a short walkthrough.
 
 ## License
 
-CC BY-NC-SA 4.0 — See [LICENSE](LICENSE) for details.
+CC BY-NC-SA 4.0 — see [LICENSE](LICENSE).

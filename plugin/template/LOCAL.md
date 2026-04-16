@@ -1,184 +1,24 @@
-# Knowledge Repository — Local Guide
+# aria-ex1 local configuration
 
-Project-specific conventions, format templates, and usage details that extend the base [README.md](README.md). This file is yours — the aria-knowledge plugin will never overwrite it.
-
-**Last updated:** (update when you edit this file)
-
-## Extended Structure
-
-<!-- Document any subdirectories or conventions you add beyond the base structure.
-     Example: if you create guides/claude/ for Claude Code-specific docs, note it here
-     so future sessions know where to look. -->
-
-```
-knowledge/
-├── ...                              # (base structure — see README.md)
-├── guides/
-│   └── your-topic/                  # Group related guides into subdirectories
-├── intake/
-│   ├── clippings/                   # Web articles, threads, saved content
-│   ├── notes/                       # Quick notes and observations
-│   └── attachments/                 # Images, PDFs, supporting files
-└── references/
-    └── ...                          # Research papers, external docs
-```
-
-## Format Templates
-
-### Approaches (`approaches/`)
-
-```markdown
----
-Last updated: YYYY-MM-DD
-tags: [tag1, tag2, tag3]
----
-
-# [Approach Name]
-
-## When to Use
-[Conditions where this approach applies]
-
-## When NOT to Use
-[Conditions where this approach is wrong or doesn't apply]
-
-## The Approach
-[Description with examples]
-
-## Validated By
-[Project/session where this was tested and confirmed]
-
-## Related
-[Links to related rules, decisions, or other approaches]
-```
-
-### Decisions (`decisions/` or `projects/{tag}/decisions/`)
-
-```markdown
----
-Status: Accepted | Superseded | Deprecated
-Date: YYYY-MM-DD
-tags: [tag1, tag2]
----
-
-# [Number] — [Title]
-
-## Context
-[What prompted this decision]
-
-## Decision
-[What we decided]
-
-## Alternatives Considered
-[What else we evaluated and why it was rejected]
-
-## Consequences
-[What this means going forward]
-
-## Related
-[Links to related rules, approaches, or other decisions]
-```
-
-**Numbering:**
-- Cross-project ADRs in `decisions/` use `YYYY-NNN-` prefix (e.g., `2026-001-auth-strategy.md`) — self-dating, resets per year.
-- Project-level ADRs in `projects/{tag}/decisions/` use sequential `NNN-` per project (e.g., `001-app-router-as-spa.md`) — each project is its own namespace.
-
-**Provenance (for cross-project promotions):** When `/audit-knowledge` Step 5e promotes a project-specific ADR or pattern to the cross-project tree, the new file gets an `originally_at:` YAML frontmatter field documenting the source(s). Greppable consolidation history.
-
-### Guides (`guides/`)
-
-```markdown
----
-Last updated: YYYY-MM-DD
-tags: [tag1, tag2]
----
-
-# [Guide Title]
-
-## Overview
-[What this guide covers and who it's for]
-
-## [Sections as needed]
-[Content organized by topic]
-
-## Related
-[Links to related guides, approaches, or references]
-```
-
-## What Belongs Where
-
-| Content | Location | Reason |
-|---------|----------|--------|
-| Principles and constraints | `rules/` | "We must / must not" |
-| Validated methodologies (cross-project) | `approaches/` | "How we do X (proven across projects)" |
-| Cross-project architectural choices | `decisions/` (YYYY-NNN) | "We chose X because Y, applies across projects" |
-| Operational knowledge | `guides/` | "Here's how X works" |
-| External research | `references/` | "What others say about X" |
-| Retired content | `archive/` | "What we used to do" |
-| Unprocessed input | `intake/` | "Not yet categorized" |
-| Project-specific decisions | `projects/{tag}/decisions/` (opt-in, sequential `001-`) | "Single-project decision not yet proven elsewhere" |
-| Project-specific patterns | `projects/{tag}/patterns/` (opt-in) | "Pattern valuable within one project" |
-| Project-specific context | Project's CLAUDE.md | Loaded automatically per project |
-| Session history | Project's PROGRESS.md | Ephemeral project state |
-
-## What Does NOT Belong Here
-
-- Code snippets or implementation details (those belong in the codebase)
-- Ephemeral task context (use PROGRESS.md or session notes)
-- Opinions without validation (approaches must be tested)
-- Duplicated content from CLAUDE.md files (reference, don't copy)
-
-## When to Read
-
-Add your own "When to Read" mappings as your knowledge base grows:
-
-| Scenario | Read |
-|----------|------|
-| Starting any session | `rules/working-rules.md` (or summary in your project's CLAUDE.md) |
-| Before a code change triggers the Rule 22 hook | `rules/change-decision-framework.md` |
-| Designing a new enforcement mechanism | `rules/enforcement-mechanisms.md` |
-| Working in a specific domain (API, CSS, Stripe, etc.) | Run `/context <topic>` to load relevant knowledge |
-| After promoting knowledge or adding new files | Run `/index` to rebuild the tag index |
-| Checking what knowledge exists for a topic | Run `/context <topic>` to see matches |
-| *(add your own rows as your knowledge base grows)* | |
-
-## Adding New Knowledge
-
-1. Determine the right category (rules, approaches, decisions, guides, references)
-2. Check if an existing file should be updated rather than creating a new one
-3. Use the format template above for the category
-4. Review with your team before committing
-
-## How New Knowledge Files Emerge
-
-The `intake/` backlogs are staging areas and signal generators. Over time, multiple backlog entries may cluster around a theme — repeated insights about the same problem space, or several related decisions that share underlying principles.
-
-During the knowledge audit (`/audit-knowledge`), look for these clusters:
-
-- **Multiple insights on the same topic** → may warrant a new approach or guide
-- **Multiple decisions with shared rationale** → may warrant an approach documenting the pattern
-- **Recurring feedback corrections** → may warrant a new rule
-
-Not every insight becomes a knowledge file — but patterns of insights do.
-
-## Tag Convention
-
-Every promoted knowledge file should include a `tags:` field in its YAML frontmatter:
+Copy this structure to `~/.claude/aria-ex1.local.md` (or run `/setup`).
 
 ```yaml
 ---
-Last updated: YYYY-MM-DD
-tags: [api, pagination, django]
+version: 1
+repo_groups:
+  example_group:
+    backend: backend-repo-folder-name
+    frontends:
+      - frontend-repo-folder-name
+    stitch_path: backend-repo-folder-name/STITCH.md
+rules:
+  critical_paths: ""
 ---
 ```
 
-**Known tags** are maintained in `index.md` under `## Known Tags`. The initial set includes:
+## Fields
 
-| Group | Tags |
-|-------|------|
-| Tech domain | `api`, `css`, `database`, `deployment`, `django`, `react`, `nextjs`, `react-native`, `tailwind`, `testing`, `infrastructure` |
-| Cross-cutting | `architecture`, `performance`, `security`, `accessibility` |
-| Tool/service | `stripe`, `linear`, `supabase`, `figma`, `claude-code` |
-| Process | `process`, `decision-framework`, `enforcement` |
-| Project | `cs`, `ss`, `df`, `aria` |
+- **repo_groups** — keys are group ids used with `/stitch create <group>`. Each group lists `backend` and `frontends` as **folder names** relative to your workspace root (sibling repos). **stitch_path** is where `STITCH.md` is written (usually under the backend repo).
+- **rules.critical_paths** — comma-separated path fragments; any edit whose path matches `*/<fragment>/*` is treated as protected (full change assessment).
 
-**Freeform tags** are valid — any tag works. Freeform tags that appear on 3+ files get suggested for promotion to the known set during `/index`. Similar tags (e.g., `api` vs `apis`) get flagged for normalization.
+Optional: add a `.md/blueprints/<group>.md` in your workspace — `/codemap` and `/stitch` may read it as a seed when present.

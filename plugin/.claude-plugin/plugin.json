@@ -1,37 +1,22 @@
 {
-  "name": "aria-knowledge",
-  "version": "2.8.4",
-  "description": "Knowledge repository management — audit memory/plans, scan configs for drift, extract session knowledge, manage backlogs, look up rules, build tag indexes, load knowledge by topic, clip URLs/snippets, and view knowledge base health stats. Includes Rule 22 enforcement hooks (with abbreviated mode for planning paths and configurable critical paths), session start audit checks, pre-compaction transcript capture, post-compaction review prompts, and automatic knowledge surfacing when tasks are created. IMPORTANT: All skills except /setup require ~/.claude/aria-knowledge.local.md to exist. If missing when any skill is invoked, stop and tell the user to run /setup.",
+  "name": "aria-ex1",
+  "version": "0.1.0",
+  "description": "Execution-First Claude Code plugin: per-repo CODEMAP.md, cross-repo STITCH.md, complexity-tiered /distill task specs, and edit-time change enforcement (impact / alternatives / scope). Skills require ~/.claude/aria-ex1.local.md — run /setup if missing.",
   "author": {
     "name": "Mike Prasad"
   },
-  "homepage": "https://github.com/mikeprasad/aria-knowledge",
-  "repository": "https://github.com/mikeprasad/aria-knowledge",
+  "homepage": "https://github.com/nrek/aria-ex1",
+  "repository": "https://github.com/nrek/aria-ex1",
   "license": "CC-BY-NC-SA-4.0",
   "keywords": [
-    "knowledge-management",
-    "knowledge-capture",
-    "decision-framework",
-    "code-review",
-    "session-knowledge",
-    "audit",
-    "tag-index",
-    "context-retrieval",
+    "codemap",
+    "execution-first",
+    "task-distillation",
+    "full-stack",
     "hooks",
     "enforcement"
   ],
   "hooks": {
-    "SessionStart": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/session-start-check.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
     "PreToolUse": [
       {
         "matcher": "Edit|Write",
@@ -61,39 +46,6 @@
           {
             "type": "command",
             "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/post-edit-check.sh",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/pre-compact-check.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "PostCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/post-compact-check.sh",
-            "timeout": 10
-          }
-        ]
-      }
-    ],
-    "TaskCreated": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ${CLAUDE_PLUGIN_ROOT}/bin/task-context-check.sh",
             "timeout": 5
           }
         ]

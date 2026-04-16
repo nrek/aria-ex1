@@ -1,8 +1,8 @@
 {
   "plugins": {
-    "aria-knowledge": {
-      "version": "2.7.5",
-      "description": "Knowledge management, decision discipline, and codebase understanding for Claude Code",
+    "aria-ex1": {
+      "version": "0.1.0",
+      "description": "Execution-First: per-repo codemaps, group stitch, tiered distill, edit hooks",
       "author": "Mike Prasad",
       "source": {
         "type": "dir",

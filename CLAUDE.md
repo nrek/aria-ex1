@@ -1,63 +1,34 @@
-# CLAUDE.md — ARIA
+# CLAUDE.md — aria-ex1
 
-## What This Is
+## What this is
 
-ARIA (Anchored Reasoning and Insight Architecture) — an active knowledge and development discipline plugin for Claude Code. Three pillars: knowledge lifecycle (capture → review → promote), decision discipline (Rule 22 enforcement at every edit), and codebase understanding (/codemap with full-stack tracing).
+**aria-ex1** is the installable Claude Code plugin under `plugin/`. It provides:
 
-**Repository:** GitHub (`mikeprasad/aria-knowledge`) — **public repo**
+- **Per-repo** `CODEMAP.md` — one file per git repo, sections matched to stack (Django gets migrations, signals, Celery, etc.; Next.js gets routes, RTK Query, …).
+- **Per product group** `STITCH.md` — tables linking FE calls to BE views, entities, integrations; drift section can reuse workspace `analyze_projects.py` patterns.
+- **`/distill`** — outputs tiered task specs per `plugin/template/distill/TASK.schema.md`.
+- **Edit hooks** — enforce visible change assessment on every file write.
 
-## Project Structure
+## Layout
 
 ```
-aria/
-├── README.md          ← GitHub-facing intro
-├── LICENSE            ← CC BY-NC-SA 4.0
-├── CHANGELOG.md       ← Version history
-├── CLAUDE.md          ← You are here
-├── plugin/            ← The installable plugin
-│   ├── .claude-plugin/
-│   │   └── plugin.json
-│   ├── bin/           ← Hook scripts (bash)
-│   ├── skills/        ← Skill definitions (SKILL.md files)
-│   └── template/      ← Knowledge folder templates
-└── docs/              ← Extended documentation (future)
+aria-ex1/
+├── README.md
+├── CHANGELOG.md
+├── CLAUDE.md          ← you are here
+└── plugin/
+    ├── .claude-plugin/plugin.json
+    ├── bin/           ← hook scripts (bash)
+    ├── skills/        ← SKILL.md per command
+    └── template/      ├── rules/, codemap/, stitch/, distill/, LOCAL.md
 ```
 
-## Key Conventions
+## Development
 
-- **`plugin/` is the installable unit** — everything inside it is what users copy to their plugins directory
-- **Template files** in `plugin/template/` are either plugin-managed (diffable on `/setup`) or user-owned (created once, never overwritten). See `plugin/skills/setup/SKILL.md` for the authoritative list.
-- **Version** lives in `plugin/.claude-plugin/plugin.json`
-- **Hook scripts** in `plugin/bin/` are bash — they read config from `~/.claude/aria-knowledge.local.md`
-- **Skills** are markdown files — each skill is a `SKILL.md` with YAML frontmatter
+1. Edit files under `plugin/`.
+2. Bump `plugin/.claude-plugin/plugin.json` version for release-worthy changes.
+3. Test by copying `plugin/` to your local Claude plugins path and restarting Claude Code.
 
-## Development Workflow
+## Public repo hygiene
 
-1. Edit files in `plugin/`
-2. To test, copy `plugin/` to `~/.claude/plugins/marketplaces/local-desktop-app-uploads/aria-knowledge/`
-3. Restart Claude Code to pick up changes
-
-## Rules
-
-- Follow the universal rules in `Projects/CLAUDE.md`
-- **This is a public repository** — never commit personal information, API keys, secrets, credentials, internal URLs, or any sensitive data. Content here is visible to anyone on GitHub.
-- The plugin's own template content (working-rules, change-decision-framework, enforcement-mechanisms) is both shipped content AND documentation of how the plugin works — edits to these have dual impact
-- Bump version in `plugin.json` when making release-worthy changes
-
-## Knowledge Repository
-
-Project-specific architecture decisions live in `~/Projects/knowledge/projects/aria/`:
-
-- `decisions/002-knowledge-extraction-architecture.md` — task-based /extract + audit promotion model
-- `decisions/006-full-rule22-format-every-edit.md` — full format on every edit (no compression)
-- `decisions/008-skill-knowledge-connections.md` — skill-knowledge connection discovery + drift detection
-
-Cross-project knowledge that applies to ARIA:
-- `knowledge/rules/working-rules.md` — the 27 universal rules (ARIA's source of truth ships in plugin/template)
-- `knowledge/rules/change-decision-framework.md` — Rule 22 framework
-- `knowledge/rules/enforcement-mechanisms.md` — enforcement tier model
-- `knowledge/guides/claude/plugin-development.md` — Claude Code plugin patterns
-
-Pre-staged for next audit (in decisions-backlog.md): three-pillar architecture, LLM-captures-human-promotes philosophy, auto_capture toggle, audit cadence with first-run detection, plugin/installed-copy diffability, backlog deduplication, hook exit-code pattern.
-
-Use `/context aria` to load relevant knowledge by project tag.
+Do not commit secrets, internal URLs, or personal paths in examples.
