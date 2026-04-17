@@ -4,7 +4,11 @@
 
 # aria-ex1 — Execution-First
 
-**aria-ex1** is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin for teams that want **surgical execution**, not a growing “knowledge vault.” It forked from [aria-knowledge](https://github.com/mikeprasad/aria-knowledge) and **removes** capture pipelines, backlogs, audits, and session knowledge lifecycles. What remains is a small set of commands plus hooks that keep changes explicit and maps that stay **per-repo** and **verifiable**.
+**aria-ex1** is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin oriented toward **structured execution**: per-repository maps, optional cross-repo stitching, tiered task specs, and edit-time change discipline.
+
+This project **began as a fork** of the open-source [**aria-knowledge**](https://github.com/mikeprasad/aria-knowledge) plugin, which provides a broad **knowledge lifecycle** (capture, review, promotion, audits, intake, and related skills). That design suits teams who want durable session memory and staged knowledge workflows. **aria-ex1** is a **narrower variant**: it keeps codemap-style mapping, cross-repo linking, distillable task specs, and the same class of edit hooks, but **does not ship** the knowledge-capture commands, backlogs, audit cadences, or compaction-adjacent flows. Choosing between them is a **product fit** question, not a judgment on either codebase.
+
+**aria-ex1** offers a compact command set plus hooks that keep changes explicit and maps **per-repo** and **verifiable**.
 
 ---
 
@@ -12,7 +16,7 @@
 
 | Capability | What you get |
 |------------|----------------|
-| **Per-repo `CODEMAP.md`** | One map per git repository, with sections matched to the **actual stack** (e.g. Django: URLs, apps, migrations, middleware, Celery, signals; Next.js: routes, hooks, RTK Query, auth hydration). No single megafile that pretends one shape fits “full stack.” |
+| **Per-repo `CODEMAP.md`** | One map per git repository, with sections matched to the **detected stack** (e.g. Django: URLs, apps, migrations, middleware, Celery, signals; Next.js: routes, hooks, RTK Query, auth hydration). Backend and frontend repos each get an appropriate layout instead of one combined document for dissimilar stacks. |
 | **Group `STITCH.md`** | For a **product group** (backend + one or more frontends), a separate file that **stitches** maps together: auth flow, endpoint tables, entities, integrations, and a **drift** section (FE vs BE) when you pair it with your own analysis scripts. |
 | **`/distill`** | Turns vague tickets or notes into a **tiered** task spec (`micro` / `standard` / `full`): always includes objective, scope, dependencies/APIs, QA, and definition of done; adds frontend/backend/database sections **only when the work touches those layers**. |
 | **Edit-time discipline** | Before every file write: visible impact, alternatives, and scope. After: scope check. Encourages one clear approach instead of speculative refactors. |
@@ -89,7 +93,7 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 
 - **Split stacks**: Django (or Laravel, etc.) in one repo; React / Next.js / Expo in another — you want maps that respect each codebase’s real layout.
 - **API-heavy features**: You benefit from endpoint and entity tables in `STITCH.md` and a drift section aligned with automated FE/BE checks.
-- **Ambiguous tickets**: `/distill` forces dependencies, APIs, QA, and done criteria without defaulting to a 20-section essay for a one-line typo fix.
+- **Underspecified tasks**: `/distill` scales output to complexity (tiered spec) so small edits stay lightweight and larger work still records dependencies, APIs, QA, and done criteria.
 
 **Suggested workflow**
 
@@ -98,10 +102,10 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 3. **Distill before big edits**: Especially for cross-cutting work, run `/distill … --group=…` and attach the output to the issue or PR so scope is explicit.
 4. **Use `critical_paths`**: List path fragments (comma-separated) for subsystems that must always get the **full** pre-edit assessment — see config in [plugin/template/LOCAL.md](plugin/template/LOCAL.md).
 
-**When not to use aria-ex1**
+**When another tool may fit better**
 
-- You want automatic knowledge capture, backlogs, and promotion workflows (use upstream **aria-knowledge** or another tool).
-- You need a single markdown file to replace code review or tests — maps and distill **assist** execution; they do not replace verification.
+- **Full knowledge lifecycle** (capture → review → promote, audits, intake, session backlogs): the [**aria-knowledge**](https://github.com/mikeprasad/aria-knowledge) project documents and implements that model end to end.
+- **Substitutes for review or tests**: maps and `/distill` **support** execution and clarity; they do not replace human review, CI, or automated tests.
 
 ---
 
@@ -136,7 +140,7 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 |--------|----------------|
 | Spec too heavy for a tiny change | Pass **`--tier=micro`** or shorten the input so the heuristic scores low; see [plugin/template/distill/TASK.schema.md](plugin/template/distill/TASK.schema.md). |
 | Missing layer sections | By design, Frontend/Backend/Database appear **only** when the task touches that layer. |
-| Validation complaints (banned words, empty layers) | Remove fluff words listed in `TASK.schema.md`; delete empty layer headings. |
+| Validation complaints (banned words, empty layers) | Replace terms disallowed in `TASK.schema.md`; remove empty layer headings rather than leaving placeholders. |
 
 ### Hooks
 
