@@ -1,6 +1,6 @@
 {
   "name": "aria-ex1",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Execution-First Claude Code plugin: per-repo CODEMAP.md, cross-repo STITCH.md, complexity-tiered /distill task specs, and edit-time change enforcement (impact / alternatives / scope). Skills require ~/.claude/aria-ex1.local.md — run /setup if missing.",
   "author": {
     "name": "Mike Prasad"

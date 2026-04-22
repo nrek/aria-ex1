@@ -21,4 +21,4 @@ rules:
 - **repo_groups** — keys are group ids used with `/stitch create <group>`. Each group lists `backend` and `frontends` as **folder names** relative to your workspace root (sibling repos). **stitch_path** is where `STITCH.md` is written (usually under the backend repo).
 - **rules.critical_paths** — comma-separated path fragments; any edit whose path matches `*/<fragment>/*` is treated as protected (full change assessment).
 
-Optional: add a `.md/blueprints/<group>.md` in your workspace — `/codemap` and `/stitch` may read it as a seed when present.
+Optional: add a `.md/blueprints/<group>.md` in your workspace as a reference document for your product group architecture. Skills do not auto-read it, but you can reference it in prompts when running `/codemap` or `/stitch`.

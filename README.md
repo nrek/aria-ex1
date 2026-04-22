@@ -1,7 +1,3 @@
-<p align="left">
-  <img src="aria-icon-rounded.png" width="120" alt="aria-ex1">
-</p>
-
 # aria-ex1 — Execution-First
 
 **aria-ex1** is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin oriented toward **structured execution**: per-repository maps, optional cross-repo stitching, tiered task specs, and edit-time change discipline.
@@ -19,7 +15,7 @@ This project **began as a fork** of the open-source [**aria-knowledge**](https:/
 | **Per-repo `CODEMAP.md`** | One map per git repository, with sections matched to the **detected stack** (e.g. Django: URLs, apps, migrations, middleware, Celery, signals; Next.js: routes, hooks, RTK Query, auth hydration). Backend and frontend repos each get an appropriate layout instead of one combined document for dissimilar stacks. |
 | **Group `STITCH.md`** | For a **product group** (backend + one or more frontends), a separate file that **stitches** maps together: auth flow, endpoint tables, entities, integrations, and a **drift** section (FE vs BE) when you pair it with your own analysis scripts. |
 | **`/distill`** | Turns vague tickets or notes into a **tiered** task spec (`micro` / `standard` / `full`): always includes objective, scope, dependencies/APIs, QA, and definition of done; adds frontend/backend/database sections **only when the work touches those layers**. |
-| **Edit-time discipline** | Before every file write: visible impact, alternatives, and scope. After: scope check. Encourages one clear approach instead of speculative refactors. |
+| **Edit-time discipline** | Before every file write: structural enforcement via `[Rule 22]` marker detection -- the hook denies the edit if the compliance block is missing. After: scope check with `[Rule 22 . Scope]` markers. Structural signals (auth, migration, model, routing, external-service) surfaced automatically. |
 | **Explore nudges** | Before heavy **Glob** / **Grep**: reminds you to load the repo `CODEMAP.md` (and `STITCH.md` when it sits next to the map) so exploration stays anchored. |
 
 ---
@@ -27,34 +23,34 @@ This project **began as a fork** of the open-source [**aria-knowledge**](https:/
 ## How it operates
 
 ```text
-                    ┌─────────────────────────────────────┐
-                    │  ~/.claude/aria-ex1.local.md        │
-                    │  repo_groups, critical_paths        │
-                    └─────────────────────────────────────┘
-                                        │
-          ┌─────────────────────────────┼─────────────────────────────┐
-          ▼                             ▼                             ▼
+                    +-------------------------------------+
+                    |  ~/.claude/aria-ex1.local.md        |
+                    |  repo_groups, critical_paths        |
+                    +-------------------------------------+
+                                        |
+          +-----------------------------+-----------------------------+
+          v                             v                             v
    /codemap (per repo)           /stitch (per group)            /distill
-          │                             │                             │
-          ▼                             ▼                             │
-   CODEMAP.md                   STITCH.md (tables)                    │
-   in repo root                 at stitch_path                       │
-          │                             │                             │
-          └─────────────────────────────┴─────────────────────────────┘
-                                        │
-                                        ▼
+          |                             |                             |
+          v                             v                             |
+   CODEMAP.md                   STITCH.md (tables)                    |
+   in repo root                 at stitch_path                       |
+          |                             |                             |
+          +-----------------------------+-----------------------------+
+                                        |
+                                        v
                               Optional context for /distill
                               (--group loads maps + stitch)
 
 Hooks (plugin.json) run automatically:
-  PreToolUse Edit|Write  → change-decision prompt
-  PostToolUse Edit|Write → scope verification prompt
-  PreToolUse Glob|Grep   → read CODEMAP / STITCH first (once per project per session)
+  PreToolUse Edit|Write  -> compliance scan: deny if [Rule 22] marker missing
+  PostToolUse Edit|Write -> scope verification: [Rule 22 . Scope] PASS/FAIL
+  PreToolUse Glob|Grep   -> read CODEMAP / STITCH first (once per project per session)
 ```
 
 **Configuration** is the single source of truth for **which folders belong to which product group**. Skills resolve paths from your workspace; folder names in config are typically **sibling repo directories** (e.g. `my-api`, `my-web`).
 
-**Rules** ship under `plugin/template/rules/` (change-decision framework, working-rules subset). `/rules` looks up by number or keyword — useful when you want the exact wording without loading the whole file.
+**Rules** ship under `plugin/template/rules/` (change-decision framework, working-rules subset). `/rules` looks up by number or keyword -- useful when you want the exact wording without loading the whole file.
 
 See [plugin/QUICKSTART.md](plugin/QUICKSTART.md) for a minimal YAML example and command order.
 
@@ -65,16 +61,17 @@ See [plugin/QUICKSTART.md](plugin/QUICKSTART.md) for a minimal YAML example and 
 ### Prerequisites
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code) installed and able to load plugins.
+- `python3` on PATH (required for the pre-edit compliance scanner; hook fails open if missing).
 - A workspace where backend and frontend (if any) are **separate clones** or folders you can name in config.
 
-### Option A — Local plugin directory
+### Option A -- Local plugin directory
 
 1. Clone or download this repository.
-2. Copy or symlink the **`plugin/`** directory into your Claude Code plugins location (exact path depends on your OS and Claude Code version — use **Customize → Plugins** in the app to see or add a local plugin).
+2. Copy or symlink the **`plugin/`** directory into your Claude Code plugins location (exact path depends on your OS and Claude Code version -- use **Customize > Plugins** in the app to see or add a local plugin).
 3. Restart Claude Code if required.
 4. In chat, run **`/setup`** so `~/.claude/aria-ex1.local.md` is created.
 
-### Option B — Marketplace JSON (monorepo / dev)
+### Option B -- Marketplace JSON (monorepo / dev)
 
 If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add this repo as a marketplace source and install **aria-ex1** from the listing.
 
@@ -91,20 +88,20 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 
 **Best fit**
 
-- **Split stacks**: Django (or Laravel, etc.) in one repo; React / Next.js / Expo in another — you want maps that respect each codebase’s real layout.
+- **Split stacks**: Django (or Laravel, etc.) in one repo; React / Next.js / Expo in another -- you want maps that respect each codebase's real layout.
 - **API-heavy features**: You benefit from endpoint and entity tables in `STITCH.md` and a drift section aligned with automated FE/BE checks.
 - **Underspecified tasks**: `/distill` scales output to complexity (tiered spec) so small edits stay lightweight and larger work still records dependencies, APIs, QA, and done criteria.
 
 **Suggested workflow**
 
-1. **Onboard a group once**: config → codemap each repo → stitch once → commit `CODEMAP.md` / `STITCH.md` to those repos (or your docs repo) so the whole team shares the same anchors.
+1. **Onboard a group once**: config > codemap each repo > stitch once > commit `CODEMAP.md` / `STITCH.md` to those repos (or your docs repo) so the whole team shares the same anchors.
 2. **Keep maps fresh**: After meaningful merges, `/codemap update` or `/codemap section <name>` instead of regenerating everything.
-3. **Distill before big edits**: Especially for cross-cutting work, run `/distill … --group=…` and attach the output to the issue or PR so scope is explicit.
-4. **Use `critical_paths`**: List path fragments (comma-separated) for subsystems that must always get the **full** pre-edit assessment — see config in [plugin/template/LOCAL.md](plugin/template/LOCAL.md).
+3. **Distill before big edits**: Especially for cross-cutting work, run `/distill ... --group=...` and attach the output to the issue or PR so scope is explicit.
+4. **Use `critical_paths`**: List path fragments (comma-separated) for subsystems that must always get the **full** pre-edit assessment -- see config in [plugin/template/LOCAL.md](plugin/template/LOCAL.md).
 
 **When another tool may fit better**
 
-- **Full knowledge lifecycle** (capture → review → promote, audits, intake, session backlogs): the [**aria-knowledge**](https://github.com/mikeprasad/aria-knowledge) project documents and implements that model end to end.
+- **Full knowledge lifecycle** (capture > review > promote, audits, intake, session backlogs): the [**aria-knowledge**](https://github.com/mikeprasad/aria-knowledge) project documents and implements that model end to end.
 - **Substitutes for review or tests**: maps and `/distill` **support** execution and clarity; they do not replace human review, CI, or automated tests.
 
 ---
@@ -117,7 +114,7 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 |--------|----------------|
 | `/stitch` cannot find repos | `backend` / `frontends` in `aria-ex1.local.md` must match **folder names** under the workspace root you opened in Claude Code. Use relative names, not absolute paths, unless you have adapted the skill locally. |
 | `STITCH.md` in the wrong place | Set **`stitch_path`** explicitly (often `{backend-folder}/STITCH.md`). |
-| Hooks seem to ignore “protected” paths | Under `rules:`, set **`critical_paths`** to comma-separated fragments matching `*/fragment/*` in file paths. Ensure YAML is between `---` frontmatter delimiters. |
+| Hooks seem to ignore "protected" paths | Under `rules:`, set **`critical_paths`** to comma-separated fragments matching `*/fragment/*` in file paths. Ensure YAML is between `---` frontmatter delimiters. |
 
 ### Codemap
 
@@ -131,7 +128,7 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 
 | Symptom | What to check |
 |--------|----------------|
-| Drift section empty or generic | Populate it from **your** FE/BE diff script or manual comparison; the skill describes the contract — automation is workspace-specific. |
+| Drift section empty or generic | Populate it from **your** FE/BE diff script or manual comparison; the skill describes the contract -- automation is workspace-specific. |
 | Endpoint rows feel wrong | Regenerate after **both** `CODEMAP.md` files are up to date; verify paths in tables point to real files. |
 
 ### Distill
@@ -146,14 +143,16 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 
 | Symptom | What to check |
 |--------|----------------|
-| Claude Code shows a **“hook error”** label next to tool calls | Known Claude Code UI issue: hooks can exit successfully yet still show the label. If the hook returns JSON with `additionalContext`, behavior is usually correct — treat the label as cosmetic unless tools actually fail. |
-| Prompts feel noisy on docs-only edits | Planning-style paths (`*/docs/specs/*`, `*/docs/plans/*`) use **abbreviated** prompts in the bundled scripts; adjust paths in `plugin/bin/pre-edit-check.sh` / `post-edit-check.sh` if your layout differs. |
+| Claude Code shows a "hook error" label next to tool calls | Known Claude Code UI issue: hooks can exit successfully yet still show the label. If the hook returns JSON with `additionalContext` or `permissionDecision`, behavior is usually correct -- treat the label as cosmetic unless tools actually fail. |
+| First edit in a session is denied | Expected: the hook requires a `[Rule 22]` marker before the Edit/Write. Claude self-recovers by emitting the marker and retrying. No user action needed. |
+| Every edit is denied (deadlock) | Verify you are on v0.1.1+ (`plugin.json` version `0.1.1`). The deny mechanism requires `python3` on PATH for transcript parsing. If `python3` is missing, the hook fails open (allows all edits). |
+| Prompts feel noisy on docs-only edits | Planning-style paths (`*/docs/specs/*`, `*/docs/plans/*`) use abbreviated prompts; adjust paths in `plugin/bin/pre-edit-check.sh` / `post-edit-check.sh` if your layout differs. |
 
 ### Updating the plugin
 
 - Replace the `plugin/` tree with the new release.
-- Compare **`plugin/template/rules/`** if you vendor those files into a project — merge carefully.
-- Bump version in **`plugin/.claude-plugin/plugin.json`** is the shipped version for releases.
+- Compare **`plugin/template/rules/`** if you vendor those files into a project -- merge carefully.
+- Run `sh tests/run.sh` from the repo root to verify hook behavior after updates.
 
 ---
 
@@ -162,8 +161,8 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 | Command | Purpose |
 |---------|---------|
 | `/setup` | Create or refine `~/.claude/aria-ex1.local.md` (repo groups, `critical_paths`) |
-| `/codemap` | Create / inventory / update / section — **per-repo** `CODEMAP.md` |
-| `/stitch` | Create / verify / diff / section — group **`STITCH.md`** |
+| `/codemap` | Create / inventory / update / section -- **per-repo** `CODEMAP.md` |
+| `/stitch` | Create / verify / diff / section -- group **`STITCH.md`** |
 | `/distill` | Tiered task spec; optional `--group`, `--tier` |
 | `/rules` | Look up execution rules by number or keyword |
 | `/help` | Short command list |
@@ -172,7 +171,7 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 
 ## Docs and license
 
-- **Plugin README**: [plugin/README.md](plugin/README.md)  
-- **Quick start**: [plugin/QUICKSTART.md](plugin/QUICKSTART.md)  
-- **Privacy**: [PRIVACY.md](PRIVACY.md)  
+- **Plugin README**: [plugin/README.md](plugin/README.md)
+- **Quick start**: [plugin/QUICKSTART.md](plugin/QUICKSTART.md)
+- **Privacy**: [PRIVACY.md](PRIVACY.md)
 - **License**: [CC BY-NC-SA 4.0](LICENSE)

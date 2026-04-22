@@ -1,6 +1,6 @@
 # Working Rules (execution subset)
 
-**Last updated:** 2026-04-16
+**Last updated:** 2026-04-22
 
 These rules apply across projects. Numbers are stable IDs — do not renumber. For team-specific additions see [`user-rules.md`](user-rules.md).
 
@@ -66,9 +66,17 @@ Say what changes vs what is preserved before large rewrites.
 
 Accurate, concise, precise.
 
+### 18a. Specific case: Producer–consumer ordering
+
+When a schema, config field, or interface exists primarily to serve a specific consumer, design them together. Don't ship the schema alone against a speculative consumer (creates two migrations when the real consumer lands) or a consumer against a placeholder schema (creates fragile coupling).
+
 ### 30. Signal context pressure
 
 Say when the window is full; do not silently skip process steps.
+
+### 32. Halt on direct contradiction with a written directive
+
+If a user request directly contradicts a written directive (rule in `working-rules.md`, instruction in the currently-invoked skill's prompt, or recorded decision), halt before any tool call, name the contradiction verbatim, and ask for explicit override. Trigger is literal textual contradiction only — perceived expectations and inferred intent don't trigger (handled by Rule 7); scope-creep concerns remain governed by Rule 22.
 
 ---
 
