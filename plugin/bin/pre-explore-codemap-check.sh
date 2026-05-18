@@ -8,7 +8,7 @@ INPUT=$(cat)
 # Extract path from Glob (path field) or Grep (path field)
 TARGET_PATH=$(echo "$INPUT" | grep -o '"path":"[^"]*"' | head -1 | sed 's/"path":"//;s/"//')
 
-# If no explicit path, target is cwd — skip (SessionStart already covers cwd)
+# If no explicit path, target is cwd. Skip to avoid noisy reminders on broad searches.
 if [ -z "$TARGET_PATH" ]; then
   exit 0
 fi

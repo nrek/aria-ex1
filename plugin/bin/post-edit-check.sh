@@ -1,6 +1,6 @@
 #!/bin/sh
 # post-edit-check.sh — PostToolUse hook for Edit|Write
-# v1.1: trimmed prose, [Rule 22 · Scope] markers for greppable audit trail.
+# v0.1.1: trimmed prose, [Rule 22 · Scope] markers for greppable audit trail.
 
 INPUT=$(cat)
 FILE_PATH=$(echo "$INPUT" | grep -o '"file_path":"[^"]*"' | head -1 | sed 's/"file_path":"//;s/"//')

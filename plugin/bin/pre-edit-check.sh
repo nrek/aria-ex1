@@ -1,9 +1,9 @@
 #!/bin/sh
 # pre-edit-check.sh — PreToolUse hook for Edit|Write
 #
-# v1.1: turn-scoped compliance detection adapted from aria-knowledge v2.10.6.
+# v0.1.1: turn-scoped compliance detection adapted from aria-knowledge v2.10.6.
 # Walks backward through the transcript's assistant messages, collecting text
-# blocks up to the previous Edit/Write tool_use or user message (whicheve
+# blocks up to the previous Edit/Write tool_use or user message (whichever
 # comes first). Scans those text blocks for a [Rule 22...] marker. Denies the
 # tool call if no marker found; fail-open on any parse/detector error.
 #
@@ -117,6 +117,12 @@ try:
                 continue
             evt_type = evt.get("type")
             if evt_type == "user":
+                # Claude Code encodes tool results as type:"user" messages.
+                # Tool-result-only messages are not real user turn boundaries.
+                user_content = evt.get("message", {}).get("content", [])
+                if isinstance(user_content, list) and user_content and \
+                   all(isinstance(b, dict) and b.get("type") == "tool_result" for b in user_content):
+                    continue
                 break
             if evt_type != "assistant":
                 continue

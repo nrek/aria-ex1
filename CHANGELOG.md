@@ -1,5 +1,23 @@
 # Changelog
 
+## Unreleased
+
+Lean upstream sync against `aria-knowledge` v2.15-v2.18. Imports only execution-relevant fixes and prompt/spec improvements; leaves knowledge lifecycle, MCP, audit/intake, handoff, compaction, TaskCreated, SessionStart, Cursor/Codex ports, and batch manifests out of scope.
+
+### Fixed — Rule 22 marker window across tool results
+
+`pre-edit-check.sh` now walks past Claude Code `tool_result` messages encoded as `type:"user"` when scanning backward for a `[Rule 22]` marker. This prevents false-deny when the assistant emits a valid marker, runs a non-edit inspection tool, then performs the Edit/Write in the same assistant turn. Added a regression fixture and test case to `tests/repros/4-7-split-message.sh`.
+
+### Changed — execution artifact specs
+
+- `/distill` now documents safer output handling: `--append`, `--out=path`, `--no-archive`, default archive of existing `TASK.md` to `.aria-distill/archive/`, and advisory vocabulary warnings instead of hard rejection.
+- `/stitch` now prefers CODEMAP-based endpoint drift detection with explicit drift-source labeling and user opt-in before coarse grep fallback. Full `create` output gets the same archive/overwrite safety model.
+- `/codemap` now prompts for stack-aware cross-cutting sections such as Django URLConf/signals/migrations/env, React/Next route/API/env, Laravel routes/jobs/providers/env, and Expo screens/navigation/API/env.
+
+### Still excluded
+
+Batch manifests remain deferred because they add `jq` and hook complexity. ARIA Knowledge's v2.15-v2.18 lifecycle additions remain rejected for aria-ex1: active knowledge surfacing, MCP connector skills, intake/audit/hand-off workflows, compaction hooks, SessionStart, TaskCreated, and multi-port surfaces.
+
 ## 0.1.1 — 2026-04-22
 
 Execution-reliability release. Adapts structural enforcement from aria-knowledge v2.10.5–v2.10.6 for aria-ex1's leaner execution-first context. Adds structural signal surfacing, Rule 22 marker convention, deny mechanism, test infrastructure, and consistency fixes across docs.
@@ -50,11 +68,11 @@ Removed `aria-icon-rounded.png` image tag; file did not exist in the repository.
 
 Test infrastructure for hook contracts. Three fixtures under `tests/fixtures/` capture the 4.7 split-message transcript shape in three scenarios (compliant, non-compliant, second-edit-without-fresh-marker). A repro script at `tests/repros/4-7-split-message.sh` invokes `pre-edit-check.sh` with each fixture and asserts the expected allow/deny outcome. A runner at `tests/run.sh` executes all repros and reports pass/fail.
 
-### Added — `docs/v1.1-upstream-delta-ledger.md`
+### Added — `docs/v0.1.1-upstream-delta-ledger.md`
 
 Structured ledger of every aria-knowledge addition from v2.8.4 through v2.10.6, classified by execution-first value (IMPORT / OPTIONAL / REJECT). Audit trail for what was ported and why.
 
-### Added — `docs/v1.1-non-goals.md`
+### Added — `docs/v0.1.1-non-goals.md`
 
 Explicit list of aria-knowledge features that will not enter aria-ex1, separated into "permanently out of scope" and "deferred to v1.2+".
 

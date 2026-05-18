@@ -94,7 +94,7 @@ If any answer is no, flag the issue before proceeding.
 
 ## Ordering (required)
 
-The Low/High Impact block must appear **ABOVE** the Edit/Write tool call in the same assistant turn, never below. As of v1.1, the PreToolUse hook structurally enforces this: if the `[Rule 22]` marker is absent from a text block between the previous Edit/Write and this one, the hook returns `permissionDecision: deny` and blocks the tool call. Retrying without the marker will deny again. Emit the block prospectively, not retroactively — the only valid path is marker-then-edit.
+The Low/High Impact block must appear **ABOVE** the Edit/Write tool call in the same assistant turn, never below. As of v0.1.1, the PreToolUse hook structurally enforces this: if the `[Rule 22]` marker is absent from a text block between the previous Edit/Write and this one, the hook returns `permissionDecision: deny` and blocks the tool call. Retrying without the marker will deny again. Emit the block prospectively, not retroactively — the only valid path is marker-then-edit.
 
 ## Rationalizations that do not apply
 

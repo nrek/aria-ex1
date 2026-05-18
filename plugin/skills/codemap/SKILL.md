@@ -28,7 +28,18 @@ Report a short table: root, stack, version hints. User may correct.
 
 Glob/grep for framework-specific paths (see sections below). In `inventory` mode, print summary and stop.
 
-## Step 3: Section templates (write in order)
+## Step 3: Stack-aware cross-cutting candidates
+
+Before writing the map, present stack-level cross-cutting candidates alongside the feature/section list. These concerns often span all features and are easy to under-document in a feature-organized map. Offer each as proposed; user can accept, decline, rename, or defer per item.
+
+- **Django detected:** URLConf tree overview, signal registry (`post_save` / `pre_save` handlers), migration state (latest migration per app), env matrix (grouped env var names, no values).
+- **Next.js / React detected:** Route tree overview, API client and interceptor configuration, env matrix.
+- **Laravel detected:** Route file overview, job / queue registry, service providers, env matrix.
+- **Expo / React Native detected:** Screen tree overview, navigation config, API client, env matrix.
+
+Add accepted items to the cross-cutting block when using a feature-organized map, for example `C6. URLConf Tree`, `C7. Signal Registry`, `C8. Env Matrix`.
+
+## Step 4: Section templates (write in order)
 
 Start from `${CLAUDE_PLUGIN_ROOT}/template/codemap/CODEMAP.template.md`. Fill **Directory** last.
 
@@ -64,11 +75,11 @@ Routes `routes/*.php`, controllers, jobs, middleware, integrations — mirror Dj
 
 Screens, navigation, API modules, env — no Django-shaped sections.
 
-## Step 4: Directory & build log
+## Step 5: Directory & build log
 
 After sections exist, fill **Directory** table with line ranges or grep anchors. Add **Build log** table.
 
-## Step 5: Stats
+## Step 6: Stats
 
 Report line count, section count, token estimate for Directory-only load.
 

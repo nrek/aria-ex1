@@ -1,0 +1,5 @@
+{"type":"user","message":{"role":"user","content":"Please inspect then edit /tmp/test.txt"}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"text","text":"[Rule 22] Low Impact — test change to /tmp/test.txt after inspection. Change — inspect first, then append one line. Solutions — (1) inspect then edit [chosen]. Execute — Read then Edit."}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_intervening_read","name":"Read","input":{"file_path":"/tmp/test.txt"}}]}}
+{"type":"user","message":{"role":"user","content":[{"type":"tool_result","tool_use_id":"toolu_intervening_read","content":"old contents"}]}}
+{"type":"assistant","message":{"role":"assistant","content":[{"type":"tool_use","id":"toolu_after_tool_result","name":"Edit","input":{"file_path":"/tmp/test.txt","old_string":"old","new_string":"new"}}]}}

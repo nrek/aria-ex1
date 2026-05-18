@@ -4,7 +4,7 @@
 # Validates that the hook correctly handles Opus 4.7's split-message
 # transcript shape (text and tool_use in separate assistant messages).
 #
-# Three cases:
+# Four cases:
 #   A. compliant split-message — marker in preceding assistant text message,
 #      tool_use in next assistant message. Expected: empty stdout (allow).
 #   B. non-compliant split-message — no marker in any preceding text block.
@@ -12,6 +12,8 @@
 #   C. second-edit-uncovered — marker covers first edit's tool_use_id, but
 #      querying the second edit's tool_use_id should deny (marker belongs to
 #      the first edit; second edit needs its own marker).
+#   D. marker-before-tool-result — marker remains visible across an intervening
+#      non-edit tool result encoded as a user message. Expected: allow.
 
 set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
@@ -50,6 +52,7 @@ run_case() {
 run_case "A-compliant-split-message"       "$FIXTURES/transcript-split-compliant.jsonl"       "toolu_test_compliant"       "allow"
 run_case "B-noncompliant-no-marker"        "$FIXTURES/transcript-split-noncompliant.jsonl"    "toolu_test_noncompliant"    "deny"
 run_case "C-second-edit-needs-own-marker"  "$FIXTURES/transcript-second-edit-uncovered.jsonl" "toolu_second_edit_uncovered" "deny"
+run_case "D-marker-visible-past-tool-result" "$FIXTURES/transcript-marker-before-tool-result.jsonl" "toolu_after_tool_result" "allow"
 
 printf "\n%d passed, %d failed\n" "$PASS" "$FAIL"
 [ "$FAIL" -eq 0 ]
