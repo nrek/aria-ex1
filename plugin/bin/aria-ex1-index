@@ -1,0 +1,66 @@
+#!/usr/bin/env python3
+"""Initialize or refresh the ARIA-EX1 workspace_index.sqlite."""
+
+from __future__ import annotations
+
+import argparse
+import json
+import sys
+from pathlib import Path
+
+_PLUGIN = Path(__file__).resolve().parents[1]
+if str(_PLUGIN) not in sys.path:
+    sys.path.insert(0, str(_PLUGIN))
+
+from workspace_knowledge.bootstrap import init_workspace  # noqa: E402
+from workspace_knowledge.indexer import index_all, index_paths  # noqa: E402
+from workspace_knowledge.paths import find_workspace_root  # noqa: E402
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description="ARIA-EX1 workspace index")
+    parser.add_argument("--init", action="store_true", help="Create .aria-ex1 and apply schema")
+    parser.add_argument("--full", action="store_true", help="Full reindex with prune")
+    parser.add_argument(
+        "--path",
+        action="append",
+        dest="paths",
+        help="Reindex specific file(s), repo-relative or absolute",
+    )
+    parser.add_argument("--json", action="store_true", help="JSON output")
+    args = parser.parse_args()
+
+    root = find_workspace_root()
+
+    if args.init:
+        result = init_workspace(root, full_index=args.full)
+        if args.json:
+            print(json.dumps(result, indent=2))
+        else:
+            print(f"workspace: {result['workspace_root']}")
+            print(f"db: {result['db_path']}")
+            print(f"fts5: {result['fts5']}")
+            if "index_stats" in result:
+                print(f"index: {result['index_stats']}")
+        return 0
+
+    if args.paths:
+        resolved = []
+        for p in args.paths:
+            path = Path(p)
+            if not path.is_absolute():
+                path = root / path
+            resolved.append(path.resolve())
+        stats = index_paths(resolved, workspace=root)
+    else:
+        stats = index_all(workspace=root, prune=args.full or True)
+
+    if args.json:
+        print(json.dumps(stats, indent=2))
+    else:
+        print(stats)
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

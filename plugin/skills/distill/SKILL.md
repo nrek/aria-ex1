@@ -11,7 +11,14 @@ Turn raw task text into a tiered executable spec following `TASK.schema.md`.
 ## Step 0: Inputs
 
 - Raw task: inline string, read from file path, or prompt user to paste if no argument was provided.
-- Optional `--group=<id>`: read `~/.claude/aria-ex1.local.md`, load `CODEMAP.md` for backend + each frontend, and `stitch_path` `STITCH.md` if present.
+- Optional `--group=<id>`: load execution context from the workspace index first, then fall back to files:
+  1. If `.aria-ex1/workspace_index.sqlite` exists (or `ARIA_EX1_DB_PATH`), run:
+     ```bash
+     python3 ${CLAUDE_PLUGIN_ROOT}/bin/aria-ex1-context --group=<id> --hours=72
+     python3 ${CLAUDE_PLUGIN_ROOT}/bin/aria-ex1-search "<keywords from task>" --project=<id> --json
+     ```
+  2. Read `~/.claude/aria-ex1.local.md`, then load `CODEMAP.md` / `STITCH.md` from disk only for paths not already covered by index snippets.
+  3. If the DB is missing, run `/setup-db` once or proceed file-only (legacy behavior).
 - Optional `--tier=micro|standard|full`; else compute score:
 
 | Signal | Points |
@@ -67,6 +74,11 @@ Default output path: `TASK.md` in CWD.
 1. Determine final target path from flags / default.
 2. If archive applies: verify `.aria-distill/archive/` exists, creating it if needed, then move the existing file in with a timestamped name.
 3. Write the spec to the target path.
-4. Print summary: tier chosen, score when auto-tiered, target path, archive path when used, and advisory-vocabulary warnings when present.
+4. Print summary: tier chosen, score when auto-tiered, target path, archive path when used, advisory-vocabulary warnings, and **bloat score** (see `docs/ANTI_BLOAT_RULES.md`).
+5. When the DB is available, upsert a compact execution row:
+   ```bash
+   # After writing TASK output — agent may call execution helper or note id for /exec
+   ```
+   Write distilled markdown to `.aria-ex1/distilled/<slug>.md` when `--group` is set (preferred over repo-root `TASK.md` for indexed workspaces).
 
-No backlog or side files beyond `.aria-distill/archive/`.
+No backlog or side files beyond `.aria-distill/archive/` and `.aria-ex1/distilled/`.

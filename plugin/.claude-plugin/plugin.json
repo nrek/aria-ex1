@@ -1,7 +1,7 @@
 {
   "name": "aria-ex1",
-  "version": "0.1.1",
-  "description": "Execution-First Claude Code plugin: per-repo CODEMAP.md, cross-repo STITCH.md, complexity-tiered /distill task specs, and edit-time change enforcement (impact / alternatives / scope). Skills require ~/.claude/aria-ex1.local.md — run /setup if missing.",
+  "version": "0.2.0",
+  "description": "Execution-first workspace system: CODEMAP/STITCH, tiered /distill, edit-time Rule 22 hooks, and local workspace_index.sqlite for search and execution state. Claude, Cursor, and Codex compatible. Run /setup then /setup-db.",
   "author": {
     "name": "Mike Prasad"
   },

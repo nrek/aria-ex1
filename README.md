@@ -1,6 +1,6 @@
 # aria-ex1 — Execution-First
 
-**aria-ex1** is a [Claude Code](https://docs.anthropic.com/en/docs/claude-code) plugin oriented toward **structured execution**: per-repository maps, optional cross-repo stitching, tiered task specs, and edit-time change discipline.
+**aria-ex1** is an **execution-first workspace system** for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), **Cursor**, and **Codex**: per-repository maps, cross-repo stitching, tiered task specs, edit-time discipline, and a local **`workspace_index.sqlite`** for structured search and execution state — without replacing human-readable markdown.
 
 This project **began as a fork** of the open-source [**aria-knowledge**](https://github.com/mikeprasad/aria-knowledge) plugin, which provides a broad **knowledge lifecycle** (capture, review, promotion, audits, intake, and related skills). That design suits teams who want durable session memory and staged knowledge workflows. **aria-ex1** is a **narrower variant**: it keeps codemap-style mapping, cross-repo linking, distillable task specs, and the same class of edit hooks, but **does not ship** the knowledge-capture commands, backlogs, audit cadences, or compaction-adjacent flows. Choosing between them is a **product fit** question, not a judgment on either codebase.
 
@@ -17,6 +17,22 @@ This project **began as a fork** of the open-source [**aria-knowledge**](https:/
 | **`/distill`** | Turns vague tickets or notes into a **tiered** task spec (`micro` / `standard` / `full`): always includes objective, scope, dependencies/APIs, QA, and definition of done; adds frontend/backend/database sections **only when the work touches those layers**. |
 | **Edit-time discipline** | Before every file write: structural enforcement via `[Rule 22]` marker detection -- the hook denies the edit if the compliance block is missing. After: scope check with `[Rule 22 . Scope]` markers. Structural signals (auth, migration, model, routing, external-service) surfaced automatically. |
 | **Explore nudges** | Before heavy **Glob** / **Grep**: reminds you to load the repo `CODEMAP.md` (and `STITCH.md` when it sits next to the map) so exploration stays anchored. |
+| **Workspace index** | Local SQLite under `.aria-ex1/` indexes handoffs, plans, blueprints, CODEMAP/STITCH, and distilled tasks for FTS search and compact `/context` loads. |
+
+---
+
+## Workspace index (Cursor / Codex / Claude)
+
+Markdown stays the source of truth; the DB is a query layer only.
+
+```bash
+python3 plugin/bin/check-sqlite.py
+python3 plugin/bin/aria-ex1-index --init --full
+python3 plugin/bin/aria-ex1-search "custom domain" --project=commonspace
+python3 plugin/bin/aria-ex1-context --group=seersite --hours=72
+```
+
+See [docs/SQLITE_WORKSPACE_INDEX.md](docs/SQLITE_WORKSPACE_INDEX.md), [docs/EX1_METHOD.md](docs/EX1_METHOD.md), and [docs/ANTI_BLOAT_RULES.md](docs/ANTI_BLOAT_RULES.md).
 
 ---
 
@@ -166,6 +182,10 @@ If you use a `.claude-plugin/marketplace.json` that points at `./plugin`, add th
 | `/distill` | Tiered task spec; optional `--group`, `--tier` |
 | `/rules` | Look up execution rules by number or keyword |
 | `/help` | Short command list |
+| `/setup-db` | Initialize `.aria-ex1/workspace_index.sqlite` |
+| `/index` | Full or path reindex |
+| `/search` | FTS search over indexed markdown |
+| `/exec` | Execution item status workflow |
 
 ---
 

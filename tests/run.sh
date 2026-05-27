@@ -21,6 +21,19 @@ for suite in repros/*.sh; do
   printf "\n"
 done
 
+printf "=== workspace index (python) ===\n"
+if command -v python3 >/dev/null 2>&1; then
+  if python3 "$SCRIPT_DIR/test_workspace_index.py"; then
+    TOTAL_PASS=$((TOTAL_PASS + 1))
+  else
+    TOTAL_FAIL=$((TOTAL_FAIL + 1))
+    FAILED_SUITES="$FAILED_SUITES tests/test_workspace_index.py"
+  fi
+else
+  printf "SKIP: python3 not on PATH\n"
+fi
+printf "\n"
+
 printf "=== SUMMARY ===\n"
 printf "%d suite(s) passed, %d suite(s) failed\n" "$TOTAL_PASS" "$TOTAL_FAIL"
 if [ -n "$FAILED_SUITES" ]; then

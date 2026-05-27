@@ -1,0 +1,10 @@
+# Enforce LF in repo; avoids Windows checkout CRLF noise in diffs
+* text=auto eol=lf
+
+*.sh text eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.sql text eol=lf
+*.json text eol=lf
+*.jsonl text eol=lf
+*.mdc text eol=lf

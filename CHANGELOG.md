@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+### Added — workspace index (SQLite)
+
+- `plugin/template/db/schema.sql` — workspaces, documents, FTS, sections, plans, execution_items, decisions, index_events.
+- `plugin/workspace_knowledge/` — bootstrap, indexer, parsers, search, execution (bloat score).
+- CLI: `check-sqlite.py`, `aria-ex1-index`, `aria-ex1-search`, `aria-ex1-context`, `aria-ex1-exec`, `reindex-workspace.py`.
+- Skills: `/setup-db`, `/index`, `/search`, `/exec`.
+- Docs: `docs/EX1_METHOD.md`, `docs/SQLITE_WORKSPACE_INDEX.md`, `docs/ANTI_BLOAT_RULES.md`.
+- `/distill` loads DB context before file fallback when `.aria-ex1/workspace_index.sqlite` exists.
+- Unit tests: `tests/test_workspace_index.py`.
+
+### Previous — lean upstream sync
+
 Lean upstream sync against `aria-knowledge` v2.15-v2.18. Imports only execution-relevant fixes and prompt/spec improvements; leaves knowledge lifecycle, MCP, audit/intake, handoff, compaction, TaskCreated, SessionStart, Cursor/Codex ports, and batch manifests out of scope.
 
 ### Fixed — Rule 22 marker window across tool results
